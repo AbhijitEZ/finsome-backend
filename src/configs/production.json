@@ -2,16 +2,16 @@
     "env": "production",
     "dbConfig": {
         "host": "localhost",
-        "database": "test",
+        "database": "finsomedb",
         "port": 27017
     },
-    "secretKey": "secretKey",
+    "secretKey": "HC8XyvuqRMSUMvck9VfUjKB3G8PSH5swvmNJskAgndCAsVWZqa",
     "log": {
         "format": "combined",
         "dir": "../logs"
     },
     "cors": {
-        "origin": "your.domain.com",
+        "origin": true,
         "credentials": true
     }
 }
