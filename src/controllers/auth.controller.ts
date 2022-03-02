@@ -8,6 +8,16 @@ import { APP_SUCCESS_MESSAGE } from '@/utils/constants';
 class AuthController {
   public authService = new AuthService();
 
+  public verifyPhoneNumber = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      //const reqPayload: VerifyMobileDto = req.body;
+
+      res.status(201).json({ data: {}, message: APP_SUCCESS_MESSAGE.signup_success });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userData: CreateUserDto = req.body;

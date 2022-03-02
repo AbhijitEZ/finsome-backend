@@ -3,3 +3,8 @@ export const APP_SUCCESS_MESSAGE = {
   login_success: 'Login Successfully.',
   logout_success: 'Logout Successfully.',
 };
+
+export const USER_ROLE = {
+  ADMIN: 'ADMIN',
+  MEMBER: 'MEMBER',
+};
