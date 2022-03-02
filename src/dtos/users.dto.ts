@@ -8,7 +8,7 @@ export class CreateUserDto {
   public password: string;
 }
 
-export class VerifyMobileDto {
+export class VerifyPhoneDto {
   @IsNotEmpty()
   @IsString()
   phone_country_code: string;
