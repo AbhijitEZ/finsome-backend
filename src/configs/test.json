@@ -6,6 +6,7 @@
         "port": 27017
     },
     "secretKey": "HC8XyvuqRMSUMvck9VfUjKB3G8PSH5swvmNJskAgndCAsVWZqp",
+    "tokenExpiry": 1209600,
     "log": {
         "format": "dev",
         "dir": "../logs"

@@ -3,11 +3,12 @@ import { User } from '@interfaces/users.interface';
 
 export interface DataStoredInToken {
   _id: string;
+  role: string;
 }
 
 export interface TokenData {
   token: string;
-  expiresIn: number;
+  expires_in: number;
 }
 
 export interface RequestWithUser extends Request {

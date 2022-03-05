@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { User } from '@interfaces/users.interface';
-import { USER_ROLE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
 
 const userSchema: Schema = new Schema(
   {
@@ -47,6 +47,18 @@ const userSchema: Schema = new Schema(
     gender: {
       type: String,
     },
+    bio: {
+      type: String,
+    },
+    youtube_link: {
+      type: String,
+    },
+    instagram_link: {
+      type: String,
+    },
+    telegram_link: {
+      type: String,
+    },
     forgot_password_otp: {
       type: String,
     },
@@ -58,6 +70,15 @@ const userSchema: Schema = new Schema(
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   },
 );
+
+userSchema.post('save', function (error, doc, next) {
+  // Unqiue Email error handler
+  if (error.name === 'MongoError' && error.code === 11000) {
+    next(new Error(APP_ERROR_MESSAGE.email_exists));
+  } else {
+    next(error);
+  }
+});
 
 const userModel = model<User & Document>('users', userSchema);
 

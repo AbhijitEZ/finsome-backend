@@ -1,18 +1,42 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserDto } from '@dtos/users.dto';
+import { CreateUserDto, LoginDto, ValidateUserFieldDto, VerifyPhoneDto } from '@dtos/users.dto';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import AuthService from '@services/auth.service';
 import { APP_SUCCESS_MESSAGE } from '@/utils/constants';
+import { responseJSONMapper } from '@/utils/global';
 
 class AuthController {
   public authService = new AuthService();
 
+  public validateUserField = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const reqPayload: ValidateUserFieldDto = req.body;
+      await this.authService.validateUserField(reqPayload);
+
+      responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.validate_user_field_success);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public verifyPhoneNumber = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      //const reqPayload: VerifyMobileDto = req.body;
+      const reqPayload: VerifyPhoneDto = req.body;
 
-      res.status(201).json({ data: {}, message: APP_SUCCESS_MESSAGE.signup_success });
+      // TODO: OTP phase would be dynamic after the client confirmation
+      responseJSONMapper(res, 200, { ...reqPayload, otp: 1234 }, APP_SUCCESS_MESSAGE.sent_otp_success);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public verifyOTP = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      //const reqPayload: VerifyOtpDTO = req.body;
+
+      // TODO: OTP phase would be dynamic after the client confirmation
+      responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.verify_otp_success);
     } catch (error) {
       next(error);
     }
@@ -21,9 +45,10 @@ class AuthController {
   public signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userData: CreateUserDto = req.body;
-      const signUpUserData: User = await this.authService.signup(userData);
+      const { cookie, token_data, user } = await this.authService.signup(userData);
+      res.setHeader('Set-Cookie', [cookie]);
 
-      res.status(201).json({ data: signUpUserData, message: APP_SUCCESS_MESSAGE.signup_success });
+      responseJSONMapper(res, 201, { token_data, user }, APP_SUCCESS_MESSAGE.signup_success);
     } catch (error) {
       next(error);
     }
@@ -31,11 +56,11 @@ class AuthController {
 
   public logIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userData: CreateUserDto = req.body;
-      const { cookie, findUser } = await this.authService.login(userData);
-
+      const userData: LoginDto = req.body;
+      const { cookie, token_data, user } = await this.authService.login(userData);
       res.setHeader('Set-Cookie', [cookie]);
-      res.status(200).json({ data: findUser, message: APP_SUCCESS_MESSAGE.login_success });
+
+      responseJSONMapper(res, 200, { token_data, user }, APP_SUCCESS_MESSAGE.login_success);
     } catch (error) {
       next(error);
     }
