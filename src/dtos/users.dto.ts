@@ -1,3 +1,4 @@
+import { GENDER_CONST } from '@/utils/constants';
 import { IsDateString, IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class VerifyPhoneDto {
@@ -27,14 +28,19 @@ export class ValidateUserFieldDto {
   value: string;
 }
 
-export class CreateUserDto extends VerifyPhoneDto {
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
+export class SignupPhoneDto extends VerifyOtpDTO {
   @IsNotEmpty()
   @IsString()
   password: string;
+}
+export class CreateUserDto {
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 
   @IsNotEmpty()
   @IsString()
@@ -44,12 +50,17 @@ export class CreateUserDto extends VerifyPhoneDto {
   @IsString()
   fullname: string;
 
+  @IsOptional()
   @IsDateString()
   birth_date: string;
 
   @IsOptional()
   @IsNumber()
   trading_exp: number;
+
+  @IsOptional()
+  @IsIn(Object.keys(GENDER_CONST))
+  gender: string;
 }
 
 export class LoginDto {

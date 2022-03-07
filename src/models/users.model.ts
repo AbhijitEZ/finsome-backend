@@ -1,17 +1,19 @@
 import { model, Schema, Document } from 'mongoose';
 import { User } from '@interfaces/users.interface';
 import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
+import { HttpException } from '@/exceptions/HttpException';
 
 const userSchema: Schema = new Schema(
   {
     email: {
       type: String,
-      required: true,
-      unique: true,
+      index: {
+        unique: true,
+        partialFilterExpression: { email: { $type: 'string' } },
+      },
     },
     password: {
       type: String,
-      required: true,
     },
     role: {
       type: String,
@@ -25,6 +27,7 @@ const userSchema: Schema = new Schema(
     phone_number: {
       type: String,
       required: true,
+      unique: true,
     },
     term_agree_timestamp: {
       type: Date,
@@ -32,11 +35,9 @@ const userSchema: Schema = new Schema(
     },
     username: {
       type: String,
-      required: true,
     },
     fullname: {
       type: String,
-      required: true,
     },
     birth_date: {
       type: Date,
@@ -59,6 +60,10 @@ const userSchema: Schema = new Schema(
     telegram_link: {
       type: String,
     },
+    is_registration_complete: {
+      type: Boolean,
+      default: false,
+    },
     forgot_password_otp: {
       type: String,
     },
@@ -74,7 +79,11 @@ const userSchema: Schema = new Schema(
 userSchema.post('save', function (error, doc, next) {
   // Unqiue Email error handler
   if (error.name === 'MongoError' && error.code === 11000) {
-    next(new Error(APP_ERROR_MESSAGE.email_exists));
+    if (error.keyPattern?.phone_number) {
+      next(new HttpException(409, APP_ERROR_MESSAGE.phone_exists));
+    } else {
+      next(new HttpException(409, APP_ERROR_MESSAGE.email_exists));
+    }
   } else {
     next(error);
   }

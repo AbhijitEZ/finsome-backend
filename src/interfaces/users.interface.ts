@@ -5,4 +5,5 @@ export interface User {
   role: string;
   term_agree_timestamp: string;
   updated_at: string;
+  is_registration_complete: boolean;
 }
