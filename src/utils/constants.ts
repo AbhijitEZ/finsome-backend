@@ -3,6 +3,7 @@ export const APP_SUCCESS_MESSAGE = {
   signup_success: 'Signup successfully.',
   login_success: 'Login successfully.',
   logout_success: 'Logout successfully.',
+  change_password_success: 'Password updated successfully.',
   validate_user_field_success: 'No user exists with following field.',
   sent_otp_success: 'OTP sent to you phone number.',
   verify_otp_success: 'OTP is verified.',

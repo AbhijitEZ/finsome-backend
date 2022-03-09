@@ -1,5 +1,5 @@
 import { GENDER_CONST } from '@/utils/constants';
-import { IsDateString, IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class VerifyPhoneDto {
   @IsNotEmpty()
@@ -31,6 +31,7 @@ export class ValidateUserFieldDto {
 export class SignupPhoneDto extends VerifyOtpDTO {
   @IsNotEmpty()
   @IsString()
+  @MinLength(6)
   password: string;
 }
 export class CreateUserDto {
@@ -70,5 +71,18 @@ export class LoginDto {
 
   @IsNotEmpty()
   @IsString()
+  @MinLength(6)
   password: string;
+}
+
+export class ChangePasswordDto {
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  new_password: string;
 }

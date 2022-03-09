@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserDto, LoginDto, SignupPhoneDto, ValidateUserFieldDto, VerifyPhoneDto } from '@dtos/users.dto';
+import { ChangePasswordDto, CreateUserDto, LoginDto, SignupPhoneDto, ValidateUserFieldDto, VerifyPhoneDto } from '@dtos/users.dto';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import AuthService from '@services/auth.service';
@@ -78,6 +78,18 @@ class AuthController {
       res.setHeader('Set-Cookie', [cookie]);
 
       responseJSONMapper(res, 200, { token_data, user }, APP_SUCCESS_MESSAGE.login_success);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public changePassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userData: ChangePasswordDto = req.body;
+      // @ts-ignore
+      await this.authService.changePassword(userData, req.user._id);
+
+      responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.change_password_success);
     } catch (error) {
       next(error);
     }

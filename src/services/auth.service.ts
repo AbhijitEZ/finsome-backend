@@ -2,7 +2,7 @@ import { hash, compare } from 'bcrypt';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { toDate } from 'date-fns';
-import { CreateUserDto, LoginDto, SignupPhoneDto, ValidateUserFieldDto } from '@dtos/users.dto';
+import { ChangePasswordDto, CreateUserDto, LoginDto, SignupPhoneDto, ValidateUserFieldDto } from '@dtos/users.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
@@ -86,6 +86,17 @@ class AuthService {
     const userResponseFilter = this.userResponseFilter(findUser);
 
     return { cookie, token_data, user: userResponseFilter };
+  }
+
+  public async changePassword(userData: ChangePasswordDto, id: string): Promise<void> {
+    const findUser = await this.users.findOne({ _id: id }).lean();
+    if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+
+    const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
+    if (!isPasswordMatching) throw new HttpException(409, APP_ERROR_MESSAGE.incorrect_password);
+
+    const hashedPassword = await hash(userData.new_password, 10);
+    await this.users.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
   }
 
   public async logout(userData: User): Promise<void> {
