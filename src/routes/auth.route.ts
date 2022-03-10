@@ -1,9 +1,19 @@
 import { Router } from 'express';
 import AuthController from '@controllers/auth.controller';
-import { ChangePasswordDto, CreateUserDto, LoginDto, SignupPhoneDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '@dtos/users.dto';
+import {
+  ChangePasswordDto,
+  CreateUserDto,
+  LoginDto,
+  ProfileUpdateDto,
+  SignupPhoneDto,
+  ValidateUserFieldDto,
+  VerifyOtpDTO,
+  VerifyPhoneDto,
+} from '@dtos/users.dto';
 import { Routes } from '@interfaces/routes.interface';
 import authMiddleware from '@middlewares/auth.middleware';
 import validationMiddleware from '@middlewares/validation.middleware';
+import { fileUploadCB } from '@/utils/global';
 
 class AuthRoute implements Routes {
   public path = '/';
@@ -26,6 +36,14 @@ class AuthRoute implements Routes {
       validationMiddleware(ChangePasswordDto, 'body'),
       authMiddleware,
       this.authController.changePassword,
+    );
+    this.router.get(`${this.path}profile`, authMiddleware, this.authController.profile);
+    this.router.post(
+      `${this.path}profile`,
+      fileUploadCB,
+      validationMiddleware(ProfileUpdateDto, 'body'),
+      authMiddleware,
+      this.authController.editProfile,
     );
     this.router.post(`${this.path}logout`, authMiddleware, this.authController.logOut);
   }

@@ -2,7 +2,7 @@ import { hash, compare } from 'bcrypt';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { toDate } from 'date-fns';
-import { ChangePasswordDto, CreateUserDto, LoginDto, SignupPhoneDto, ValidateUserFieldDto } from '@dtos/users.dto';
+import { ChangePasswordDto, CreateUserDto, LoginDto, ProfileUpdateDto, SignupPhoneDto, ValidateUserFieldDto } from '@dtos/users.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
@@ -97,6 +97,39 @@ class AuthService {
 
     const hashedPassword = await hash(userData.new_password, 10);
     await this.users.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+  }
+
+  public async profile(id: String): Promise<{ user: Partial<User> }> {
+    const findUser = await this.users.findOne({ _id: id }).lean();
+    const userResponseFilter = this.userResponseFilter(findUser);
+    return { user: userResponseFilter };
+  }
+
+  public async editProfile(userData: ProfileUpdateDto, file: Express.Multer.File, id: string): Promise<void> {
+    const userExistsCheckForEmailField = await this.users.findOne({ _id: { $ne: id }, email: userData.email });
+    if (userExistsCheckForEmailField) {
+      throw new HttpException(409, APP_ERROR_MESSAGE.email_exists);
+    }
+
+    const userExistsCheckForUsernameField = await this.users.findOne({ _id: { $ne: id }, username: userData.username });
+    if (userExistsCheckForUsernameField) {
+      throw new HttpException(409, APP_ERROR_MESSAGE.username_exists);
+    }
+
+    const payload = {
+      email: userData.email,
+      username: userData.username,
+      fullname: userData.fullname,
+      birth_date: userData.birth_date,
+      trading_exp: userData.trading_exp,
+      gender: userData.gender,
+      bio: userData.bio,
+      youtube_link: userData.youtube_link,
+      instagram_link: userData.instagram_link,
+      telegram_link: userData.telegram_link,
+    };
+
+    await this.users.findByIdAndUpdate(id, payload, { new: true });
   }
 
   public async logout(userData: User): Promise<void> {

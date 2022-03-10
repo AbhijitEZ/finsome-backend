@@ -4,6 +4,7 @@ export const APP_SUCCESS_MESSAGE = {
   login_success: 'Login successfully.',
   logout_success: 'Logout successfully.',
   change_password_success: 'Password updated successfully.',
+  update_profile_success: 'Profile updated successfully.',
   validate_user_field_success: 'No user exists with following field.',
   sent_otp_success: 'OTP sent to you phone number.',
   verify_otp_success: 'OTP is verified.',
@@ -20,6 +21,7 @@ export const APP_ERROR_MESSAGE = {
   otp_invalid: 'Invalid OTP, try different one.',
   user_not_exists: "User doesn't exists for the following phone number.",
   incorrect_password: 'Incorrect Password.',
+  incorrect_img_format: 'Incorrect image format, use valid one.',
 };
 
 export const USER_ROLE = {
@@ -32,3 +34,5 @@ export const GENDER_CONST = {
   FEMALE: 'FEMALE',
   OTHER: 'OTHER',
 };
+
+export const FILE_LIMIT = 20000000;

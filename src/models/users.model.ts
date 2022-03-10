@@ -20,6 +20,9 @@ const userSchema: Schema = new Schema(
       enum: Object.keys(USER_ROLE),
       default: USER_ROLE.MEMBER,
     },
+    profile_photo: {
+      type: String,
+    },
     phone_country_code: {
       type: String,
       required: true,

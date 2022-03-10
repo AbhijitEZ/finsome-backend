@@ -86,3 +86,45 @@ export class ChangePasswordDto {
   @MinLength(6)
   new_password: string;
 }
+
+export class ProfileUpdateDto {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  username: string;
+
+  @IsNotEmpty()
+  @IsString()
+  fullname: string;
+
+  @IsOptional()
+  @IsDateString()
+  birth_date: string;
+
+  @IsOptional()
+  @IsNumber()
+  trading_exp: number;
+
+  @IsOptional()
+  @IsIn(Object.keys(GENDER_CONST))
+  gender: string;
+
+  @IsNotEmpty()
+  @IsString()
+  bio: string;
+
+  @IsOptional()
+  @IsString()
+  youtube_link: string;
+
+  @IsOptional()
+  @IsString()
+  instagram_link: string;
+
+  @IsOptional()
+  @IsString()
+  telegram_link: string;
+}

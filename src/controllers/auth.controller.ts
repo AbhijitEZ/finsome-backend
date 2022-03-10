@@ -95,6 +95,29 @@ class AuthController {
     }
   };
 
+  public profile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const user = await this.authService.profile(req.user._id);
+
+      responseJSONMapper(res, 200, { ...user }, APP_SUCCESS_MESSAGE.update_profile_success);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // TODO: Profile Image upload pending
+  public editProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      await this.authService.editProfile(req.body, req.file, req.user._id);
+
+      responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.update_profile_success);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public logOut = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
       const userData: User = req.user;

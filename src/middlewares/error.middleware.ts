@@ -4,7 +4,8 @@ import { logger } from '@utils/logger';
 
 const errorMiddleware = (error: HttpException, req: Request, res: Response, next: NextFunction) => {
   try {
-    const status: number = error.status || 500;
+    // @ts-ignore
+    const status: number = error.status || error.code === 'LIMIT_FILE_SIZE' ? 400 : 500;
     const message: string = error.message || 'Something went wrong';
     const data: any = error.data ?? {};
 
