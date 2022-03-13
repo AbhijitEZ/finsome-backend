@@ -89,7 +89,9 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+
+# TODO: This would be added by when we are going to production, as out current server is giving error of memory out
+# dist
 
 # Gatsby files
 .cache/
