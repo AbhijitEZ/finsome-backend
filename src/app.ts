@@ -9,6 +9,7 @@ import hpp from 'hpp';
 import morgan from 'morgan';
 import { connect, set } from 'mongoose';
 import { dbConnection } from '@databases';
+import awsHandler from '@utils/aws';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
@@ -27,6 +28,7 @@ class App {
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initializeErrorHandling();
+    awsHandler.init();
   }
 
   public listen() {

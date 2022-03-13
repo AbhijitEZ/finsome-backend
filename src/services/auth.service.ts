@@ -2,12 +2,13 @@ import { hash, compare } from 'bcrypt';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { toDate } from 'date-fns';
+import awsHandler from '@utils/aws';
 import { ChangePasswordDto, CreateUserDto, LoginDto, ProfileUpdateDto, SignupPhoneDto, ValidateUserFieldDto } from '@dtos/users.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
-import { isEmpty } from '@utils/util';
+import { isEmpty, profileImageGenerator } from '@utils/util';
 import { APP_ERROR_MESSAGE } from '@/utils/constants';
 
 class AuthService {
@@ -116,7 +117,7 @@ class AuthService {
       throw new HttpException(409, APP_ERROR_MESSAGE.username_exists);
     }
 
-    const payload = {
+    const payload: any = {
       email: userData.email,
       username: userData.username,
       fullname: userData.fullname,
@@ -128,6 +129,18 @@ class AuthService {
       instagram_link: userData.instagram_link,
       telegram_link: userData.telegram_link,
     };
+
+    if (file) {
+      const profileUser = await this.users.findOne({ _id: id });
+      // Delete the existing image from S3
+      if (profileUser.profile_photo) {
+        awsHandler.deleteProfileImage(profileUser.profile_photo);
+      }
+
+      // Add image
+      const profileImage = await awsHandler.addProfileImage(file);
+      payload.profile_photo = profileImage;
+    }
 
     await this.users.findByIdAndUpdate(id, payload, { new: true });
   }
@@ -144,6 +157,9 @@ class AuthService {
     delete user.password;
     delete user.term_agree_timestamp;
     delete user.updated_at;
+    if (user.profile_photo) {
+      user.profile_photo = profileImageGenerator(user.profile_photo);
+    }
     return user;
   }
 

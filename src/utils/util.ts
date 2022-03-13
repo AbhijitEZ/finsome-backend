@@ -1,3 +1,5 @@
+import { profileImageFolder } from './constants';
+
 /**
  * @method isEmpty
  * @param {String | Number | Object} value
@@ -16,4 +18,8 @@ export const isEmpty = (value: string | number | object): boolean => {
   } else {
     return false;
   }
+};
+
+export const profileImageGenerator = (imageName: string) => {
+  return `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${profileImageFolder}${imageName}`;
 };

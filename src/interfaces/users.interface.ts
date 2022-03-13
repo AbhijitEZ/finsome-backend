@@ -6,4 +6,5 @@ export interface User {
   term_agree_timestamp: string;
   updated_at: string;
   is_registration_complete: boolean;
+  profile_photo?: string;
 }

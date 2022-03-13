@@ -11,6 +11,9 @@ export const APP_SUCCESS_MESSAGE = {
 };
 
 export const APP_ERROR_MESSAGE = {
+  invalid_token: 'Invalid token, please login agian.',
+  delete_s3_error: 'Error while deleting the image from S3.',
+  add_s3_error: 'Error while adding the image from S3.',
   user_field_exists: 'User with the following field already exists, try something other.',
   user_id_not_exits: "User id doesn't exists in system.",
   user_not_complete_register: 'User has not completed the registration process, process further to complete.',
@@ -36,3 +39,5 @@ export const GENDER_CONST = {
 };
 
 export const FILE_LIMIT = 20000000;
+
+export const profileImageFolder = 'profile-img/';
