@@ -9,7 +9,7 @@ import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import { isEmpty, profileImageGenerator } from '@utils/util';
-import { APP_ERROR_MESSAGE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
 
 class AuthService {
   public users = userModel;
@@ -82,6 +82,12 @@ class AuthService {
 
     const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
     if (!isPasswordMatching) throw new HttpException(409, APP_ERROR_MESSAGE.incorrect_password);
+
+    /* IF User is admin we won't allow them to login in the mobile application */
+    if (findUser.role === USER_ROLE.ADMIN) {
+      throw new HttpException(403, APP_ERROR_MESSAGE.forbidden_error);
+    }
+
     const token_data = this.createToken(findUser);
     const cookie = this.createCookie(token_data);
     const userResponseFilter = this.userResponseFilter(findUser);
