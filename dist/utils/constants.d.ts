@@ -20,6 +20,7 @@ export declare const APP_ERROR_MESSAGE: {
     email_exists: string;
     username_exists: string;
     phone_exists: string;
+    forbidden_error: string;
     otp_invalid: string;
     user_not_exists: string;
     incorrect_password: string;

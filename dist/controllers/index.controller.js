@@ -1,5 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const bcrypt_1 = require("bcrypt");
+const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
+const constants_1 = require("../utils/constants");
+const HttpException_1 = require("../exceptions/HttpException");
+const date_fns_1 = require("date-fns");
 class IndexController {
     constructor() {
         this.index = (req, res, next) => {
@@ -10,6 +16,33 @@ class IndexController {
                 next(error);
             }
         };
+        /* Script Start */
+        /* Adding default admin for the initial system */
+        this.addAdminScript = async (req, res, next) => {
+            try {
+                const adminExists = await users_model_1.default.findOne({
+                    role: constants_1.USER_ROLE.ADMIN,
+                });
+                if (adminExists) {
+                    throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.user_already_register);
+                }
+                const hashedPassword = await (0, bcrypt_1.hash)('Finsom@123', 10);
+                await users_model_1.default.create({
+                    phone_country_code: '+91',
+                    phone_number: '00000000000',
+                    username: 'admin_user',
+                    email: 'adminfinsom@yopmail.com',
+                    password: hashedPassword,
+                    term_agree_timestamp: (0, date_fns_1.toDate)(new Date()),
+                    role: constants_1.USER_ROLE.ADMIN,
+                });
+                res.status(200).json({ email: 'adminfinsom@yopmail.com' });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        /* Script End */
     }
 }
 exports.default = IndexController;

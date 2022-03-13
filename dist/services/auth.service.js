@@ -67,6 +67,10 @@ class AuthService {
         const isPasswordMatching = await (0, bcrypt_1.compare)(userData.password, findUser.password);
         if (!isPasswordMatching)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.incorrect_password);
+        /* IF User is admin we won't allow them to login in the mobile application */
+        if (findUser.role === constants_1.USER_ROLE.ADMIN) {
+            throw new HttpException_1.HttpException(403, constants_1.APP_ERROR_MESSAGE.forbidden_error);
+        }
         const token_data = this.createToken(findUser);
         const cookie = this.createCookie(token_data);
         const userResponseFilter = this.userResponseFilter(findUser);
