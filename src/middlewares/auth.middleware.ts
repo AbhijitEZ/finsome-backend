@@ -37,7 +37,7 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
 
 export const authAdminMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
-    const Authorization = req.cookies['Authorization'] || (req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null);
+    const Authorization = req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null;
 
     if (Authorization) {
       const secretKey: string = config.get('secretKey');

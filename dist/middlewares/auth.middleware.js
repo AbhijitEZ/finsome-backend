@@ -37,7 +37,7 @@ const authMiddleware = async (req, res, next) => {
 };
 const authAdminMiddleware = async (req, res, next) => {
     try {
-        const Authorization = req.cookies['Authorization'] || (req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null);
+        const Authorization = req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null;
         if (Authorization) {
             const secretKey = config_1.default.get('secretKey');
             const verificationResponse = (await (0, jsonwebtoken_1.verify)(Authorization, secretKey));
