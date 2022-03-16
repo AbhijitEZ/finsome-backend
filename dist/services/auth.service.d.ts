@@ -25,7 +25,6 @@ declare class AuthService {
     }>;
     editProfile(userData: ProfileUpdateDto, file: Express.Multer.File, id: string): Promise<void>;
     logout(userData: User): Promise<void>;
-    userResponseFilter(userData: User): Partial<User>;
     createToken(user: User): TokenData;
     createCookie(tokenData: TokenData): string;
 }

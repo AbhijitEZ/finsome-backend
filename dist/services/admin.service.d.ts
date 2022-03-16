@@ -6,5 +6,6 @@ declare class AdminService {
     adminLogin(loginDto: AdminLoginDto): Promise<{
         token: string;
     }>;
+    userListing(user: User): Promise<Record<string, any>>;
 }
 export default AdminService;

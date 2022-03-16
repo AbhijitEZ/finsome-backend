@@ -15,6 +15,15 @@ class AdminController {
                 next(error);
             }
         };
+        this.userListing = async (req, res, next) => {
+            try {
+                const users = await this.adminService.userListing(req.user);
+                res.status(200).json({ data: users, message: constants_1.APP_SUCCESS_MESSAGE.login_success });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = AdminController;

@@ -10,6 +10,7 @@ const HttpException_1 = require("../exceptions/HttpException");
 const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
 const util_1 = require("../utils/util");
 const constants_1 = require("../utils/constants");
+const global_1 = require("../utils/global");
 class AuthService {
     constructor() {
         this.users = users_model_1.default;
@@ -23,8 +24,8 @@ class AuthService {
         const hashedPassword = await (0, bcrypt_1.hash)(userData.password, 10);
         const createUserData = await this.users.create(Object.assign(Object.assign({}, userData), { password: hashedPassword, term_agree_timestamp: (0, date_fns_1.toDate)(new Date()) }));
         // @ts-ignore
-        const userResponseFilter = this.userResponseFilter(createUserData._doc);
-        return { user: userResponseFilter };
+        const userResFilter = (0, global_1.userResponseFilter)(createUserData._doc);
+        return { user: userResFilter };
     }
     async signUpUserVerify(userData) {
         const userAlreadyFullyRegistered = await this.users.findOne({ _id: userData.id, is_registration_complete: true });
@@ -54,8 +55,8 @@ class AuthService {
         const token_data = this.createToken(updateUserData);
         const cookie = this.createCookie(token_data);
         // @ts-ignore
-        const userResponseFilter = this.userResponseFilter(updateUserData._doc);
-        return { cookie, token_data, user: userResponseFilter };
+        const userResFilter = (0, global_1.userResponseFilter)(updateUserData._doc);
+        return { cookie, token_data, user: userResFilter };
     }
     async login(userData) {
         const findUser = await this.users.findOne({ phone_number: userData.phone_number }).lean();
@@ -71,10 +72,14 @@ class AuthService {
         if (findUser.role === constants_1.USER_ROLE.ADMIN) {
             throw new HttpException_1.HttpException(403, constants_1.APP_ERROR_MESSAGE.forbidden_error);
         }
+        // @ts-ignore
+        if (findUser.deleted_at) {
+            throw new HttpException_1.HttpException(401, constants_1.APP_ERROR_MESSAGE.user_blocked);
+        }
         const token_data = this.createToken(findUser);
         const cookie = this.createCookie(token_data);
-        const userResponseFilter = this.userResponseFilter(findUser);
-        return { cookie, token_data, user: userResponseFilter };
+        const userResFilter = (0, global_1.userResponseFilter)(findUser);
+        return { cookie, token_data, user: userResFilter };
     }
     async changePassword(userData, id) {
         const findUser = await this.users.findOne({ _id: id }).lean();
@@ -88,8 +93,8 @@ class AuthService {
     }
     async profile(id) {
         const findUser = await this.users.findOne({ _id: id }).lean();
-        const userResponseFilter = this.userResponseFilter(findUser);
-        return { user: userResponseFilter };
+        const userResFilter = (0, global_1.userResponseFilter)(findUser);
+        return { user: userResFilter };
     }
     async editProfile(userData, file, id) {
         const userExistsCheckForEmailField = await this.users.findOne({ _id: { $ne: id }, email: userData.email });
@@ -130,16 +135,6 @@ class AuthService {
         const findUser = await this.users.findOne({ email: userData.email, password: userData.password });
         if (!findUser)
             throw new HttpException_1.HttpException(409, `You're email ${userData.email} not found`);
-    }
-    userResponseFilter(userData) {
-        const user = Object.assign({}, userData);
-        delete user.password;
-        delete user.term_agree_timestamp;
-        delete user.updated_at;
-        if (user.profile_photo) {
-            user.profile_photo = (0, util_1.profileImageGenerator)(user.profile_photo);
-        }
-        return user;
     }
     createToken(user) {
         const dataStoredInToken = { _id: user._id, role: user.role };

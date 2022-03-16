@@ -24,6 +24,7 @@ exports.APP_ERROR_MESSAGE = {
     username_exists: 'Username already exists use something different.',
     phone_exists: 'Phone number already exists use something different.',
     forbidden_error: 'Forbidden to access this resource for particular user.',
+    user_blocked: 'User has been blocked by admin, contact admin to unblock.',
     otp_invalid: 'Invalid OTP, try different one.',
     user_not_exists: "User doesn't exists for the following phone number.",
     incorrect_password: 'Incorrect Password.',
