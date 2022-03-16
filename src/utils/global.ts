@@ -1,7 +1,9 @@
 import { HttpException } from '@/exceptions/HttpException';
 import { Response } from 'express';
 import multer from 'multer';
+import { User } from '@interfaces/users.interface';
 import { APP_ERROR_MESSAGE, FILE_LIMIT } from './constants';
+import { profileImageGenerator } from './util';
 
 export const responseJSONMapper = (res: Response, statusCode: number, data: any, message?: string) => {
   res.status(statusCode).json({ data, message: message || '' });
@@ -19,3 +21,14 @@ const uploadFileFilter = (req: Request, file: Express.Multer.File, cb) => {
 export const fileUploadCB = multer({ storage: multer.memoryStorage(), fileFilter: uploadFileFilter, limits: { fileSize: FILE_LIMIT } }).single(
   'image',
 );
+
+export const userResponseFilter = (userData: User): Partial<User> => {
+  const user = { ...userData };
+  delete user.password;
+  delete user.term_agree_timestamp;
+  delete user.updated_at;
+  if (user.profile_photo) {
+    user.profile_photo = profileImageGenerator(user.profile_photo);
+  }
+  return user;
+};

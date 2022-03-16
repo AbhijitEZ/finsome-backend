@@ -8,8 +8,9 @@ import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
-import { isEmpty, profileImageGenerator } from '@utils/util';
+import { isEmpty } from '@utils/util';
 import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
+import { userResponseFilter } from '@/utils/global';
 
 class AuthService {
   public users = userModel;
@@ -24,9 +25,9 @@ class AuthService {
     const createUserData = await this.users.create({ ...userData, password: hashedPassword, term_agree_timestamp: toDate(new Date()) });
 
     // @ts-ignore
-    const userResponseFilter = this.userResponseFilter(createUserData._doc);
+    const userResFilter = userResponseFilter(createUserData._doc);
 
-    return { user: userResponseFilter };
+    return { user: userResFilter };
   }
 
   public async signUpUserVerify(userData: CreateUserDto): Promise<{ cookie: string; user: Partial<User>; token_data: TokenData }> {
@@ -67,9 +68,9 @@ class AuthService {
     const cookie = this.createCookie(token_data);
 
     // @ts-ignore
-    const userResponseFilter = this.userResponseFilter(updateUserData._doc);
+    const userResFilter = userResponseFilter(updateUserData._doc);
 
-    return { cookie, token_data, user: userResponseFilter };
+    return { cookie, token_data, user: userResFilter };
   }
 
   public async login(userData: LoginDto): Promise<{ cookie: string; user: Partial<User>; token_data: TokenData }> {
@@ -88,11 +89,16 @@ class AuthService {
       throw new HttpException(403, APP_ERROR_MESSAGE.forbidden_error);
     }
 
+    // @ts-ignore
+    if (findUser.deleted_at) {
+      throw new HttpException(401, APP_ERROR_MESSAGE.user_blocked);
+    }
+
     const token_data = this.createToken(findUser);
     const cookie = this.createCookie(token_data);
-    const userResponseFilter = this.userResponseFilter(findUser);
+    const userResFilter = userResponseFilter(findUser);
 
-    return { cookie, token_data, user: userResponseFilter };
+    return { cookie, token_data, user: userResFilter };
   }
 
   public async changePassword(userData: ChangePasswordDto, id: string): Promise<void> {
@@ -108,8 +114,8 @@ class AuthService {
 
   public async profile(id: String): Promise<{ user: Partial<User> }> {
     const findUser = await this.users.findOne({ _id: id }).lean();
-    const userResponseFilter = this.userResponseFilter(findUser);
-    return { user: userResponseFilter };
+    const userResFilter = userResponseFilter(findUser);
+    return { user: userResFilter };
   }
 
   public async editProfile(userData: ProfileUpdateDto, file: Express.Multer.File, id: string): Promise<void> {
@@ -156,17 +162,6 @@ class AuthService {
 
     const findUser: User = await this.users.findOne({ email: userData.email, password: userData.password });
     if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
-  }
-
-  public userResponseFilter(userData: User): Partial<User> {
-    const user = { ...userData };
-    delete user.password;
-    delete user.term_agree_timestamp;
-    delete user.updated_at;
-    if (user.profile_photo) {
-      user.profile_photo = profileImageGenerator(user.profile_photo);
-    }
-    return user;
   }
 
   public createToken(user: User): TokenData {
