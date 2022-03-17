@@ -27,7 +27,7 @@ const isEmpty = (value) => {
 };
 exports.isEmpty = isEmpty;
 const profileImageGenerator = (imageName) => {
-    return `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${constants_1.profileImageFolder}${imageName}`;
+    return imageName ? `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${constants_1.profileImageFolder}${imageName}` : null;
 };
 exports.profileImageGenerator = profileImageGenerator;
 //# sourceMappingURL=util.js.map

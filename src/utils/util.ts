@@ -21,5 +21,5 @@ export const isEmpty = (value: string | number | object): boolean => {
 };
 
 export const profileImageGenerator = (imageName: string) => {
-  return `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${profileImageFolder}${imageName}`;
+  return imageName ? `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${profileImageFolder}${imageName}` : null;
 };
