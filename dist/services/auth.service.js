@@ -20,6 +20,11 @@ class AuthService {
         if (userFound)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_field_exists);
     }
+    async verifyPhoneNumber(reqData) {
+        const userFound = await this.users.findOne({ phone_number: reqData.phone_number });
+        if (userFound)
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.phone_exists);
+    }
     async signUpPhoneVerify(userData) {
         const hashedPassword = await (0, bcrypt_1.hash)(userData.password, 10);
         const createUserData = await this.users.create(Object.assign(Object.assign({}, userData), { password: hashedPassword, term_agree_timestamp: (0, date_fns_1.toDate)(new Date()) }));
