@@ -9,6 +9,7 @@ declare class AuthController {
     signUpPhoneVerify: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     signUpUserVerify: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     logIn: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    forgotPassword: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     changePassword: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     profile: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     editProfile: (req: Request, res: Response, next: NextFunction) => Promise<void>;

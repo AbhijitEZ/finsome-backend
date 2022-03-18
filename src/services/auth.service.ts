@@ -106,6 +106,11 @@ class AuthService {
     return { cookie, token_data, user: userResFilter };
   }
 
+  public async forgotPassword(reqData: VerifyPhoneDto): Promise<void> {
+    const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
+    if (!userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+  }
+
   public async changePassword(userData: ChangePasswordDto, id: string): Promise<void> {
     const findUser = await this.users.findOne({ _id: id }).lean();
     if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);

@@ -17,6 +17,7 @@ class AuthRoute {
     initializeRoutes() {
         this.router.post(`${this.path}verify-phone`, (0, validation_middleware_1.default)(users_dto_1.VerifyPhoneDto, 'body'), this.authController.verifyPhoneNumber);
         this.router.post(`${this.path}verify-otp`, (0, validation_middleware_1.default)(users_dto_1.VerifyOtpDTO, 'body'), this.authController.verifyOTP);
+        this.router.post(`${this.path}forgot-password`, (0, validation_middleware_1.default)(users_dto_1.VerifyPhoneDto, 'body'), this.authController.forgotPassword);
         this.router.post(`${this.path}validate-user-field`, (0, validation_middleware_1.default)(users_dto_1.ValidateUserFieldDto, 'body'), this.authController.validateUserField);
         this.router.post(`${this.path}signup-phone-verify`, (0, validation_middleware_1.default)(users_dto_1.SignupPhoneDto, 'body'), this.authController.signUpPhoneVerify);
         this.router.post(`${this.path}signup-user-verify`, (0, validation_middleware_1.default)(users_dto_1.CreateUserDto, 'body'), this.authController.signUpUserVerify);

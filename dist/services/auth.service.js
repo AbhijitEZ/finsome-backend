@@ -86,6 +86,11 @@ class AuthService {
         const userResFilter = (0, global_1.userResponseFilter)(findUser);
         return { cookie, token_data, user: userResFilter };
     }
+    async forgotPassword(reqData) {
+        const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
+        if (!userFound)
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
+    }
     async changePassword(userData, id) {
         const findUser = await this.users.findOne({ _id: id }).lean();
         if (!findUser)

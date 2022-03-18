@@ -84,6 +84,18 @@ class AuthController {
     }
   };
 
+  public forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const reqPayload: VerifyPhoneDto = req.body;
+      await this.authService.forgotPassword(reqPayload);
+
+      // TODO: OTP phase would be dynamic after the client confirmation
+      responseJSONMapper(res, 200, { ...reqPayload, otp: 9999 }, APP_SUCCESS_MESSAGE.sent_otp_success);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public changePassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userData: ChangePasswordDto = req.body;

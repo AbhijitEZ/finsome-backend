@@ -27,6 +27,7 @@ class AuthRoute implements Routes {
   private initializeRoutes() {
     this.router.post(`${this.path}verify-phone`, validationMiddleware(VerifyPhoneDto, 'body'), this.authController.verifyPhoneNumber);
     this.router.post(`${this.path}verify-otp`, validationMiddleware(VerifyOtpDTO, 'body'), this.authController.verifyOTP);
+    this.router.post(`${this.path}forgot-password`, validationMiddleware(VerifyPhoneDto, 'body'), this.authController.forgotPassword);
     this.router.post(`${this.path}validate-user-field`, validationMiddleware(ValidateUserFieldDto, 'body'), this.authController.validateUserField);
     this.router.post(`${this.path}signup-phone-verify`, validationMiddleware(SignupPhoneDto, 'body'), this.authController.signUpPhoneVerify);
     this.router.post(`${this.path}signup-user-verify`, validationMiddleware(CreateUserDto, 'body'), this.authController.signUpUserVerify);

@@ -20,6 +20,7 @@ declare class AuthService {
         user: Partial<User>;
         token_data: TokenData;
     }>;
+    forgotPassword(reqData: VerifyPhoneDto): Promise<void>;
     changePassword(userData: ChangePasswordDto, id: string): Promise<void>;
     profile(id: String): Promise<{
         user: Partial<User>;

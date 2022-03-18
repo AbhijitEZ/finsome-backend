@@ -76,6 +76,17 @@ class AuthController {
                 next(error);
             }
         };
+        this.forgotPassword = async (req, res, next) => {
+            try {
+                const reqPayload = req.body;
+                await this.authService.forgotPassword(reqPayload);
+                // TODO: OTP phase would be dynamic after the client confirmation
+                (0, global_1.responseJSONMapper)(res, 200, Object.assign(Object.assign({}, reqPayload), { otp: 9999 }), constants_1.APP_SUCCESS_MESSAGE.sent_otp_success);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.changePassword = async (req, res, next) => {
             try {
                 const userData = req.body;
