@@ -3,7 +3,16 @@ import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { toDate } from 'date-fns';
 import awsHandler from '@utils/aws';
-import { ChangePasswordDto, CreateUserDto, LoginDto, ProfileUpdateDto, SignupPhoneDto, ValidateUserFieldDto, VerifyPhoneDto } from '@dtos/users.dto';
+import {
+  ChangePasswordDto,
+  CreateUserDto,
+  LoginDto,
+  ProfileUpdateDto,
+  SignupPhoneDto,
+  ValidateUserFieldDto,
+  VerifyOtpDTO,
+  VerifyPhoneDto,
+} from '@dtos/users.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
@@ -23,6 +32,12 @@ class AuthService {
   public async verifyPhoneNumber(reqData: VerifyPhoneDto): Promise<void> {
     const userFound = await this.users.findOne({ phone_number: reqData.phone_number });
     if (userFound) throw new HttpException(409, APP_ERROR_MESSAGE.phone_exists);
+  }
+
+  // TODO: This would require bypass verification for testing and Third party integration
+  public async verifyOtp(reqData: VerifyOtpDTO): Promise<void> {
+    const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
+    if (!userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
   }
 
   public async signUpPhoneVerify(userData: SignupPhoneDto): Promise<{ user: Partial<User> }> {

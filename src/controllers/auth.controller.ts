@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChangePasswordDto, CreateUserDto, LoginDto, SignupPhoneDto, ValidateUserFieldDto, VerifyPhoneDto } from '@dtos/users.dto';
+import { ChangePasswordDto, CreateUserDto, LoginDto, SignupPhoneDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '@dtos/users.dto';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import AuthService from '@services/auth.service';
@@ -35,7 +35,8 @@ class AuthController {
 
   public verifyOTP = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      //const reqPayload: VerifyOtpDTO = req.body;
+      const reqPayload: VerifyOtpDTO = req.body;
+      await this.authService.verifyOtp(reqPayload);
 
       // TODO: OTP phase would be dynamic after the client confirmation
       responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.verify_otp_success);

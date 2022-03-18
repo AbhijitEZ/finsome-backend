@@ -31,7 +31,8 @@ class AuthController {
         };
         this.verifyOTP = async (req, res, next) => {
             try {
-                //const reqPayload: VerifyOtpDTO = req.body;
+                const reqPayload = req.body;
+                await this.authService.verifyOtp(reqPayload);
                 // TODO: OTP phase would be dynamic after the client confirmation
                 (0, global_1.responseJSONMapper)(res, 200, {}, constants_1.APP_SUCCESS_MESSAGE.verify_otp_success);
             }

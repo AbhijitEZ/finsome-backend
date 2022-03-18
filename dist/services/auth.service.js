@@ -25,6 +25,12 @@ class AuthService {
         if (userFound)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.phone_exists);
     }
+    // TODO: This would require bypass verification for testing and Third party integration
+    async verifyOtp(reqData) {
+        const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
+        if (!userFound)
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
+    }
     async signUpPhoneVerify(userData) {
         const hashedPassword = await (0, bcrypt_1.hash)(userData.password, 10);
         const createUserData = await this.users.create(Object.assign(Object.assign({}, userData), { password: hashedPassword, term_agree_timestamp: (0, date_fns_1.toDate)(new Date()) }));
