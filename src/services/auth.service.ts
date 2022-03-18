@@ -38,6 +38,9 @@ class AuthService {
   public async verifyOtp(reqData: VerifyOtpDTO): Promise<void> {
     const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
     if (!userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+    if (reqData.otp !== 9999) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
+    }
   }
 
   public async signUpPhoneVerify(userData: SignupPhoneDto): Promise<{ user: Partial<User> }> {
