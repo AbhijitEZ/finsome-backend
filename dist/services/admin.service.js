@@ -8,6 +8,7 @@ const HttpException_1 = require("../exceptions/HttpException");
 const constants_1 = require("../utils/constants");
 const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
 const util_1 = require("../utils/util");
+const date_fns_1 = require("date-fns");
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
@@ -39,6 +40,12 @@ class AdminService {
             .lean();
         const userSanitized = users.map(user => (Object.assign(Object.assign({}, user), { profile_photo: (0, util_1.profileImageGenerator)(user.profile_photo) })));
         return userSanitized;
+    }
+    async toggleUserStatus(user) {
+        const findUser = await this.users.findOne({ _id: user.id }).lean();
+        if (!findUser)
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
+        await this.users.findByIdAndUpdate(user.id, { deleted_at: user.status ? (0, date_fns_1.toDate)(new Date()) : null }, { new: true });
     }
 }
 exports.default = AdminService;

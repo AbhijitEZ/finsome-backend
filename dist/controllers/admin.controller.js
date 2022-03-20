@@ -24,6 +24,15 @@ class AdminController {
                 next(error);
             }
         };
+        this.toggleUserStatus = async (req, res, next) => {
+            try {
+                const users = await this.adminService.toggleUserStatus(req.body);
+                res.status(200).json({ data: users, message: constants_1.APP_SUCCESS_MESSAGE.login_success });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = AdminController;

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 
 import validationMiddleware from '@middlewares/validation.middleware';
-import { AdminLoginDto } from '@/dtos/admin.dto';
+import { AdminLoginDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
 import AdminController from '@/controllers/admin.controller';
 import { authAdminMiddleware } from '@/middlewares/auth.middleware';
 
@@ -21,6 +21,12 @@ class AdminRoute implements Routes {
   private initializeRoutes() {
     this.router.post(`${this.path}login`, validationMiddleware(AdminLoginDto, 'body'), this.adminController.adminLogin);
     this.router.get(`${this.path}users`, authAdminMiddleware, this.adminController.userListing);
+    this.router.post(
+      `${this.path}toggle-user-status`,
+      validationMiddleware(ToggleUserStatusDto, 'body'),
+      authAdminMiddleware,
+      this.adminController.toggleUserStatus,
+    );
   }
 }
 

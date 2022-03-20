@@ -1,4 +1,4 @@
-import { AdminLoginDto } from '@/dtos/admin.dto';
+import { AdminLoginDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
@@ -7,6 +7,7 @@ import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import { profileImageGenerator } from '@/utils/util';
+import { toDate } from 'date-fns';
 
 class AdminService {
   public users = userModel;
@@ -44,6 +45,14 @@ class AdminService {
     const userSanitized = users.map(user => ({ ...user, profile_photo: profileImageGenerator(user.profile_photo) }));
 
     return userSanitized;
+  }
+
+  public async toggleUserStatus(user: ToggleUserStatusDto): Promise<void> {
+    const findUser = await this.users.findOne({ _id: user.id }).lean();
+
+    if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+
+    await this.users.findByIdAndUpdate(user.id, { deleted_at: user.status ? toDate(new Date()) : null }, { new: true });
   }
 }
 

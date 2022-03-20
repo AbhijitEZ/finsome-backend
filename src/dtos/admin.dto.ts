@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+
+export class IdDto {
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+}
 
 export class AdminLoginDto {
   @IsNotEmpty()
@@ -10,4 +16,10 @@ export class AdminLoginDto {
   @IsString()
   @MinLength(6)
   password: string;
+}
+
+export class ToggleUserStatusDto extends IdDto {
+  @IsNotEmpty()
+  @IsBoolean()
+  status: boolean;
 }
