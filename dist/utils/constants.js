@@ -7,6 +7,7 @@ exports.APP_SUCCESS_MESSAGE = {
     login_success: 'Login successfully.',
     logout_success: 'Logout successfully.',
     change_password_success: 'Password updated successfully.',
+    notification_update_success: 'Notification settings updated successfully.',
     update_profile_success: 'Profile updated successfully.',
     validate_user_field_success: 'No user exists with following field.',
     sent_otp_success: 'OTP sent to you phone number.',

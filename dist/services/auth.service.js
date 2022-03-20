@@ -148,6 +148,12 @@ class AuthService {
         }
         await this.users.findByIdAndUpdate(id, payload, { new: true });
     }
+    async notificationUpdate(userData, id) {
+        const findUser = await this.users.findOne({ _id: id }).lean();
+        if (!findUser)
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
+        await this.users.findByIdAndUpdate(id, { allow_notification: userData.allow_notification }, { new: true });
+    }
     async logout(userData) {
         if ((0, util_1.isEmpty)(userData))
             throw new HttpException_1.HttpException(400, "You're not userData");

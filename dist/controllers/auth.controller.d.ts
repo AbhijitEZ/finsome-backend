@@ -13,6 +13,7 @@ declare class AuthController {
     changePassword: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     profile: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     editProfile: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    notificationUpdate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     logOut: (req: RequestWithUser, res: Response, next: NextFunction) => Promise<void>;
 }
 export default AuthController;

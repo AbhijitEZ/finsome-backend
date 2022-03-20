@@ -1,5 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChangePasswordDto, CreateUserDto, LoginDto, SignupPhoneDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '@dtos/users.dto';
+import {
+  ChangePasswordDto,
+  CreateUserDto,
+  LoginDto,
+  NotificationDto,
+  SignupPhoneDto,
+  ValidateUserFieldDto,
+  VerifyOtpDTO,
+  VerifyPhoneDto,
+} from '@dtos/users.dto';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import AuthService from '@services/auth.service';
@@ -127,6 +136,18 @@ class AuthController {
       await this.authService.editProfile(req.body, req.file, req.user._id);
 
       responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.update_profile_success);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public notificationUpdate = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userData: NotificationDto = req.body;
+      // @ts-ignore
+      await this.authService.notificationUpdate(userData, req.user._id);
+
+      responseJSONMapper(res, 200, { ...userData }, APP_SUCCESS_MESSAGE.notification_update_success);
     } catch (error) {
       next(error);
     }

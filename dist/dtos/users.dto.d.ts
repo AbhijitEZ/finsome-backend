@@ -41,3 +41,6 @@ export declare class ProfileUpdateDto {
     instagram_link: string;
     telegram_link: string;
 }
+export declare class NotificationDto {
+    allow_notification: boolean;
+}

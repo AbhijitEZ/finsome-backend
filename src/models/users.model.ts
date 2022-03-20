@@ -70,6 +70,10 @@ const userSchema: Schema = new Schema(
     forgot_password_otp: {
       type: String,
     },
+    allow_notification: {
+      type: Boolean,
+      default: true,
+    },
     deleted_at: {
       type: Date,
     },

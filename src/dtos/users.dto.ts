@@ -1,5 +1,5 @@
 import { GENDER_CONST } from '@/utils/constants';
-import { IsDateString, IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsDateString, IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class VerifyPhoneDto {
   @IsNotEmpty()
@@ -127,4 +127,10 @@ export class ProfileUpdateDto {
   @IsOptional()
   @IsString()
   telegram_link: string;
+}
+
+export class NotificationDto {
+  @IsNotEmpty()
+  @IsBoolean()
+  allow_notification: boolean;
 }

@@ -7,6 +7,7 @@ import {
   ChangePasswordDto,
   CreateUserDto,
   LoginDto,
+  NotificationDto,
   ProfileUpdateDto,
   SignupPhoneDto,
   ValidateUserFieldDto,
@@ -183,6 +184,13 @@ class AuthService {
     }
 
     await this.users.findByIdAndUpdate(id, payload, { new: true });
+  }
+
+  public async notificationUpdate(userData: NotificationDto, id: string): Promise<void> {
+    const findUser = await this.users.findOne({ _id: id }).lean();
+    if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+
+    await this.users.findByIdAndUpdate(id, { allow_notification: userData.allow_notification }, { new: true });
   }
 
   public async logout(userData: User): Promise<void> {

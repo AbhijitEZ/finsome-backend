@@ -42,6 +42,18 @@ class IndexController {
                 next(error);
             }
         };
+        /* Adding default admin for the initial system */
+        this.addNotificationDefaultToAllUser = async (req, res, next) => {
+            try {
+                const bulk = users_model_1.default.collection.initializeOrderedBulkOp();
+                bulk.find({}).update({ $set: { allow_notification: true } });
+                bulk.execute();
+                res.status(200).json({ message: 'Updated all the user with initial allow notification = true' });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         /* Script End */
     }
 }

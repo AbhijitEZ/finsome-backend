@@ -120,6 +120,17 @@ class AuthController {
                 next(error);
             }
         };
+        this.notificationUpdate = async (req, res, next) => {
+            try {
+                const userData = req.body;
+                // @ts-ignore
+                await this.authService.notificationUpdate(userData, req.user._id);
+                (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, userData), constants_1.APP_SUCCESS_MESSAGE.notification_update_success);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.logOut = async (req, res, next) => {
             try {
                 const userData = req.user;

@@ -4,6 +4,7 @@ import {
   ChangePasswordDto,
   CreateUserDto,
   LoginDto,
+  NotificationDto,
   ProfileUpdateDto,
   SignupPhoneDto,
   ValidateUserFieldDto,
@@ -45,6 +46,12 @@ class AuthRoute implements Routes {
       validationMiddleware(ProfileUpdateDto, 'body'),
       authMiddleware,
       this.authController.editProfile,
+    );
+    this.router.post(
+      `${this.path}notification`,
+      validationMiddleware(NotificationDto, 'body'),
+      authMiddleware,
+      this.authController.notificationUpdate,
     );
     this.router.post(`${this.path}logout`, authMiddleware, this.authController.logOut);
   }

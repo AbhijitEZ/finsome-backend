@@ -13,7 +13,8 @@ class IndexRoute {
     initializeRoutes() {
         this.router.get(`${this.path}`, this.indexController.index);
         // SCRIPT
-        this.router.get(`${this.path}/script/add-admin`, this.indexController.addAdminScript);
+        this.router.get(`${this.path}script/add-admin`, this.indexController.addAdminScript);
+        this.router.get(`${this.path}script/default-notification`, this.indexController.addNotificationDefaultToAllUser);
     }
 }
 exports.default = IndexRoute;
