@@ -27,6 +27,10 @@ class AuthRoute {
         this.router.post(`${this.path}profile`, global_1.fileUploadCB, (0, validation_middleware_1.default)(users_dto_1.ProfileUpdateDto, 'body'), auth_middleware_1.default, this.authController.editProfile);
         this.router.post(`${this.path}notification`, (0, validation_middleware_1.default)(users_dto_1.NotificationDto, 'body'), auth_middleware_1.default, this.authController.notificationUpdate);
         this.router.post(`${this.path}logout`, auth_middleware_1.default, this.authController.logOut);
+        // SECTION: General APIS => START
+        this.router.get(`${this.path}app-improvement-types`, this.authController.appImprovementTypes);
+        this.router.post(`${this.path}app-improvement-types-user`, (0, validation_middleware_1.default)(users_dto_1.AppImprovementUserDto, 'body'), auth_middleware_1.default, this.authController.updateUserAppImprovementSuggestion);
+        // !SECTION: General APIS => END
     }
 }
 exports.default = AuthRoute;

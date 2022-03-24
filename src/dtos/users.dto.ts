@@ -9,6 +9,10 @@ export class VerifyPhoneDto {
   @IsNotEmpty()
   @IsString()
   phone_number: string;
+
+  @IsOptional()
+  @IsBoolean()
+  is_testing: boolean;
 }
 
 export class VerifyOtpDTO extends VerifyPhoneDto {
@@ -133,4 +137,14 @@ export class NotificationDto {
   @IsNotEmpty()
   @IsBoolean()
   allow_notification: boolean;
+}
+
+export class AppImprovementUserDto {
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @IsOptional()
+  @IsString()
+  description: string;
 }

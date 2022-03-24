@@ -8,12 +8,17 @@ const date_fns_1 = require("date-fns");
 const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
 const HttpException_1 = require("../exceptions/HttpException");
 const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
+const otp_validation_model_1 = tslib_1.__importDefault(require("../models/otp-validation.model"));
 const util_1 = require("../utils/util");
 const constants_1 = require("../utils/constants");
 const global_1 = require("../utils/global");
+const phone_1 = require("../utils/phone");
+const logger_1 = require("../utils/logger");
+const mongoose_1 = require("mongoose");
 class AuthService {
     constructor() {
         this.users = users_model_1.default;
+        this.otpValidation = otp_validation_model_1.default;
     }
     async validateUserField(userData) {
         const userFound = await this.users.findOne({ [userData.field]: userData.value });
@@ -24,6 +29,30 @@ class AuthService {
         const userFound = await this.users.findOne({ phone_number: reqData.phone_number });
         if (userFound)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.phone_exists);
+        // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
+        if (reqData.is_testing) {
+            return;
+        }
+        const phoneNumberExists = await this.otpValidation.findOne({
+            phone_number: reqData.phone_number,
+            phone_country_code: reqData.phone_country_code,
+        });
+        // TODO: update the sms sending logic
+        if (phoneNumberExists) {
+            if ((0, date_fns_1.intervalToDuration)({
+                start: (0, date_fns_1.toDate)(phoneNumberExists.created_at),
+                end: (0, date_fns_1.toDate)(new Date()),
+            }).minutes > 10) {
+                logger_1.logger.info(`Phone number OTP changed for: ${reqData.phone_country_code}-${reqData.phone_number}.`);
+                await this.otpValidation.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: (0, phone_1.createPhoneCodeToVerify)() });
+            }
+            return;
+        }
+        await this.otpValidation.create({
+            phone_number: reqData.phone_number,
+            phone_country_code: reqData.phone_country_code,
+            otp: (0, phone_1.createPhoneCodeToVerify)(),
+        });
     }
     // TODO: This would require bypass verification for testing and Third party integration
     async verifyOtp(reqData) {
@@ -160,6 +189,14 @@ class AuthService {
         const findUser = await this.users.findOne({ email: userData.email, password: userData.password });
         if (!findUser)
             throw new HttpException_1.HttpException(409, `You're email ${userData.email} not found`);
+    }
+    async appImprovementTypes() {
+        const result = await mongoose_1.connection.collection(constants_1.APP_IMPROVEMENT_TYPES).find({}).toArray();
+        return [...result];
+    }
+    async updateUserAppImprovementSuggestion(reqData, id) {
+        await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: Object.assign({}, reqData) });
+        return await this.profile(id);
     }
     createToken(user) {
         const dataStoredInToken = { _id: user._id, role: user.role };

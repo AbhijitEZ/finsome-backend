@@ -1,10 +1,11 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { ChangePasswordDto, CreateUserDto, LoginDto, NotificationDto, ProfileUpdateDto, SignupPhoneDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
+import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, LoginDto, NotificationDto, ProfileUpdateDto, SignupPhoneDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
 import { TokenData } from '../interfaces/auth.interface';
 import { User } from '../interfaces/users.interface';
 declare class AuthService {
     users: import("mongoose").Model<User & import("mongoose").Document<any, any, any>, {}, {}>;
+    otpValidation: import("mongoose").Model<import("../interfaces/general.interface").OtpValidationInf & import("mongoose").Document<any, any, any>, {}, {}>;
     validateUserField(userData: ValidateUserFieldDto): Promise<void>;
     verifyPhoneNumber(reqData: VerifyPhoneDto): Promise<void>;
     verifyOtp(reqData: VerifyOtpDTO): Promise<void>;
@@ -29,6 +30,8 @@ declare class AuthService {
     editProfile(userData: ProfileUpdateDto, file: Express.Multer.File, id: string): Promise<void>;
     notificationUpdate(userData: NotificationDto, id: string): Promise<void>;
     logout(userData: User): Promise<void>;
+    appImprovementTypes(): Promise<any>;
+    updateUserAppImprovementSuggestion(reqData: AppImprovementUserDto, id: string): Promise<any>;
     createToken(user: User): TokenData;
     createCookie(tokenData: TokenData): string;
 }

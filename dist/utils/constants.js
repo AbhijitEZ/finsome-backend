@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.profileImageFolder = exports.FILE_LIMIT = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
+exports.profileImageFolder = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
 exports.APP_SUCCESS_MESSAGE = {
     signup_phone_verify_success: 'Signup phone verified successfully.',
     signup_success: 'Signup successfully.',
@@ -27,7 +27,10 @@ exports.APP_ERROR_MESSAGE = {
     forbidden_error: 'Forbidden to access this resource for particular user.',
     user_blocked: 'User has been blocked by admin, contact admin to unblock.',
     otp_invalid: 'Invalid OTP, try different one.',
+    phone_invalid: 'Invalid phonenumber, try different one.',
     user_not_exists: "User doesn't exists for the following phone number.",
+    error_with_twilio: 'Error with Twillio need to debug further.',
+    error_with_textlocal: 'Error with Text Local need to debug further.',
     incorrect_password: 'Incorrect Password.',
     incorrect_img_format: 'Incorrect image format, use valid one.',
 };
@@ -41,5 +44,6 @@ exports.GENDER_CONST = {
     OTHER: 'OTHER',
 };
 exports.FILE_LIMIT = 20000000;
+exports.APP_IMPROVEMENT_TYPES = 'app-improvement-type';
 exports.profileImageFolder = 'profile-img/';
 //# sourceMappingURL=constants.js.map

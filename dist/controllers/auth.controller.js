@@ -109,7 +109,6 @@ class AuthController {
                 next(error);
             }
         };
-        // TODO: Profile Image upload pending
         this.editProfile = async (req, res, next) => {
             try {
                 // @ts-ignore
@@ -137,6 +136,24 @@ class AuthController {
                 await this.authService.logout(userData);
                 res.setHeader('Set-Cookie', ['Authorization=; Max-age=0']);
                 res.status(200).json({ data: {}, message: constants_1.APP_SUCCESS_MESSAGE.logout_success });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.appImprovementTypes = async (req, res, next) => {
+            try {
+                const data = await this.authService.appImprovementTypes();
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.updateUserAppImprovementSuggestion = async (req, res, next) => {
+            try {
+                const data = await this.authService.updateUserAppImprovementSuggestion(req.body, req.user._id);
+                (0, global_1.responseJSONMapper)(res, 201, data);
             }
             catch (error) {
                 next(error);

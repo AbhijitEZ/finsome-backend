@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NotificationDto = exports.ProfileUpdateDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
+exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
@@ -16,6 +16,11 @@ tslib_1.__decorate([
     (0, class_validator_1.IsString)(),
     tslib_1.__metadata("design:type", String)
 ], VerifyPhoneDto.prototype, "phone_number", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    tslib_1.__metadata("design:type", Boolean)
+], VerifyPhoneDto.prototype, "is_testing", void 0);
 exports.VerifyPhoneDto = VerifyPhoneDto;
 class VerifyOtpDTO extends VerifyPhoneDto {
 }
@@ -176,4 +181,17 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Boolean)
 ], NotificationDto.prototype, "allow_notification", void 0);
 exports.NotificationDto = NotificationDto;
+class AppImprovementUserDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], AppImprovementUserDto.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], AppImprovementUserDto.prototype, "description", void 0);
+exports.AppImprovementUserDto = AppImprovementUserDto;
 //# sourceMappingURL=users.dto.js.map

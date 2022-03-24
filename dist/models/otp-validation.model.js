@@ -18,9 +18,6 @@ const otpValidationSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false,
     },
-    deleted_at: {
-        type: Date,
-    },
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 });

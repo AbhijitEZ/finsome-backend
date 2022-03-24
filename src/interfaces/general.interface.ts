@@ -4,5 +4,5 @@ export interface OtpValidationInf {
   phone_number: string;
   otp: string;
   confirmed: boolean;
-  deleted_at?: string;
+  created_at: Date;
 }

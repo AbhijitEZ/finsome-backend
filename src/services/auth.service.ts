@@ -1,9 +1,10 @@
 import { hash, compare } from 'bcrypt';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
-import { toDate } from 'date-fns';
+import { toDate, intervalToDuration } from 'date-fns';
 import awsHandler from '@utils/aws';
 import {
+  AppImprovementUserDto,
   ChangePasswordDto,
   CreateUserDto,
   LoginDto,
@@ -18,12 +19,17 @@ import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
+import otpValidationModel from '@models/otp-validation.model';
 import { isEmpty } from '@utils/util';
-import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
 import { userResponseFilter } from '@/utils/global';
+import { createPhoneCodeToVerify } from '@/utils/phone';
+import { logger } from '@/utils/logger';
+import { connection } from 'mongoose';
 
 class AuthService {
   public users = userModel;
+  public otpValidation = otpValidationModel;
 
   public async validateUserField(userData: ValidateUserFieldDto): Promise<void> {
     const userFound = await this.users.findOne({ [userData.field]: userData.value });
@@ -33,6 +39,37 @@ class AuthService {
   public async verifyPhoneNumber(reqData: VerifyPhoneDto): Promise<void> {
     const userFound = await this.users.findOne({ phone_number: reqData.phone_number });
     if (userFound) throw new HttpException(409, APP_ERROR_MESSAGE.phone_exists);
+    // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
+    if (reqData.is_testing) {
+      return;
+    }
+    const phoneNumberExists = await this.otpValidation.findOne({
+      phone_number: reqData.phone_number,
+      phone_country_code: reqData.phone_country_code,
+    });
+
+    // TODO: update the sms sending logic
+    if (phoneNumberExists) {
+      if (
+        intervalToDuration({
+          start: toDate(phoneNumberExists.created_at),
+          end: toDate(new Date()),
+        }).minutes > 10
+      ) {
+        logger.info(`Phone number OTP changed for: ${reqData.phone_country_code}-${reqData.phone_number}.`);
+        await this.otpValidation.findOneAndUpdate(
+          { phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code },
+          { otp: createPhoneCodeToVerify() },
+        );
+      }
+      return;
+    }
+
+    await this.otpValidation.create({
+      phone_number: reqData.phone_number,
+      phone_country_code: reqData.phone_country_code,
+      otp: createPhoneCodeToVerify(),
+    });
   }
 
   // TODO: This would require bypass verification for testing and Third party integration
@@ -198,6 +235,18 @@ class AuthService {
 
     const findUser: User = await this.users.findOne({ email: userData.email, password: userData.password });
     if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
+  }
+
+  public async appImprovementTypes(): Promise<any> {
+    const result = await connection.collection(APP_IMPROVEMENT_TYPES).find({}).toArray();
+
+    return [...result];
+  }
+
+  public async updateUserAppImprovementSuggestion(reqData: AppImprovementUserDto, id: string): Promise<any> {
+    await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: { ...reqData } });
+
+    return await this.profile(id);
   }
 
   public createToken(user: User): TokenData {

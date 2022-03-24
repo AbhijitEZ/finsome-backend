@@ -24,7 +24,10 @@ export declare const APP_ERROR_MESSAGE: {
     forbidden_error: string;
     user_blocked: string;
     otp_invalid: string;
+    phone_invalid: string;
     user_not_exists: string;
+    error_with_twilio: string;
+    error_with_textlocal: string;
     incorrect_password: string;
     incorrect_img_format: string;
 };
@@ -38,4 +41,5 @@ export declare const GENDER_CONST: {
     OTHER: string;
 };
 export declare const FILE_LIMIT = 20000000;
+export declare const APP_IMPROVEMENT_TYPES = "app-improvement-type";
 export declare const profileImageFolder = "profile-img/";

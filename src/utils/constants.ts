@@ -25,7 +25,10 @@ export const APP_ERROR_MESSAGE = {
   forbidden_error: 'Forbidden to access this resource for particular user.',
   user_blocked: 'User has been blocked by admin, contact admin to unblock.',
   otp_invalid: 'Invalid OTP, try different one.',
+  phone_invalid: 'Invalid phonenumber, try different one.',
   user_not_exists: "User doesn't exists for the following phone number.",
+  error_with_twilio: 'Error with Twillio need to debug further.',
+  error_with_textlocal: 'Error with Text Local need to debug further.',
   incorrect_password: 'Incorrect Password.',
   incorrect_img_format: 'Incorrect image format, use valid one.',
 };
@@ -42,5 +45,7 @@ export const GENDER_CONST = {
 };
 
 export const FILE_LIMIT = 20000000;
+
+export const APP_IMPROVEMENT_TYPES = 'app-improvement-type';
 
 export const profileImageFolder = 'profile-img/';

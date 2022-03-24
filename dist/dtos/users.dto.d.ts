@@ -1,6 +1,7 @@
 export declare class VerifyPhoneDto {
     phone_country_code: string;
     phone_number: string;
+    is_testing: boolean;
 }
 export declare class VerifyOtpDTO extends VerifyPhoneDto {
     otp: number;
@@ -43,4 +44,8 @@ export declare class ProfileUpdateDto {
 }
 export declare class NotificationDto {
     allow_notification: boolean;
+}
+export declare class AppImprovementUserDto {
+    id: string;
+    description: string;
 }

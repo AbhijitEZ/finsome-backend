@@ -66,8 +66,21 @@ const userSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false,
     },
+    app_improvement_suggestion: {
+        id: {
+            type: String,
+        },
+        description: {
+            type: String,
+        },
+    },
     forgot_password_otp: {
-        type: String,
+        code: {
+            type: String,
+        },
+        created_at: {
+            type: Date,
+        },
     },
     allow_notification: {
         type: Boolean,

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import AuthController from '@controllers/auth.controller';
 import {
+  AppImprovementUserDto,
   ChangePasswordDto,
   CreateUserDto,
   LoginDto,
@@ -54,6 +55,17 @@ class AuthRoute implements Routes {
       this.authController.notificationUpdate,
     );
     this.router.post(`${this.path}logout`, authMiddleware, this.authController.logOut);
+
+    // SECTION: General APIS => START
+    this.router.get(`${this.path}app-improvement-types`, this.authController.appImprovementTypes);
+    this.router.post(
+      `${this.path}app-improvement-types-user`,
+      validationMiddleware(AppImprovementUserDto, 'body'),
+      authMiddleware,
+      this.authController.updateUserAppImprovementSuggestion,
+    );
+
+    // !SECTION: General APIS => END
   }
 }
 

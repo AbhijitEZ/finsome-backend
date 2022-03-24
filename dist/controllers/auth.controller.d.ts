@@ -15,5 +15,7 @@ declare class AuthController {
     editProfile: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     notificationUpdate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     logOut: (req: RequestWithUser, res: Response, next: NextFunction) => Promise<void>;
+    appImprovementTypes: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    updateUserAppImprovementSuggestion: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default AuthController;
