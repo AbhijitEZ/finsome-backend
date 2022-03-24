@@ -68,10 +68,14 @@ const userSchema = new mongoose_1.Schema({
     },
     app_improvement_suggestion: {
         id: {
-            type: String,
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: constants_1.APP_IMPROVEMENT_TYPES,
         },
         description: {
             type: String,
+        },
+        timestamp: {
+            type: Date,
         },
     },
     forgot_password_otp: {

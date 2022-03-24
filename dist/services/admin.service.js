@@ -7,11 +7,15 @@ const bcrypt_1 = require("bcrypt");
 const HttpException_1 = require("../exceptions/HttpException");
 const constants_1 = require("../utils/constants");
 const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
+const app_improvement_type_1 = tslib_1.__importDefault(require("../models/app-improvement-type"));
+const mongoose_1 = require("mongoose");
+const ObjectId = require('mongodb').ObjectID;
 const util_1 = require("../utils/util");
 const date_fns_1 = require("date-fns");
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
+        this.appImprovement = app_improvement_type_1.default;
     }
     async adminLogin(loginDto) {
         const adminUser = await this.users.findOne({
@@ -46,6 +50,21 @@ class AdminService {
         if (!findUser)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
         await this.users.findByIdAndUpdate(user.id, { deleted_at: user.status ? (0, date_fns_1.toDate)(new Date()) : null }, { new: true });
+    }
+    async appImprovementSuggestion() {
+        const users = await this.users
+            .find({
+            role: { $ne: constants_1.USER_ROLE.ADMIN },
+            app_improvement_suggestion: { $nin: [null] },
+        })
+            .select(['fullname', 'phone_number', 'app_improvement_suggestion.id', 'app_improvement_suggestion.timestamp'])
+            .sort({ 'app_improvement_suggestion.timestamp': -1 })
+            .lean();
+        const sanitizedDate = await Promise.all(users.map(async (user) => {
+            const appImprovData = await mongoose_1.connection.collection(constants_1.APP_IMPROVEMENT_TYPES).findOne({ _id: new ObjectId(user.app_improvement_suggestion.id) });
+            return Object.assign(Object.assign({}, user), { app_improvement_suggestion: Object.assign(Object.assign({}, user.app_improvement_suggestion), { name: appImprovData.name }) });
+        }));
+        return sanitizedDate;
     }
 }
 exports.default = AdminService;

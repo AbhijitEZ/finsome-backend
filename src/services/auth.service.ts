@@ -244,7 +244,7 @@ class AuthService {
   }
 
   public async updateUserAppImprovementSuggestion(reqData: AppImprovementUserDto, id: string): Promise<any> {
-    await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: { ...reqData } });
+    await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: { ...reqData, timestamp: toDate(new Date()) } });
 
     return await this.profile(id);
   }

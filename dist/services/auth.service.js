@@ -195,7 +195,7 @@ class AuthService {
         return [...result];
     }
     async updateUserAppImprovementSuggestion(reqData, id) {
-        await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: Object.assign({}, reqData) });
+        await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: Object.assign(Object.assign({}, reqData), { timestamp: (0, date_fns_1.toDate)(new Date()) }) });
         return await this.profile(id);
     }
     createToken(user) {

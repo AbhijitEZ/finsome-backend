@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { User } from '@interfaces/users.interface';
-import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
 import { HttpException } from '@/exceptions/HttpException';
 
 const userSchema: Schema = new Schema(
@@ -69,10 +69,14 @@ const userSchema: Schema = new Schema(
     },
     app_improvement_suggestion: {
       id: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: APP_IMPROVEMENT_TYPES,
       },
       description: {
         type: String,
+      },
+      timestamp: {
+        type: Date,
       },
     },
     forgot_password_otp: {

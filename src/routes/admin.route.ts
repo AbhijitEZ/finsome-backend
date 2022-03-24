@@ -27,6 +27,7 @@ class AdminRoute implements Routes {
       authAdminMiddleware,
       this.adminController.toggleUserStatus,
     );
+    this.router.get(`${this.path}app-improvement-suggestions`, authAdminMiddleware, this.adminController.appImprovementSuggestion);
   }
 }
 

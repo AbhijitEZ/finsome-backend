@@ -6,3 +6,7 @@ export interface OtpValidationInf {
     confirmed: boolean;
     created_at: Date;
 }
+export interface AppImprovementInf {
+    _id: string;
+    name: string;
+}

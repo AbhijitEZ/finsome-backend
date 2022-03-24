@@ -34,6 +34,16 @@ class AdminController {
       next(error);
     }
   };
+
+  public appImprovementSuggestion = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.adminService.appImprovementSuggestion();
+
+      res.status(200).json({ data: users, message: APP_SUCCESS_MESSAGE.login_success });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AdminController;
