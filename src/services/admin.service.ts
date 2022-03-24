@@ -65,7 +65,13 @@ class AdminService {
         role: { $ne: USER_ROLE.ADMIN },
         app_improvement_suggestion: { $nin: [null] },
       })
-      .select(['fullname', 'phone_number', 'app_improvement_suggestion.id', 'app_improvement_suggestion.timestamp'])
+      .select([
+        'fullname',
+        'phone_number',
+        'app_improvement_suggestion.id',
+        'app_improvement_suggestion.timestamp',
+        'app_improvement_suggestion.description',
+      ])
       .sort({ 'app_improvement_suggestion.timestamp': -1 })
       .lean();
 

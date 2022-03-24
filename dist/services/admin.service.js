@@ -57,7 +57,13 @@ class AdminService {
             role: { $ne: constants_1.USER_ROLE.ADMIN },
             app_improvement_suggestion: { $nin: [null] },
         })
-            .select(['fullname', 'phone_number', 'app_improvement_suggestion.id', 'app_improvement_suggestion.timestamp'])
+            .select([
+            'fullname',
+            'phone_number',
+            'app_improvement_suggestion.id',
+            'app_improvement_suggestion.timestamp',
+            'app_improvement_suggestion.description',
+        ])
             .sort({ 'app_improvement_suggestion.timestamp': -1 })
             .lean();
         const sanitizedDate = await Promise.all(users.map(async (user) => {
