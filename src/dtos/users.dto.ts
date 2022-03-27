@@ -17,8 +17,8 @@ export class VerifyPhoneDto {
 
 export class VerifyOtpDTO extends VerifyPhoneDto {
   @IsNotEmpty()
-  @IsNumber()
-  otp: number;
+  @IsString()
+  otp: string;
 }
 
 export class ValidateUserFieldDto {

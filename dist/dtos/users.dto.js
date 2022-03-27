@@ -26,8 +26,8 @@ class VerifyOtpDTO extends VerifyPhoneDto {
 }
 tslib_1.__decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
-    tslib_1.__metadata("design:type", Number)
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
 ], VerifyOtpDTO.prototype, "otp", void 0);
 exports.VerifyOtpDTO = VerifyOtpDTO;
 class ValidateUserFieldDto {

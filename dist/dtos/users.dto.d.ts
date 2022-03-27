@@ -4,7 +4,7 @@ export declare class VerifyPhoneDto {
     is_testing: boolean;
 }
 export declare class VerifyOtpDTO extends VerifyPhoneDto {
-    otp: number;
+    otp: string;
 }
 export declare class ValidateUserFieldDto {
     field: string;

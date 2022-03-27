@@ -44,7 +44,7 @@ class AuthController {
             try {
                 const userData = req.body;
                 // TODO: Would have actual OTP check after client confirmation
-                if (userData.otp !== 9999) {
+                if (userData.otp !== '9999') {
                     throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.otp_invalid);
                 }
                 delete userData.otp;
