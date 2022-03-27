@@ -12,10 +12,12 @@ const mongoose_1 = require("mongoose");
 const ObjectId = require('mongodb').ObjectID;
 const util_1 = require("../utils/util");
 const date_fns_1 = require("date-fns");
+const quick_contact_1 = tslib_1.__importDefault(require("../models/quick-contact"));
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
         this.appImprovement = app_improvement_type_1.default;
+        this.quickContact = quick_contact_1.default;
     }
     async adminLogin(loginDto) {
         const adminUser = await this.users.findOne({
@@ -71,6 +73,10 @@ class AdminService {
             return Object.assign(Object.assign({}, user), { app_improvement_suggestion: Object.assign(Object.assign({}, user.app_improvement_suggestion), { name: appImprovData.name }) });
         }));
         return sanitizedDate;
+    }
+    async quickContactListing() {
+        const quickContacts = await this.quickContact.find({}).lean();
+        return quickContacts;
     }
 }
 exports.default = AdminService;

@@ -11,10 +11,12 @@ import { connection } from 'mongoose';
 const ObjectId = require('mongodb').ObjectID;
 import { profileImageGenerator } from '@/utils/util';
 import { toDate } from 'date-fns';
+import quickContactModel from '@/models/quick-contact';
 
 class AdminService {
   public users = userModel;
   public appImprovement = appImprovementModel;
+  public quickContact = quickContactModel;
 
   public async adminLogin(loginDto: AdminLoginDto): Promise<{ token: string }> {
     const adminUser: User = await this.users.findOne({
@@ -89,6 +91,12 @@ class AdminService {
     );
 
     return sanitizedDate;
+  }
+
+  public async quickContactListing(): Promise<Record<string, any>> {
+    const quickContacts = await this.quickContact.find({}).lean();
+
+    return quickContacts;
   }
 }
 

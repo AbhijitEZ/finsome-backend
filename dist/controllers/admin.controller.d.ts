@@ -6,5 +6,6 @@ declare class AdminController {
     userListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     toggleUserStatus: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     appImprovementSuggestion: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    quickContactListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default AdminController;

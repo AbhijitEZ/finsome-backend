@@ -44,6 +44,16 @@ class AdminController {
       next(error);
     }
   };
+
+  public quickContactListing = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.adminService.quickContactListing();
+
+      res.status(200).json({ data: users, message: APP_SUCCESS_MESSAGE.login_success });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AdminController;
