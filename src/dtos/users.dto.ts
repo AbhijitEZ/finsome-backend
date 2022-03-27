@@ -148,3 +148,17 @@ export class AppImprovementUserDto {
   @IsString()
   description: string;
 }
+
+export class QuickContactDto {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  message: string;
+}

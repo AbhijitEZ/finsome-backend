@@ -7,6 +7,7 @@ import {
   LoginDto,
   NotificationDto,
   ProfileUpdateDto,
+  QuickContactDto,
   SignupPhoneDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
@@ -64,6 +65,7 @@ class AuthRoute implements Routes {
       authMiddleware,
       this.authController.updateUserAppImprovementSuggestion,
     );
+    this.router.post(`${this.path}quick-contact`, validationMiddleware(QuickContactDto, 'body'), authMiddleware, this.authController.addQuickContact);
 
     // !SECTION: General APIS => END
   }

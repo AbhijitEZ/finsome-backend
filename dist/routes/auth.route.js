@@ -30,6 +30,7 @@ class AuthRoute {
         // SECTION: General APIS => START
         this.router.get(`${this.path}app-improvement-types`, this.authController.appImprovementTypes);
         this.router.post(`${this.path}app-improvement-types-user`, (0, validation_middleware_1.default)(users_dto_1.AppImprovementUserDto, 'body'), auth_middleware_1.default, this.authController.updateUserAppImprovementSuggestion);
+        this.router.post(`${this.path}quick-contact`, (0, validation_middleware_1.default)(users_dto_1.QuickContactDto, 'body'), auth_middleware_1.default, this.authController.addQuickContact);
         // !SECTION: General APIS => END
     }
 }

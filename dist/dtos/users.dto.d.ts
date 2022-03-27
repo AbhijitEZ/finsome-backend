@@ -49,3 +49,8 @@ export declare class AppImprovementUserDto {
     id: string;
     description: string;
 }
+export declare class QuickContactDto {
+    name: string;
+    email: string;
+    message: string;
+}

@@ -183,6 +183,16 @@ class AuthController {
       next(error);
     }
   };
+
+  public addQuickContact = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.authService.addQuickContact(req.body);
+
+      responseJSONMapper(res, 201, data);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

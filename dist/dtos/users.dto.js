@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
+exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
@@ -194,4 +194,22 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], AppImprovementUserDto.prototype, "description", void 0);
 exports.AppImprovementUserDto = AppImprovementUserDto;
+class QuickContactDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], QuickContactDto.prototype, "name", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEmail)(),
+    tslib_1.__metadata("design:type", String)
+], QuickContactDto.prototype, "email", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], QuickContactDto.prototype, "message", void 0);
+exports.QuickContactDto = QuickContactDto;
 //# sourceMappingURL=users.dto.js.map

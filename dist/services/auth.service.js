@@ -6,19 +6,21 @@ const config_1 = tslib_1.__importDefault(require("config"));
 const jsonwebtoken_1 = require("jsonwebtoken");
 const date_fns_1 = require("date-fns");
 const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
+const mongoose_1 = require("mongoose");
 const HttpException_1 = require("../exceptions/HttpException");
 const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
 const otp_validation_model_1 = tslib_1.__importDefault(require("../models/otp-validation.model"));
+const quick_contact_1 = tslib_1.__importDefault(require("../models/quick-contact"));
 const util_1 = require("../utils/util");
 const constants_1 = require("../utils/constants");
 const global_1 = require("../utils/global");
 const phone_1 = require("../utils/phone");
 const logger_1 = require("../utils/logger");
-const mongoose_1 = require("mongoose");
 class AuthService {
     constructor() {
         this.users = users_model_1.default;
         this.otpValidation = otp_validation_model_1.default;
+        this.quickContact = quick_contact_1.default;
     }
     async validateUserField(userData) {
         const userFound = await this.users.findOne({ [userData.field]: userData.value });
@@ -197,6 +199,11 @@ class AuthService {
     async updateUserAppImprovementSuggestion(reqData, id) {
         await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: Object.assign(Object.assign({}, reqData), { timestamp: (0, date_fns_1.toDate)(new Date()) }) });
         return await this.profile(id);
+    }
+    async addQuickContact(reqData) {
+        const newContact = await this.quickContact.create(Object.assign({}, reqData));
+        // @ts-ignore
+        return newContact;
     }
     createToken(user) {
         const dataStoredInToken = { _id: user._id, role: user.role };

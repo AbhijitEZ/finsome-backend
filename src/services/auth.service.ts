@@ -10,26 +10,29 @@ import {
   LoginDto,
   NotificationDto,
   ProfileUpdateDto,
+  QuickContactDto,
   SignupPhoneDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
   VerifyPhoneDto,
 } from '@dtos/users.dto';
+import { connection } from 'mongoose';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import otpValidationModel from '@models/otp-validation.model';
+import quickContactModel from '@models/quick-contact';
 import { isEmpty } from '@utils/util';
 import { APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
 import { userResponseFilter } from '@/utils/global';
 import { createPhoneCodeToVerify } from '@/utils/phone';
 import { logger } from '@/utils/logger';
-import { connection } from 'mongoose';
 
 class AuthService {
   public users = userModel;
   public otpValidation = otpValidationModel;
+  public quickContact = quickContactModel;
 
   public async validateUserField(userData: ValidateUserFieldDto): Promise<void> {
     const userFound = await this.users.findOne({ [userData.field]: userData.value });
@@ -247,6 +250,13 @@ class AuthService {
     await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: { ...reqData, timestamp: toDate(new Date()) } });
 
     return await this.profile(id);
+  }
+
+  public async addQuickContact(reqData: QuickContactDto): Promise<any> {
+    const newContact = await this.quickContact.create({ ...reqData });
+
+    // @ts-ignore
+    return newContact;
   }
 
   public createToken(user: User): TokenData {

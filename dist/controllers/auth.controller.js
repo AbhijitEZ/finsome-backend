@@ -159,6 +159,15 @@ class AuthController {
                 next(error);
             }
         };
+        this.addQuickContact = async (req, res, next) => {
+            try {
+                const data = await this.authService.addQuickContact(req.body);
+                (0, global_1.responseJSONMapper)(res, 201, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = AuthController;

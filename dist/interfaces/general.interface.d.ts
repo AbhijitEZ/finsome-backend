@@ -10,3 +10,9 @@ export interface AppImprovementInf {
     _id: string;
     name: string;
 }
+export interface QuickContactInf {
+    _id: string;
+    name: string;
+    email: string;
+    message: string;
+}
