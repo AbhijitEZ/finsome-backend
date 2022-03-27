@@ -19,7 +19,7 @@ class AdminController {
     try {
       const users = await this.adminService.userListing(req.user);
 
-      res.status(200).json({ data: users, message: APP_SUCCESS_MESSAGE.login_success });
+      res.status(200).json({ data: users });
     } catch (error) {
       next(error);
     }
@@ -27,9 +27,9 @@ class AdminController {
 
   public toggleUserStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const users = await this.adminService.toggleUserStatus(req.body);
+      await this.adminService.toggleUserStatus(req.body);
 
-      res.status(200).json({ data: users, message: APP_SUCCESS_MESSAGE.login_success });
+      res.status(200).json({ data: {} });
     } catch (error) {
       next(error);
     }
@@ -39,7 +39,7 @@ class AdminController {
     try {
       const users = await this.adminService.appImprovementSuggestion();
 
-      res.status(200).json({ data: users, message: APP_SUCCESS_MESSAGE.login_success });
+      res.status(200).json({ data: users });
     } catch (error) {
       next(error);
     }
@@ -49,7 +49,7 @@ class AdminController {
     try {
       const users = await this.adminService.quickContactListing();
 
-      res.status(200).json({ data: users, message: APP_SUCCESS_MESSAGE.login_success });
+      res.status(200).json({ data: users });
     } catch (error) {
       next(error);
     }
