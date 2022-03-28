@@ -1,5 +1,5 @@
 import { GENDER_CONST } from '@/utils/constants';
-import { IsBoolean, IsDateString, IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsDateString, IsEmail, IsIn, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class VerifyPhoneDto {
   @IsNotEmpty()
@@ -60,8 +60,8 @@ export class CreateUserDto {
   birth_date: string;
 
   @IsOptional()
-  @IsNumber()
-  trading_exp: number;
+  @IsString()
+  trading_exp: string;
 
   @IsOptional()
   @IsIn(Object.keys(GENDER_CONST))
@@ -109,8 +109,8 @@ export class ProfileUpdateDto {
   birth_date: string;
 
   @IsOptional()
-  @IsNumber()
-  trading_exp: number;
+  @IsString()
+  trading_exp: string;
 
   @IsOptional()
   @IsIn(Object.keys(GENDER_CONST))

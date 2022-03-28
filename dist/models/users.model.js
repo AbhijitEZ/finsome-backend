@@ -45,7 +45,7 @@ const userSchema = new mongoose_1.Schema({
         type: Date,
     },
     trading_exp: {
-        type: Number,
+        type: String,
     },
     gender: {
         type: String,

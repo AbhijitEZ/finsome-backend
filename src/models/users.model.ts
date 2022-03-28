@@ -46,7 +46,7 @@ const userSchema: Schema = new Schema(
       type: Date,
     },
     trading_exp: {
-      type: Number,
+      type: String,
     },
     gender: {
       type: String,

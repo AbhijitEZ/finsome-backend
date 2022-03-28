@@ -82,8 +82,8 @@ tslib_1.__decorate([
 ], CreateUserDto.prototype, "birth_date", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumber)(),
-    tslib_1.__metadata("design:type", Number)
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
 ], CreateUserDto.prototype, "trading_exp", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
@@ -144,8 +144,8 @@ tslib_1.__decorate([
 ], ProfileUpdateDto.prototype, "birth_date", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumber)(),
-    tslib_1.__metadata("design:type", Number)
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
 ], ProfileUpdateDto.prototype, "trading_exp", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),

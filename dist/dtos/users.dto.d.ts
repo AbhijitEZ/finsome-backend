@@ -19,7 +19,7 @@ export declare class CreateUserDto {
     username: string;
     fullname: string;
     birth_date: string;
-    trading_exp: number;
+    trading_exp: string;
     gender: string;
 }
 export declare class LoginDto {
@@ -35,7 +35,7 @@ export declare class ProfileUpdateDto {
     username: string;
     fullname: string;
     birth_date: string;
-    trading_exp: number;
+    trading_exp: string;
     gender: string;
     bio: string;
     youtube_link: string;

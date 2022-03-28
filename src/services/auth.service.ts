@@ -142,7 +142,7 @@ class AuthService {
     if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
 
     if (!findUser.is_registration_complete) {
-      throw new HttpException(412, APP_ERROR_MESSAGE.user_not_complete_register, { id: findUser._id });
+      throw new HttpException(451, APP_ERROR_MESSAGE.user_not_complete_register, { id: findUser._id });
     }
 
     const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
