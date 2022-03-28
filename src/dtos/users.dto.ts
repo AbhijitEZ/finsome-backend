@@ -19,6 +19,10 @@ export class VerifyOtpDTO extends VerifyPhoneDto {
   @IsNotEmpty()
   @IsString()
   otp: string;
+
+  @IsOptional()
+  @IsBoolean()
+  is_reset_password: boolean;
 }
 
 export class ValidateUserFieldDto {
@@ -89,6 +93,17 @@ export class ChangePasswordDto {
   @IsString()
   @MinLength(6)
   new_password: string;
+}
+
+export class ResetPasswordDto {
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  password: string;
 }
 
 export class ProfileUpdateDto {

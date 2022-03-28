@@ -8,6 +8,7 @@ export declare const APP_SUCCESS_MESSAGE: {
     update_profile_success: string;
     validate_user_field_success: string;
     sent_otp_success: string;
+    password_reset_success: string;
     verify_otp_success: string;
 };
 export declare const APP_ERROR_MESSAGE: {

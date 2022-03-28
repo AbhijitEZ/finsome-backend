@@ -5,6 +5,7 @@ export declare class VerifyPhoneDto {
 }
 export declare class VerifyOtpDTO extends VerifyPhoneDto {
     otp: string;
+    is_reset_password: boolean;
 }
 export declare class ValidateUserFieldDto {
     field: string;
@@ -29,6 +30,10 @@ export declare class LoginDto {
 export declare class ChangePasswordDto {
     password: string;
     new_password: string;
+}
+export declare class ResetPasswordDto {
+    id: string;
+    password: string;
 }
 export declare class ProfileUpdateDto {
     email: string;

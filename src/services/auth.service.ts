@@ -11,6 +11,7 @@ import {
   NotificationDto,
   ProfileUpdateDto,
   QuickContactDto,
+  ResetPasswordDto,
   SignupPhoneDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
@@ -76,12 +77,16 @@ class AuthService {
   }
 
   // TODO: This would require bypass verification for testing and Third party integration
-  public async verifyOtp(reqData: VerifyOtpDTO): Promise<void> {
+  public async verifyOtp(reqData: VerifyOtpDTO): Promise<any> {
     const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
     if (!userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
     if (reqData.otp !== '9999') {
       throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
     }
+
+    return {
+      id: userFound._id,
+    };
   }
 
   public async signUpPhoneVerify(userData: SignupPhoneDto): Promise<{ user: Partial<User> }> {
@@ -168,6 +173,19 @@ class AuthService {
   public async forgotPassword(reqData: VerifyPhoneDto): Promise<void> {
     const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
     if (!userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+
+    // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
+    if (reqData.is_testing) {
+      return;
+    }
+  }
+
+  public async resetPassword(reqData: ResetPasswordDto): Promise<void> {
+    const userFound = await this.users.findOne({ _id: reqData.id });
+    if (!userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+
+    const hashedPassword = await hash(reqData.password, 10);
+    await this.users.findByIdAndUpdate(reqData.id, { password: hashedPassword }, { new: true });
   }
 
   public async changePassword(userData: ChangePasswordDto, id: string): Promise<void> {

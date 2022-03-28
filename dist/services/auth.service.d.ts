@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, LoginDto, NotificationDto, ProfileUpdateDto, QuickContactDto, SignupPhoneDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
+import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, LoginDto, NotificationDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
 import { TokenData } from '../interfaces/auth.interface';
 import { User } from '../interfaces/users.interface';
 declare class AuthService {
@@ -9,7 +9,7 @@ declare class AuthService {
     quickContact: import("mongoose").Model<import("../interfaces/general.interface").QuickContactInf & import("mongoose").Document<any, any, any>, {}, {}>;
     validateUserField(userData: ValidateUserFieldDto): Promise<void>;
     verifyPhoneNumber(reqData: VerifyPhoneDto): Promise<void>;
-    verifyOtp(reqData: VerifyOtpDTO): Promise<void>;
+    verifyOtp(reqData: VerifyOtpDTO): Promise<any>;
     signUpPhoneVerify(userData: SignupPhoneDto): Promise<{
         user: Partial<User>;
     }>;
@@ -24,6 +24,7 @@ declare class AuthService {
         token_data: TokenData;
     }>;
     forgotPassword(reqData: VerifyPhoneDto): Promise<void>;
+    resetPassword(reqData: ResetPasswordDto): Promise<void>;
     changePassword(userData: ChangePasswordDto, id: string): Promise<void>;
     profile(id: String): Promise<{
         user: Partial<User>;

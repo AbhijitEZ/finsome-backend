@@ -32,9 +32,9 @@ class AuthController {
         this.verifyOTP = async (req, res, next) => {
             try {
                 const reqPayload = req.body;
-                await this.authService.verifyOtp(reqPayload);
+                const id = await this.authService.verifyOtp(reqPayload);
                 // TODO: OTP phase would be dynamic after the client confirmation
-                (0, global_1.responseJSONMapper)(res, 200, {}, constants_1.APP_SUCCESS_MESSAGE.verify_otp_success);
+                (0, global_1.responseJSONMapper)(res, 200, { id }, constants_1.APP_SUCCESS_MESSAGE.verify_otp_success);
             }
             catch (error) {
                 next(error);
@@ -80,9 +80,21 @@ class AuthController {
         this.forgotPassword = async (req, res, next) => {
             try {
                 const reqPayload = req.body;
+                // TODO: Here Id would be changed to unquie code
                 await this.authService.forgotPassword(reqPayload);
                 // TODO: OTP phase would be dynamic after the client confirmation
                 (0, global_1.responseJSONMapper)(res, 200, Object.assign(Object.assign({}, reqPayload), { otp: 9999 }), constants_1.APP_SUCCESS_MESSAGE.sent_otp_success);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.resetPassword = async (req, res, next) => {
+            try {
+                const reqPayload = req.body;
+                await this.authService.resetPassword(reqPayload);
+                // TODO: OTP phase would be dynamic after the client confirmation
+                (0, global_1.responseJSONMapper)(res, 200, {}, constants_1.APP_SUCCESS_MESSAGE.password_reset_success);
             }
             catch (error) {
                 next(error);

@@ -8,6 +8,7 @@ export const APP_SUCCESS_MESSAGE = {
   update_profile_success: 'Profile updated successfully.',
   validate_user_field_success: 'No user exists with following field.',
   sent_otp_success: 'OTP sent to you phone number.',
+  password_reset_success: 'Password Reset successfully.',
   verify_otp_success: 'OTP is verified.',
 };
 

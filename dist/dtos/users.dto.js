@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
+exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ResetPasswordDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
@@ -29,6 +29,11 @@ tslib_1.__decorate([
     (0, class_validator_1.IsString)(),
     tslib_1.__metadata("design:type", String)
 ], VerifyOtpDTO.prototype, "otp", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    tslib_1.__metadata("design:type", Boolean)
+], VerifyOtpDTO.prototype, "is_reset_password", void 0);
 exports.VerifyOtpDTO = VerifyOtpDTO;
 class ValidateUserFieldDto {
 }
@@ -120,6 +125,20 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], ChangePasswordDto.prototype, "new_password", void 0);
 exports.ChangePasswordDto = ChangePasswordDto;
+class ResetPasswordDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], ResetPasswordDto.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(6),
+    tslib_1.__metadata("design:type", String)
+], ResetPasswordDto.prototype, "password", void 0);
+exports.ResetPasswordDto = ResetPasswordDto;
 class ProfileUpdateDto {
 }
 tslib_1.__decorate([

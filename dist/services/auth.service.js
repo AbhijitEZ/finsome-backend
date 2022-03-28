@@ -64,6 +64,9 @@ class AuthService {
         if (reqData.otp !== '9999') {
             throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.otp_invalid);
         }
+        return {
+            id: userFound._id,
+        };
     }
     async signUpPhoneVerify(userData) {
         const hashedPassword = await (0, bcrypt_1.hash)(userData.password, 10);
@@ -130,6 +133,17 @@ class AuthService {
         const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
         if (!userFound)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
+        // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
+        if (reqData.is_testing) {
+            return;
+        }
+    }
+    async resetPassword(reqData) {
+        const userFound = await this.users.findOne({ _id: reqData.id });
+        if (!userFound)
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
+        const hashedPassword = await (0, bcrypt_1.hash)(reqData.password, 10);
+        await this.users.findByIdAndUpdate(reqData.id, { password: hashedPassword }, { new: true });
     }
     async changePassword(userData, id) {
         const findUser = await this.users.findOne({ _id: id }).lean();

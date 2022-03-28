@@ -4,6 +4,7 @@ import {
   CreateUserDto,
   LoginDto,
   NotificationDto,
+  ResetPasswordDto,
   SignupPhoneDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
@@ -45,10 +46,10 @@ class AuthController {
   public verifyOTP = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const reqPayload: VerifyOtpDTO = req.body;
-      await this.authService.verifyOtp(reqPayload);
+      const id = await this.authService.verifyOtp(reqPayload);
 
       // TODO: OTP phase would be dynamic after the client confirmation
-      responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.verify_otp_success);
+      responseJSONMapper(res, 200, { id }, APP_SUCCESS_MESSAGE.verify_otp_success);
     } catch (error) {
       next(error);
     }
@@ -97,10 +98,23 @@ class AuthController {
   public forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const reqPayload: VerifyPhoneDto = req.body;
+      // TODO: Here Id would be changed to unquie code
       await this.authService.forgotPassword(reqPayload);
 
       // TODO: OTP phase would be dynamic after the client confirmation
       responseJSONMapper(res, 200, { ...reqPayload, otp: 9999 }, APP_SUCCESS_MESSAGE.sent_otp_success);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const reqPayload: ResetPasswordDto = req.body;
+      await this.authService.resetPassword(reqPayload);
+
+      // TODO: OTP phase would be dynamic after the client confirmation
+      responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.password_reset_success);
     } catch (error) {
       next(error);
     }
