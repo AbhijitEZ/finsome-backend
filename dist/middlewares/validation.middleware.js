@@ -7,6 +7,7 @@ const validationMiddleware = (type, value = 'body', skipMissingProperties = fals
     return (req, res, next) => {
         (0, class_validator_1.validate)((0, class_transformer_1.plainToClass)(type, req[value]), { skipMissingProperties, whitelist, forbidNonWhitelisted }).then((errors) => {
             if (errors.length > 0) {
+                console.log('ERRORS: ', errors);
                 const message = errors.map((error) => Object.values(error.constraints)).join(', ');
                 next(new HttpException_1.HttpException(400, message));
             }
