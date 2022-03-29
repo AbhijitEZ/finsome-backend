@@ -157,10 +157,11 @@ class AuthController {
   public notificationUpdate = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userData: NotificationDto = req.body;
+      console.log('NOTIFICATION BODY: ', userData);
       // @ts-ignore
-      await this.authService.notificationUpdate(userData, req.user._id);
+      const data = await this.authService.notificationUpdate(userData, req.user._id);
 
-      responseJSONMapper(res, 200, { ...userData }, APP_SUCCESS_MESSAGE.notification_update_success);
+      responseJSONMapper(res, 200, data, APP_SUCCESS_MESSAGE.notification_update_success);
     } catch (error) {
       next(error);
     }

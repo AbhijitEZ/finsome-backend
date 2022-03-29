@@ -198,6 +198,7 @@ class AuthService {
         if (!findUser)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
         await this.users.findByIdAndUpdate(id, { allow_notification: userData.allow_notification }, { new: true });
+        return await this.profile(id);
     }
     async logout(userData) {
         if ((0, util_1.isEmpty)(userData))

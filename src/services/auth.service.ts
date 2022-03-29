@@ -244,11 +244,12 @@ class AuthService {
     await this.users.findByIdAndUpdate(id, payload, { new: true });
   }
 
-  public async notificationUpdate(userData: NotificationDto, id: string): Promise<void> {
+  public async notificationUpdate(userData: NotificationDto, id: string): Promise<any> {
     const findUser = await this.users.findOne({ _id: id }).lean();
     if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
 
     await this.users.findByIdAndUpdate(id, { allow_notification: userData.allow_notification }, { new: true });
+    return await this.profile(id);
   }
 
   public async logout(userData: User): Promise<void> {

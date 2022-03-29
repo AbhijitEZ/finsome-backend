@@ -30,7 +30,7 @@ declare class AuthService {
         user: Partial<User>;
     }>;
     editProfile(userData: ProfileUpdateDto, file: Express.Multer.File, id: string): Promise<void>;
-    notificationUpdate(userData: NotificationDto, id: string): Promise<void>;
+    notificationUpdate(userData: NotificationDto, id: string): Promise<any>;
     logout(userData: User): Promise<void>;
     appImprovementTypes(): Promise<any>;
     updateUserAppImprovementSuggestion(reqData: AppImprovementUserDto, id: string): Promise<any>;
