@@ -1,7 +1,7 @@
 export declare class VerifyPhoneDto {
     phone_country_code: string;
     phone_number: string;
-    is_testing: boolean;
+    is_testing: string;
 }
 export declare class VerifyOtpDTO extends VerifyPhoneDto {
     otp: string;
@@ -48,7 +48,7 @@ export declare class ProfileUpdateDto {
     telegram_link: string;
 }
 export declare class NotificationDto {
-    allow_notification: boolean;
+    allow_notification: string;
 }
 export declare class AppImprovementUserDto {
     id: string;

@@ -124,8 +124,8 @@ class AuthController {
         this.editProfile = async (req, res, next) => {
             try {
                 // @ts-ignore
-                await this.authService.editProfile(req.body, req.file, req.user._id);
-                (0, global_1.responseJSONMapper)(res, 200, {}, constants_1.APP_SUCCESS_MESSAGE.update_profile_success);
+                const user = await this.authService.editProfile(req.body, req.file, req.user._id);
+                (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, user), constants_1.APP_SUCCESS_MESSAGE.update_profile_success);
             }
             catch (error) {
                 next(error);
@@ -134,7 +134,6 @@ class AuthController {
         this.notificationUpdate = async (req, res, next) => {
             try {
                 const userData = req.body;
-                console.log('NOTIFICATION BODY: ', userData);
                 // @ts-ignore
                 const data = await this.authService.notificationUpdate(userData, req.user._id);
                 (0, global_1.responseJSONMapper)(res, 200, data, constants_1.APP_SUCCESS_MESSAGE.notification_update_success);
@@ -158,6 +157,15 @@ class AuthController {
             try {
                 const data = await this.authService.appImprovementTypes();
                 (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.getUserAppImprovementSuggestion = async (req, res, next) => {
+            try {
+                const data = await this.authService.getUserAppImprovementSuggestion(req.user._id);
+                (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, data.app_improvement_suggestion));
             }
             catch (error) {
                 next(error);

@@ -61,6 +61,7 @@ class AuthRoute implements Routes {
 
     // SECTION: General APIS => START
     this.router.get(`${this.path}app-improvement-types`, this.authController.appImprovementTypes);
+    this.router.get(`${this.path}app-improvement-types-user`, authMiddleware, this.authController.getUserAppImprovementSuggestion);
     this.router.post(
       `${this.path}app-improvement-types-user`,
       validationMiddleware(AppImprovementUserDto, 'body'),

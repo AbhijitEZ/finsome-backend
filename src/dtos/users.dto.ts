@@ -11,8 +11,8 @@ export class VerifyPhoneDto {
   phone_number: string;
 
   @IsOptional()
-  @IsBoolean()
-  is_testing: boolean;
+  @IsString()
+  is_testing: string;
 }
 
 export class VerifyOtpDTO extends VerifyPhoneDto {
@@ -150,8 +150,8 @@ export class ProfileUpdateDto {
 
 export class NotificationDto {
   @IsNotEmpty()
-  @IsBoolean()
-  allow_notification: boolean;
+  @IsString()
+  allow_notification: string;
 }
 
 export class AppImprovementUserDto {

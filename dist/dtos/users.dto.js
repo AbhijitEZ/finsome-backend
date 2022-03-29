@@ -18,8 +18,8 @@ tslib_1.__decorate([
 ], VerifyPhoneDto.prototype, "phone_number", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    tslib_1.__metadata("design:type", Boolean)
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
 ], VerifyPhoneDto.prototype, "is_testing", void 0);
 exports.VerifyPhoneDto = VerifyPhoneDto;
 class VerifyOtpDTO extends VerifyPhoneDto {
@@ -196,8 +196,8 @@ class NotificationDto {
 }
 tslib_1.__decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsBoolean)(),
-    tslib_1.__metadata("design:type", Boolean)
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
 ], NotificationDto.prototype, "allow_notification", void 0);
 exports.NotificationDto = NotificationDto;
 class AppImprovementUserDto {

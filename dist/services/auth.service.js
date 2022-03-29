@@ -32,7 +32,7 @@ class AuthService {
         if (userFound)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.phone_exists);
         // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
-        if (reqData.is_testing) {
+        if (reqData.is_testing === 'true') {
             return;
         }
         const phoneNumberExists = await this.otpValidation.findOne({
@@ -134,7 +134,7 @@ class AuthService {
         if (!userFound)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
         // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
-        if (reqData.is_testing) {
+        if (reqData.is_testing === 'true') {
             return;
         }
     }
@@ -192,12 +192,14 @@ class AuthService {
             payload.profile_photo = profileImage;
         }
         await this.users.findByIdAndUpdate(id, payload, { new: true });
+        return await this.profile(id);
     }
     async notificationUpdate(userData, id) {
         const findUser = await this.users.findOne({ _id: id }).lean();
         if (!findUser)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
-        await this.users.findByIdAndUpdate(id, { allow_notification: userData.allow_notification }, { new: true });
+        // TODO: Needs to be updated once mobile change are fixed
+        await this.users.findByIdAndUpdate(id, { allow_notification: userData.allow_notification === 'true' }, { new: true });
         return await this.profile(id);
     }
     async logout(userData) {
@@ -210,6 +212,14 @@ class AuthService {
     async appImprovementTypes() {
         const result = await mongoose_1.connection.collection(constants_1.APP_IMPROVEMENT_TYPES).find({}).toArray();
         return [...result];
+    }
+    async getUserAppImprovementSuggestion(id) {
+        var _a;
+        const user = await this.users.findOne({ _id: id }).lean();
+        return {
+            // @ts-ignore
+            app_improvement_suggestion: (_a = user === null || user === void 0 ? void 0 : user.app_improvement_suggestion) !== null && _a !== void 0 ? _a : {},
+        };
     }
     async updateUserAppImprovementSuggestion(reqData, id) {
         await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: Object.assign(Object.assign({}, reqData), { timestamp: (0, date_fns_1.toDate)(new Date()) }) });

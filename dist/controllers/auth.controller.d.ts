@@ -17,6 +17,7 @@ declare class AuthController {
     notificationUpdate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     logOut: (req: RequestWithUser, res: Response, next: NextFunction) => Promise<void>;
     appImprovementTypes: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getUserAppImprovementSuggestion: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     updateUserAppImprovementSuggestion: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     addQuickContact: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }

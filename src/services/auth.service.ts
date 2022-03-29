@@ -44,7 +44,7 @@ class AuthService {
     const userFound = await this.users.findOne({ phone_number: reqData.phone_number });
     if (userFound) throw new HttpException(409, APP_ERROR_MESSAGE.phone_exists);
     // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
-    if (reqData.is_testing) {
+    if (reqData.is_testing === 'true') {
       return;
     }
     const phoneNumberExists = await this.otpValidation.findOne({
@@ -175,7 +175,7 @@ class AuthService {
     if (!userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
 
     // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
-    if (reqData.is_testing) {
+    if (reqData.is_testing === 'true') {
       return;
     }
   }
@@ -205,7 +205,7 @@ class AuthService {
     return { user: userResFilter };
   }
 
-  public async editProfile(userData: ProfileUpdateDto, file: Express.Multer.File, id: string): Promise<void> {
+  public async editProfile(userData: ProfileUpdateDto, file: Express.Multer.File, id: string): Promise<any> {
     const userExistsCheckForEmailField = await this.users.findOne({ _id: { $ne: id }, email: userData.email });
     if (userExistsCheckForEmailField) {
       throw new HttpException(409, APP_ERROR_MESSAGE.email_exists);
@@ -242,13 +242,15 @@ class AuthService {
     }
 
     await this.users.findByIdAndUpdate(id, payload, { new: true });
+    return await this.profile(id);
   }
 
   public async notificationUpdate(userData: NotificationDto, id: string): Promise<any> {
     const findUser = await this.users.findOne({ _id: id }).lean();
     if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
 
-    await this.users.findByIdAndUpdate(id, { allow_notification: userData.allow_notification }, { new: true });
+    // TODO: Needs to be updated once mobile change are fixed
+    await this.users.findByIdAndUpdate(id, { allow_notification: userData.allow_notification === 'true' }, { new: true });
     return await this.profile(id);
   }
 
@@ -263,6 +265,15 @@ class AuthService {
     const result = await connection.collection(APP_IMPROVEMENT_TYPES).find({}).toArray();
 
     return [...result];
+  }
+
+  public async getUserAppImprovementSuggestion(id: string): Promise<any> {
+    const user = await this.users.findOne({ _id: id }).lean();
+
+    return {
+      // @ts-ignore
+      app_improvement_suggestion: user?.app_improvement_suggestion ?? {},
+    };
   }
 
   public async updateUserAppImprovementSuggestion(reqData: AppImprovementUserDto, id: string): Promise<any> {

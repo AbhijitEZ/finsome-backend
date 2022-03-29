@@ -146,9 +146,9 @@ class AuthController {
   public editProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      await this.authService.editProfile(req.body, req.file, req.user._id);
+      const user = await this.authService.editProfile(req.body, req.file, req.user._id);
 
-      responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.update_profile_success);
+      responseJSONMapper(res, 200, { ...user }, APP_SUCCESS_MESSAGE.update_profile_success);
     } catch (error) {
       next(error);
     }
@@ -157,7 +157,7 @@ class AuthController {
   public notificationUpdate = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userData: NotificationDto = req.body;
-      console.log('NOTIFICATION BODY: ', userData);
+
       // @ts-ignore
       const data = await this.authService.notificationUpdate(userData, req.user._id);
 
@@ -184,6 +184,16 @@ class AuthController {
       const data = await this.authService.appImprovementTypes();
 
       responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getUserAppImprovementSuggestion = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.authService.getUserAppImprovementSuggestion(req.user._id);
+
+      responseJSONMapper(res, 200, { ...data.app_improvement_suggestion });
     } catch (error) {
       next(error);
     }
