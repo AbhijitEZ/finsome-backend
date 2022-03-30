@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.profileImageFolder = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
+exports.profileImageFolder = exports.USER_SUGGESTION_IMPROVEMENTS = exports.USERS = exports.OTP_VALIDATIONS = exports.QUICK_CONTACTS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
 exports.APP_SUCCESS_MESSAGE = {
     signup_phone_verify_success: 'Signup phone verified successfully.',
     signup_success: 'Signup successfully.',
@@ -10,6 +10,7 @@ exports.APP_SUCCESS_MESSAGE = {
     notification_update_success: 'Notification settings updated successfully.',
     update_profile_success: 'Profile updated successfully.',
     validate_user_field_success: 'No user exists with following field.',
+    user_suggestion_app_improve_success: 'Thanks for giving the suggestion regarding app improvement.',
     sent_otp_success: 'OTP sent to you phone number.',
     password_reset_success: 'Password Reset successfully.',
     verify_otp_success: 'OTP is verified.',
@@ -46,5 +47,9 @@ exports.GENDER_CONST = {
 };
 exports.FILE_LIMIT = 20000000;
 exports.APP_IMPROVEMENT_TYPES = 'app-improvement-type';
+exports.QUICK_CONTACTS = 'quick-contacts';
+exports.OTP_VALIDATIONS = 'otp-validations';
+exports.USERS = 'users';
+exports.USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';
 exports.profileImageFolder = 'profile-img/';
 //# sourceMappingURL=constants.js.map

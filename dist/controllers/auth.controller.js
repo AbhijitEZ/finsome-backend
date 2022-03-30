@@ -165,7 +165,7 @@ class AuthController {
         this.getUserAppImprovementSuggestion = async (req, res, next) => {
             try {
                 const data = await this.authService.getUserAppImprovementSuggestion(req.user._id);
-                (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, data.app_improvement_suggestion));
+                (0, global_1.responseJSONMapper)(res, 200, [...data.app_improvement_suggestion]);
             }
             catch (error) {
                 next(error);
@@ -173,8 +173,8 @@ class AuthController {
         };
         this.updateUserAppImprovementSuggestion = async (req, res, next) => {
             try {
-                const data = await this.authService.updateUserAppImprovementSuggestion(req.body, req.user._id);
-                (0, global_1.responseJSONMapper)(res, 201, data);
+                await this.authService.updateUserAppImprovementSuggestion(req.body, req.user._id);
+                (0, global_1.responseJSONMapper)(res, 200, {}, constants_1.APP_SUCCESS_MESSAGE.user_suggestion_app_improve_success);
             }
             catch (error) {
                 next(error);

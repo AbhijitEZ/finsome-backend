@@ -24,16 +24,20 @@ import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import otpValidationModel from '@models/otp-validation.model';
 import quickContactModel from '@models/quick-contact';
+import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
 import { isEmpty } from '@utils/util';
 import { APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
 import { userResponseFilter } from '@/utils/global';
 import { createPhoneCodeToVerify } from '@/utils/phone';
 import { logger } from '@/utils/logger';
+import appImprovementModel from '@/models/app-improvement-type';
 
 class AuthService {
   public users = userModel;
   public otpValidation = otpValidationModel;
+  public appImprovement = appImprovementModel;
   public quickContact = quickContactModel;
+  public userAppSuggestion = userSuggestionImprovementModel;
 
   public async validateUserField(userData: ValidateUserFieldDto): Promise<void> {
     const userFound = await this.users.findOne({ [userData.field]: userData.value });
@@ -268,18 +272,16 @@ class AuthService {
   }
 
   public async getUserAppImprovementSuggestion(id: string): Promise<any> {
-    const user = await this.users.findOne({ _id: id }).lean();
+    const appSuggestion = await this.userAppSuggestion.find({ user_id: id }).populate('app_improve_type_id').populate('user_id', ['_id', 'fullname']);
 
     return {
       // @ts-ignore
-      app_improvement_suggestion: user?.app_improvement_suggestion ?? {},
+      app_improvement_suggestion: appSuggestion,
     };
   }
 
   public async updateUserAppImprovementSuggestion(reqData: AppImprovementUserDto, id: string): Promise<any> {
-    await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: { ...reqData, timestamp: toDate(new Date()) } });
-
-    return await this.profile(id);
+    await this.userAppSuggestion.create({ description: reqData?.description ?? '', user_id: id, app_improve_type_id: reqData.id });
   }
 
   public async addQuickContact(reqData: QuickContactDto): Promise<any> {

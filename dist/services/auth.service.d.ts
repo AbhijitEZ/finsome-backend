@@ -6,7 +6,9 @@ import { User } from '../interfaces/users.interface';
 declare class AuthService {
     users: import("mongoose").Model<User & import("mongoose").Document<any, any, any>, {}, {}>;
     otpValidation: import("mongoose").Model<import("../interfaces/general.interface").OtpValidationInf & import("mongoose").Document<any, any, any>, {}, {}>;
+    appImprovement: import("mongoose").Model<import("../interfaces/general.interface").AppImprovementInf & import("mongoose").Document<any, any, any>, {}, {}>;
     quickContact: import("mongoose").Model<import("../interfaces/general.interface").QuickContactInf & import("mongoose").Document<any, any, any>, {}, {}>;
+    userAppSuggestion: import("mongoose").Model<import("../interfaces/general.interface").UserSuggestionImproveInf & import("mongoose").Document<any, any, any>, {}, {}>;
     validateUserField(userData: ValidateUserFieldDto): Promise<void>;
     verifyPhoneNumber(reqData: VerifyPhoneDto): Promise<void>;
     verifyOtp(reqData: VerifyOtpDTO): Promise<any>;

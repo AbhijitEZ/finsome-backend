@@ -16,3 +16,7 @@ export interface QuickContactInf {
     email: string;
     message: string;
 }
+export interface UserSuggestionImproveInf {
+    description?: string;
+    timestamp: string;
+}

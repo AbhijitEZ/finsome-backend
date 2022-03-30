@@ -7,6 +7,7 @@ export const APP_SUCCESS_MESSAGE = {
   notification_update_success: 'Notification settings updated successfully.',
   update_profile_success: 'Profile updated successfully.',
   validate_user_field_success: 'No user exists with following field.',
+  user_suggestion_app_improve_success: 'Thanks for giving the suggestion regarding app improvement.',
   sent_otp_success: 'OTP sent to you phone number.',
   password_reset_success: 'Password Reset successfully.',
   verify_otp_success: 'OTP is verified.',
@@ -48,5 +49,9 @@ export const GENDER_CONST = {
 export const FILE_LIMIT = 20000000;
 
 export const APP_IMPROVEMENT_TYPES = 'app-improvement-type';
+export const QUICK_CONTACTS = 'quick-contacts';
+export const OTP_VALIDATIONS = 'otp-validations';
+export const USERS = 'users';
+export const USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';
 
 export const profileImageFolder = 'profile-img/';

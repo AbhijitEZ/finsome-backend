@@ -66,18 +66,6 @@ const userSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false,
     },
-    app_improvement_suggestion: {
-        id: {
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: constants_1.APP_IMPROVEMENT_TYPES,
-        },
-        description: {
-            type: String,
-        },
-        timestamp: {
-            type: Date,
-        },
-    },
     forgot_password_otp: {
         code: {
             type: String,
@@ -111,6 +99,6 @@ userSchema.post('save', function (error, doc, next) {
         next(error);
     }
 });
-const userModel = (0, mongoose_1.model)('users', userSchema);
+const userModel = (0, mongoose_1.model)(constants_1.USERS, userSchema);
 exports.default = userModel;
 //# sourceMappingURL=users.model.js.map

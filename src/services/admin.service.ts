@@ -3,20 +3,20 @@ import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
 import { HttpException } from '@/exceptions/HttpException';
-import { APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import appImprovementModel from '@models/app-improvement-type';
-import { connection } from 'mongoose';
-const ObjectId = require('mongodb').ObjectID;
 import { profileImageGenerator } from '@/utils/util';
 import { toDate } from 'date-fns';
 import quickContactModel from '@/models/quick-contact';
+import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
 
 class AdminService {
   public users = userModel;
   public appImprovement = appImprovementModel;
   public quickContact = quickContactModel;
+  public userSuggestion = userSuggestionImprovementModel;
 
   public async adminLogin(loginDto: AdminLoginDto): Promise<{ token: string }> {
     const adminUser: User = await this.users.findOne({
@@ -61,36 +61,29 @@ class AdminService {
     await this.users.findByIdAndUpdate(user.id, { deleted_at: user.status ? toDate(new Date()) : null }, { new: true });
   }
 
-  public async appImprovementSuggestion(): Promise<Record<string, any>> {
-    const users = await this.users
-      .find({
-        role: { $ne: USER_ROLE.ADMIN },
-        app_improvement_suggestion: { $nin: [null] },
-      })
-      .select([
-        'fullname',
-        'phone_number',
-        'app_improvement_suggestion.id',
-        'app_improvement_suggestion.timestamp',
-        'app_improvement_suggestion.description',
-      ])
-      .sort({ 'app_improvement_suggestion.timestamp': -1 })
-      .lean();
+  public async appImprovementSuggestion(): Promise<any> {
+    let allSuggestion = await this.userSuggestion
+      .find({})
+      .populate('user_id', ['fullname', 'phone_number'])
+      .populate('app_improve_type_id', ['_id', 'name']);
+    console.log(allSuggestion, 'allSuggestion');
 
-    const sanitizedDate = await Promise.all(
-      users.map(async (user: any) => {
-        const appImprovData = await connection.collection(APP_IMPROVEMENT_TYPES).findOne({ _id: new ObjectId(user.app_improvement_suggestion.id) });
-        return {
-          ...user,
-          app_improvement_suggestion: {
-            ...user.app_improvement_suggestion,
-            name: appImprovData.name,
-          },
-        };
-      }),
-    );
+    // @ts-ignore
+    allSuggestion = allSuggestion.map((suggestion: any) => {
+      return {
+        _id: suggestion.id,
+        phone_number: suggestion?.user_id?.phone_number ?? '',
+        fullname: suggestion?.user_id?.fullname ?? '',
+        app_improvement_suggestion: {
+          id: suggestion?.app_improve_type_id?._id,
+          description: suggestion.description ?? '',
+          timestamp: suggestion.timestamp,
+          name: suggestion?.app_improve_type_id?.name ?? '',
+        },
+      };
+    });
 
-    return sanitizedDate;
+    return allSuggestion;
   }
 
   public async quickContactListing(): Promise<Record<string, any>> {

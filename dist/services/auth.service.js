@@ -11,16 +11,20 @@ const HttpException_1 = require("../exceptions/HttpException");
 const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
 const otp_validation_model_1 = tslib_1.__importDefault(require("../models/otp-validation.model"));
 const quick_contact_1 = tslib_1.__importDefault(require("../models/quick-contact"));
+const user_suggestion_improvement_1 = tslib_1.__importDefault(require("../models/user-suggestion-improvement"));
 const util_1 = require("../utils/util");
 const constants_1 = require("../utils/constants");
 const global_1 = require("../utils/global");
 const phone_1 = require("../utils/phone");
 const logger_1 = require("../utils/logger");
+const app_improvement_type_1 = tslib_1.__importDefault(require("../models/app-improvement-type"));
 class AuthService {
     constructor() {
         this.users = users_model_1.default;
         this.otpValidation = otp_validation_model_1.default;
+        this.appImprovement = app_improvement_type_1.default;
         this.quickContact = quick_contact_1.default;
+        this.userAppSuggestion = user_suggestion_improvement_1.default;
     }
     async validateUserField(userData) {
         const userFound = await this.users.findOne({ [userData.field]: userData.value });
@@ -215,16 +219,15 @@ class AuthService {
         return [...result];
     }
     async getUserAppImprovementSuggestion(id) {
-        var _a;
-        const user = await this.users.findOne({ _id: id }).lean();
+        const appSuggestion = await this.userAppSuggestion.find({ user_id: id }).populate('app_improve_type_id').populate('user_id', ['_id', 'fullname']);
         return {
             // @ts-ignore
-            app_improvement_suggestion: (_a = user === null || user === void 0 ? void 0 : user.app_improvement_suggestion) !== null && _a !== void 0 ? _a : {},
+            app_improvement_suggestion: appSuggestion,
         };
     }
     async updateUserAppImprovementSuggestion(reqData, id) {
-        await this.users.findByIdAndUpdate(id, { app_improvement_suggestion: Object.assign(Object.assign({}, reqData), { timestamp: (0, date_fns_1.toDate)(new Date()) }) });
-        return await this.profile(id);
+        var _a;
+        await this.userAppSuggestion.create({ description: (_a = reqData === null || reqData === void 0 ? void 0 : reqData.description) !== null && _a !== void 0 ? _a : '', user_id: id, app_improve_type_id: reqData.id });
     }
     async addQuickContact(reqData) {
         const newContact = await this.quickContact.create(Object.assign({}, reqData));

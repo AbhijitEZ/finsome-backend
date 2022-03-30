@@ -7,6 +7,7 @@ export declare const APP_SUCCESS_MESSAGE: {
     notification_update_success: string;
     update_profile_success: string;
     validate_user_field_success: string;
+    user_suggestion_app_improve_success: string;
     sent_otp_success: string;
     password_reset_success: string;
     verify_otp_success: string;
@@ -43,4 +44,8 @@ export declare const GENDER_CONST: {
 };
 export declare const FILE_LIMIT = 20000000;
 export declare const APP_IMPROVEMENT_TYPES = "app-improvement-type";
+export declare const QUICK_CONTACTS = "quick-contacts";
+export declare const OTP_VALIDATIONS = "otp-validations";
+export declare const USERS = "users";
+export declare const USER_SUGGESTION_IMPROVEMENTS = "user-suggestion-improvements";
 export declare const profileImageFolder = "profile-img/";

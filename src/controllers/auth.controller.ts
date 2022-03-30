@@ -193,7 +193,7 @@ class AuthController {
     try {
       const data = await this.authService.getUserAppImprovementSuggestion(req.user._id);
 
-      responseJSONMapper(res, 200, { ...data.app_improvement_suggestion });
+      responseJSONMapper(res, 200, [...data.app_improvement_suggestion]);
     } catch (error) {
       next(error);
     }
@@ -201,9 +201,9 @@ class AuthController {
 
   public updateUserAppImprovementSuggestion = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.authService.updateUserAppImprovementSuggestion(req.body, req.user._id);
+      await this.authService.updateUserAppImprovementSuggestion(req.body, req.user._id);
 
-      responseJSONMapper(res, 201, data);
+      responseJSONMapper(res, 200, {}, APP_SUCCESS_MESSAGE.user_suggestion_app_improve_success);
     } catch (error) {
       next(error);
     }

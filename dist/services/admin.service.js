@@ -8,16 +8,16 @@ const HttpException_1 = require("../exceptions/HttpException");
 const constants_1 = require("../utils/constants");
 const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
 const app_improvement_type_1 = tslib_1.__importDefault(require("../models/app-improvement-type"));
-const mongoose_1 = require("mongoose");
-const ObjectId = require('mongodb').ObjectID;
 const util_1 = require("../utils/util");
 const date_fns_1 = require("date-fns");
 const quick_contact_1 = tslib_1.__importDefault(require("../models/quick-contact"));
+const user_suggestion_improvement_1 = tslib_1.__importDefault(require("../models/user-suggestion-improvement"));
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
         this.appImprovement = app_improvement_type_1.default;
         this.quickContact = quick_contact_1.default;
+        this.userSuggestion = user_suggestion_improvement_1.default;
     }
     async adminLogin(loginDto) {
         const adminUser = await this.users.findOne({
@@ -54,25 +54,27 @@ class AdminService {
         await this.users.findByIdAndUpdate(user.id, { deleted_at: user.status ? (0, date_fns_1.toDate)(new Date()) : null }, { new: true });
     }
     async appImprovementSuggestion() {
-        const users = await this.users
-            .find({
-            role: { $ne: constants_1.USER_ROLE.ADMIN },
-            app_improvement_suggestion: { $nin: [null] },
-        })
-            .select([
-            'fullname',
-            'phone_number',
-            'app_improvement_suggestion.id',
-            'app_improvement_suggestion.timestamp',
-            'app_improvement_suggestion.description',
-        ])
-            .sort({ 'app_improvement_suggestion.timestamp': -1 })
-            .lean();
-        const sanitizedDate = await Promise.all(users.map(async (user) => {
-            const appImprovData = await mongoose_1.connection.collection(constants_1.APP_IMPROVEMENT_TYPES).findOne({ _id: new ObjectId(user.app_improvement_suggestion.id) });
-            return Object.assign(Object.assign({}, user), { app_improvement_suggestion: Object.assign(Object.assign({}, user.app_improvement_suggestion), { name: appImprovData.name }) });
-        }));
-        return sanitizedDate;
+        let allSuggestion = await this.userSuggestion
+            .find({})
+            .populate('user_id', ['fullname', 'phone_number'])
+            .populate('app_improve_type_id', ['_id', 'name']);
+        console.log(allSuggestion, 'allSuggestion');
+        // @ts-ignore
+        allSuggestion = allSuggestion.map((suggestion) => {
+            var _a, _b, _c, _d, _e, _f, _g, _h;
+            return {
+                _id: suggestion.id,
+                phone_number: (_b = (_a = suggestion === null || suggestion === void 0 ? void 0 : suggestion.user_id) === null || _a === void 0 ? void 0 : _a.phone_number) !== null && _b !== void 0 ? _b : '',
+                fullname: (_d = (_c = suggestion === null || suggestion === void 0 ? void 0 : suggestion.user_id) === null || _c === void 0 ? void 0 : _c.fullname) !== null && _d !== void 0 ? _d : '',
+                app_improvement_suggestion: {
+                    id: (_e = suggestion === null || suggestion === void 0 ? void 0 : suggestion.app_improve_type_id) === null || _e === void 0 ? void 0 : _e._id,
+                    description: (_f = suggestion.description) !== null && _f !== void 0 ? _f : '',
+                    timestamp: suggestion.timestamp,
+                    name: (_h = (_g = suggestion === null || suggestion === void 0 ? void 0 : suggestion.app_improve_type_id) === null || _g === void 0 ? void 0 : _g.name) !== null && _h !== void 0 ? _h : '',
+                },
+            };
+        });
+        return allSuggestion;
     }
     async quickContactListing() {
         const quickContacts = await this.quickContact.find({}).lean();

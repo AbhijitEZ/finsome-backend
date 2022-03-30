@@ -1,5 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { QuickContactInf } from '@interfaces/general.interface';
+import { QUICK_CONTACTS } from '@/utils/constants';
 
 const quickContactSchema: Schema = new Schema(
   {
@@ -21,6 +22,6 @@ const quickContactSchema: Schema = new Schema(
   },
 );
 
-const quickContactModel = model<QuickContactInf & Document>('quick-contact', quickContactSchema);
+const quickContactModel = model<QuickContactInf & Document>(QUICK_CONTACTS, quickContactSchema);
 
 export default quickContactModel;

@@ -37,9 +37,9 @@ class AdminController {
 
   public appImprovementSuggestion = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const users = await this.adminService.appImprovementSuggestion();
+      const data = await this.adminService.appImprovementSuggestion();
 
-      res.status(200).json({ data: users });
+      res.status(200).json({ data });
     } catch (error) {
       next(error);
     }

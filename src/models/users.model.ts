@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { User } from '@interfaces/users.interface';
-import { APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, USERS, USER_ROLE } from '@/utils/constants';
 import { HttpException } from '@/exceptions/HttpException';
 
 const userSchema: Schema = new Schema(
@@ -67,18 +67,6 @@ const userSchema: Schema = new Schema(
       type: Boolean,
       default: false,
     },
-    app_improvement_suggestion: {
-      id: {
-        type: Schema.Types.ObjectId,
-        ref: APP_IMPROVEMENT_TYPES,
-      },
-      description: {
-        type: String,
-      },
-      timestamp: {
-        type: Date,
-      },
-    },
     forgot_password_otp: {
       code: {
         type: String,
@@ -113,6 +101,6 @@ userSchema.post('save', function (error, doc, next) {
   }
 });
 
-const userModel = model<User & Document>('users', userSchema);
+const userModel = model<User & Document>(USERS, userSchema);
 
 export default userModel;

@@ -1,5 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { OtpValidationInf } from '@interfaces/general.interface';
+import { OTP_VALIDATIONS } from '@/utils/constants';
 
 const otpValidationSchema: Schema = new Schema(
   {
@@ -25,6 +26,6 @@ const otpValidationSchema: Schema = new Schema(
   },
 );
 
-const otpValidationModel = model<OtpValidationInf & Document>('otp-validation', otpValidationSchema);
+const otpValidationModel = model<OtpValidationInf & Document>(OTP_VALIDATIONS, otpValidationSchema);
 
 export default otpValidationModel;
