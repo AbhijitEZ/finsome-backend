@@ -172,7 +172,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], ProfileUpdateDto.prototype, "gender", void 0);
 tslib_1.__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     tslib_1.__metadata("design:type", String)
 ], ProfileUpdateDto.prototype, "bio", void 0);

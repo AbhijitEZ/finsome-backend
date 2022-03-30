@@ -161,6 +161,7 @@ class AuthService {
         return { user: userResFilter };
     }
     async editProfile(userData, file, id) {
+        var _a;
         const userExistsCheckForEmailField = await this.users.findOne({ _id: { $ne: id }, email: userData.email });
         if (userExistsCheckForEmailField) {
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.email_exists);
@@ -176,7 +177,7 @@ class AuthService {
             birth_date: userData.birth_date,
             trading_exp: userData.trading_exp,
             gender: userData.gender,
-            bio: userData.bio,
+            bio: (_a = userData.bio) !== null && _a !== void 0 ? _a : null,
             youtube_link: userData.youtube_link,
             instagram_link: userData.instagram_link,
             telegram_link: userData.telegram_link,

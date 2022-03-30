@@ -131,7 +131,7 @@ export class ProfileUpdateDto {
   @IsIn(Object.keys(GENDER_CONST))
   gender: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   bio: string;
 

@@ -223,7 +223,7 @@ class AuthService {
       birth_date: userData.birth_date,
       trading_exp: userData.trading_exp,
       gender: userData.gender,
-      bio: userData.bio,
+      bio: userData.bio ?? null,
       youtube_link: userData.youtube_link,
       instagram_link: userData.instagram_link,
       telegram_link: userData.telegram_link,
