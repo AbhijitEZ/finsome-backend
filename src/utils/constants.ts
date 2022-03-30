@@ -48,7 +48,7 @@ export const GENDER_CONST = {
 
 export const FILE_LIMIT = 20000000;
 
-export const APP_IMPROVEMENT_TYPES = 'app-improvement-type';
+export const APP_IMPROVEMENT_TYPES = 'app-improvement-types';
 export const QUICK_CONTACTS = 'quick-contacts';
 export const OTP_VALIDATIONS = 'otp-validations';
 export const USERS = 'users';

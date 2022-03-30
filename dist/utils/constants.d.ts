@@ -43,7 +43,7 @@ export declare const GENDER_CONST: {
     OTHER: string;
 };
 export declare const FILE_LIMIT = 20000000;
-export declare const APP_IMPROVEMENT_TYPES = "app-improvement-type";
+export declare const APP_IMPROVEMENT_TYPES = "app-improvement-types";
 export declare const QUICK_CONTACTS = "quick-contacts";
 export declare const OTP_VALIDATIONS = "otp-validations";
 export declare const USERS = "users";

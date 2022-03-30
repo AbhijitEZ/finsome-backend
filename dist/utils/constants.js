@@ -46,7 +46,7 @@ exports.GENDER_CONST = {
     OTHER: 'OTHER',
 };
 exports.FILE_LIMIT = 20000000;
-exports.APP_IMPROVEMENT_TYPES = 'app-improvement-type';
+exports.APP_IMPROVEMENT_TYPES = 'app-improvement-types';
 exports.QUICK_CONTACTS = 'quick-contacts';
 exports.OTP_VALIDATIONS = 'otp-validations';
 exports.USERS = 'users';
