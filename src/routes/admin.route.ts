@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 
 import validationMiddleware from '@middlewares/validation.middleware';
-import { AdminLoginDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
+import { AdminLoginDto, PrivacyPolicyDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
 import AdminController from '@/controllers/admin.controller';
 import { authAdminMiddleware } from '@/middlewares/auth.middleware';
 
@@ -29,6 +29,13 @@ class AdminRoute implements Routes {
     );
     this.router.get(`${this.path}app-improvement-suggestions`, authAdminMiddleware, this.adminController.appImprovementSuggestion);
     this.router.get(`${this.path}quick-contacts`, authAdminMiddleware, this.adminController.quickContactListing);
+    this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);
+    this.router.post(
+      `${this.path}privacy-policy`,
+      validationMiddleware(PrivacyPolicyDto, 'body'),
+      authAdminMiddleware,
+      this.adminController.privacyPolicyUpdate,
+    );
   }
 }
 

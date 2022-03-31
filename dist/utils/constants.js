@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.profileImageFolder = exports.USER_SUGGESTION_IMPROVEMENTS = exports.USERS = exports.OTP_VALIDATIONS = exports.QUICK_CONTACTS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
+exports.profileImageFolder = exports.USER_SUGGESTION_IMPROVEMENTS = exports.USERS = exports.OTP_VALIDATIONS = exports.PRIVACY_POLICIES = exports.QUICK_CONTACTS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
 exports.APP_SUCCESS_MESSAGE = {
     signup_phone_verify_success: 'Signup phone verified successfully.',
     signup_success: 'Signup successfully.',
@@ -31,6 +31,7 @@ exports.APP_ERROR_MESSAGE = {
     otp_invalid: 'Invalid OTP, try different one.',
     phone_invalid: 'Invalid phonenumber, try different one.',
     user_not_exists: "User doesn't exists for the following phone number.",
+    privacy_not_exists: "Privacy Policy doesn't exists.",
     error_with_twilio: 'Error with Twillio need to debug further.',
     error_with_textlocal: 'Error with Text Local need to debug further.',
     incorrect_password: 'Incorrect Password.',
@@ -48,6 +49,7 @@ exports.GENDER_CONST = {
 exports.FILE_LIMIT = 20000000;
 exports.APP_IMPROVEMENT_TYPES = 'app-improvement-types';
 exports.QUICK_CONTACTS = 'quick-contacts';
+exports.PRIVACY_POLICIES = 'privacy-policies';
 exports.OTP_VALIDATIONS = 'otp-validations';
 exports.USERS = 'users';
 exports.USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';

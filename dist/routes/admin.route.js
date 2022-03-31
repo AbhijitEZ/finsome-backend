@@ -22,6 +22,8 @@ class AdminRoute {
         this.router.post(`${this.path}toggle-user-status`, (0, validation_middleware_1.default)(admin_dto_1.ToggleUserStatusDto, 'body'), auth_middleware_1.authAdminMiddleware, this.adminController.toggleUserStatus);
         this.router.get(`${this.path}app-improvement-suggestions`, auth_middleware_1.authAdminMiddleware, this.adminController.appImprovementSuggestion);
         this.router.get(`${this.path}quick-contacts`, auth_middleware_1.authAdminMiddleware, this.adminController.quickContactListing);
+        this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);
+        this.router.post(`${this.path}privacy-policy`, (0, validation_middleware_1.default)(admin_dto_1.PrivacyPolicyDto, 'body'), auth_middleware_1.authAdminMiddleware, this.adminController.privacyPolicyUpdate);
     }
 }
 exports.default = AdminRoute;

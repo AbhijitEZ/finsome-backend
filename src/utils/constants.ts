@@ -29,6 +29,7 @@ export const APP_ERROR_MESSAGE = {
   otp_invalid: 'Invalid OTP, try different one.',
   phone_invalid: 'Invalid phonenumber, try different one.',
   user_not_exists: "User doesn't exists for the following phone number.",
+  privacy_not_exists: "Privacy Policy doesn't exists.",
   error_with_twilio: 'Error with Twillio need to debug further.',
   error_with_textlocal: 'Error with Text Local need to debug further.',
   incorrect_password: 'Incorrect Password.',
@@ -50,6 +51,7 @@ export const FILE_LIMIT = 20000000;
 
 export const APP_IMPROVEMENT_TYPES = 'app-improvement-types';
 export const QUICK_CONTACTS = 'quick-contacts';
+export const PRIVACY_POLICIES = 'privacy-policies';
 export const OTP_VALIDATIONS = 'otp-validations';
 export const USERS = 'users';
 export const USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';

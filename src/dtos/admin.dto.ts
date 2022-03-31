@@ -23,3 +23,9 @@ export class ToggleUserStatusDto extends IdDto {
   @IsBoolean()
   status: boolean;
 }
+
+export class PrivacyPolicyDto {
+  @IsNotEmpty()
+  @IsString()
+  content: string;
+}

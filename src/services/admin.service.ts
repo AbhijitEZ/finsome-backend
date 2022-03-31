@@ -1,4 +1,4 @@
-import { AdminLoginDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
+import { AdminLoginDto, PrivacyPolicyDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
@@ -11,12 +11,14 @@ import { profileImageGenerator } from '@/utils/util';
 import { toDate } from 'date-fns';
 import quickContactModel from '@/models/quick-contact';
 import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
+import privacyPolicyModel from '@/models/privacy-policy';
 
 class AdminService {
   public users = userModel;
   public appImprovement = appImprovementModel;
   public quickContact = quickContactModel;
   public userSuggestion = userSuggestionImprovementModel;
+  public privacyPolicy = privacyPolicyModel;
 
   public async adminLogin(loginDto: AdminLoginDto): Promise<{ token: string }> {
     const adminUser: User = await this.users.findOne({
@@ -59,6 +61,26 @@ class AdminService {
     if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
 
     await this.users.findByIdAndUpdate(user.id, { deleted_at: user.status ? toDate(new Date()) : null }, { new: true });
+  }
+
+  public async privacyPolicyListing(): Promise<any> {
+    const findData = await this.privacyPolicy.findOne({}).lean();
+    console.log(findData, 'findData');
+    if (!findData) {
+      throw new HttpException(409, APP_ERROR_MESSAGE.privacy_not_exists);
+    }
+
+    return findData;
+  }
+
+  public async privacyPolicyUpdate(data: PrivacyPolicyDto): Promise<void> {
+    const findData = await this.privacyPolicy.findOne({}).lean();
+    if (!findData) {
+      await this.privacyPolicy.create({ ...data });
+      return;
+    }
+
+    await this.privacyPolicy.findByIdAndUpdate(findData._id, { ...data });
   }
 
   public async appImprovementSuggestion(): Promise<any> {

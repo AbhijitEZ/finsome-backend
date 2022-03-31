@@ -33,6 +33,24 @@ class AdminController {
                 next(error);
             }
         };
+        this.privacyPolicy = async (req, res, next) => {
+            try {
+                const data = await this.adminService.privacyPolicyListing();
+                res.status(200).json({ data });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.privacyPolicyUpdate = async (req, res, next) => {
+            try {
+                await this.adminService.privacyPolicyUpdate(req.body);
+                res.status(200).json({ data: {} });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.appImprovementSuggestion = async (req, res, next) => {
             try {
                 const data = await this.adminService.appImprovementSuggestion();

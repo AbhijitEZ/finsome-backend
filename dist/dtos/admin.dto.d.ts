@@ -8,3 +8,6 @@ export declare class AdminLoginDto {
 export declare class ToggleUserStatusDto extends IdDto {
     status: boolean;
 }
+export declare class PrivacyPolicyDto {
+    content: string;
+}

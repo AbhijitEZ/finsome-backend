@@ -23,3 +23,8 @@ export interface UserSuggestionImproveInf {
   description?: string;
   timestamp: string;
 }
+
+export interface PrivacyPolicyInf {
+  _id: string;
+  content: string;
+}

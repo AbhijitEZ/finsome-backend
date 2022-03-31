@@ -12,12 +12,14 @@ const util_1 = require("../utils/util");
 const date_fns_1 = require("date-fns");
 const quick_contact_1 = tslib_1.__importDefault(require("../models/quick-contact"));
 const user_suggestion_improvement_1 = tslib_1.__importDefault(require("../models/user-suggestion-improvement"));
+const privacy_policy_1 = tslib_1.__importDefault(require("../models/privacy-policy"));
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
         this.appImprovement = app_improvement_type_1.default;
         this.quickContact = quick_contact_1.default;
         this.userSuggestion = user_suggestion_improvement_1.default;
+        this.privacyPolicy = privacy_policy_1.default;
     }
     async adminLogin(loginDto) {
         const adminUser = await this.users.findOne({
@@ -52,6 +54,22 @@ class AdminService {
         if (!findUser)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
         await this.users.findByIdAndUpdate(user.id, { deleted_at: user.status ? (0, date_fns_1.toDate)(new Date()) : null }, { new: true });
+    }
+    async privacyPolicyListing() {
+        const findData = await this.privacyPolicy.findOne({}).lean();
+        console.log(findData, 'findData');
+        if (!findData) {
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.privacy_not_exists);
+        }
+        return findData;
+    }
+    async privacyPolicyUpdate(data) {
+        const findData = await this.privacyPolicy.findOne({}).lean();
+        if (!findData) {
+            await this.privacyPolicy.create(Object.assign({}, data));
+            return;
+        }
+        await this.privacyPolicy.findByIdAndUpdate(findData._id, Object.assign({}, data));
     }
     async appImprovementSuggestion() {
         let allSuggestion = await this.userSuggestion
