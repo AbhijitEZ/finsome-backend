@@ -27,7 +27,7 @@ class AdminService {
     });
 
     if (!adminUser) {
-      throw new HttpException(400, APP_ERROR_MESSAGE.user_not_exists);
+      throw new HttpException(400, APP_ERROR_MESSAGE.user_not_exists_id);
     }
 
     const isPasswordMatching: boolean = await compare(loginDto.password, adminUser.password);
@@ -58,9 +58,19 @@ class AdminService {
   public async toggleUserStatus(user: ToggleUserStatusDto): Promise<void> {
     const findUser = await this.users.findOne({ _id: user.id }).lean();
 
-    if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+    if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists_id);
 
     await this.users.findByIdAndUpdate(user.id, { deleted_at: user.status ? toDate(new Date()) : null }, { new: true });
+  }
+
+  public async deleteUser(id: string): Promise<void> {
+    const findUser = await this.users.findOne({ _id: id }).lean();
+
+    if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists_id);
+
+    // ANCHOR This would be added on, when more models gets associated with Users.
+    await this.userSuggestion.findOneAndDelete({ user_id: id });
+    await this.users.findOneAndDelete({ _id: id });
   }
 
   public async privacyPolicyListing(): Promise<any> {

@@ -27,6 +27,7 @@ class AdminRoute implements Routes {
       authAdminMiddleware,
       this.adminController.toggleUserStatus,
     );
+    this.router.delete(`${this.path}user/:id`, authAdminMiddleware, this.adminController.deleteUser);
     this.router.get(`${this.path}app-improvement-suggestions`, authAdminMiddleware, this.adminController.appImprovementSuggestion);
     this.router.get(`${this.path}quick-contacts`, authAdminMiddleware, this.adminController.quickContactListing);
     this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);

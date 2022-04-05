@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import AdminService from '@services/admin.service';
-import { APP_SUCCESS_MESSAGE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, APP_SUCCESS_MESSAGE } from '@/utils/constants';
+import { HttpException } from '@/exceptions/HttpException';
 
 class AdminController {
   public adminService = new AdminService();
@@ -30,6 +31,22 @@ class AdminController {
       await this.adminService.toggleUserStatus(req.body);
 
       res.status(200).json({ data: {} });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        throw new HttpException(409, APP_ERROR_MESSAGE.id_not_exists);
+      }
+
+      await this.adminService.deleteUser(id);
+
+      res.status(200).json({ data: {}, message: APP_SUCCESS_MESSAGE.delete_user_success });
     } catch (error) {
       next(error);
     }
