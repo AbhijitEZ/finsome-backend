@@ -60,12 +60,11 @@ class AdminService {
         if (!findUser)
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists_id);
         // ANCHOR This would be added on, when more models gets associated with Users.
-        await this.userSuggestion.findOneAndDelete({ user_id: id });
-        await this.users.findOneAndDelete({ _id: id });
+        await this.userSuggestion.findOneAndDelete({ user_id: id }).exec();
+        await this.users.findOneAndDelete({ _id: id }).exec();
     }
     async privacyPolicyListing() {
         const findData = await this.privacyPolicy.findOne({}).lean();
-        console.log(findData, 'findData');
         if (!findData) {
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.privacy_not_exists);
         }
@@ -84,7 +83,6 @@ class AdminService {
             .find({})
             .populate('user_id', ['fullname', 'phone_number'])
             .populate('app_improve_type_id', ['_id', 'name']);
-        console.log(allSuggestion, 'allSuggestion');
         // @ts-ignore
         allSuggestion = allSuggestion.map((suggestion) => {
             var _a, _b, _c, _d, _e, _f, _g, _h;
