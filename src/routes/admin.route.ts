@@ -37,6 +37,13 @@ class AdminRoute implements Routes {
       authAdminMiddleware,
       this.adminController.privacyPolicyUpdate,
     );
+    this.router.get(`${this.path}terms-condition`, this.adminController.termsConditionListing);
+    this.router.post(
+      `${this.path}terms-condition`,
+      validationMiddleware(PrivacyPolicyDto, 'body'),
+      authAdminMiddleware,
+      this.adminController.termsConditionUpdate,
+    );
   }
 }
 

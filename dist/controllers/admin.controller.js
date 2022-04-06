@@ -56,6 +56,24 @@ class AdminController {
                 next(error);
             }
         };
+        this.termsConditionListing = async (req, res, next) => {
+            try {
+                const data = await this.adminService.termsConditionListing();
+                res.status(200).json({ data });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.termsConditionUpdate = async (req, res, next) => {
+            try {
+                await this.adminService.termsConditionUpdate(req.body);
+                res.status(200).json({ data: {} });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.privacyPolicyUpdate = async (req, res, next) => {
             try {
                 await this.adminService.privacyPolicyUpdate(req.body);

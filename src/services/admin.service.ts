@@ -12,6 +12,7 @@ import { toDate } from 'date-fns';
 import quickContactModel from '@/models/quick-contact';
 import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
 import privacyPolicyModel from '@/models/privacy-policy';
+import termsConditionModel from '@/models/terms-condition';
 
 class AdminService {
   public users = userModel;
@@ -19,6 +20,7 @@ class AdminService {
   public quickContact = quickContactModel;
   public userSuggestion = userSuggestionImprovementModel;
   public privacyPolicy = privacyPolicyModel;
+  public termsConditionM = termsConditionModel;
 
   public async adminLogin(loginDto: AdminLoginDto): Promise<{ token: string }> {
     const adminUser: User = await this.users.findOne({
@@ -90,6 +92,25 @@ class AdminService {
     }
 
     await this.privacyPolicy.findByIdAndUpdate(findData._id, { ...data });
+  }
+
+  public async termsConditionListing(): Promise<any> {
+    const findData = await this.termsConditionM.findOne({}).lean();
+    if (!findData) {
+      throw new HttpException(409, APP_ERROR_MESSAGE.terms_not_exists);
+    }
+
+    return findData;
+  }
+
+  public async termsConditionUpdate(data: PrivacyPolicyDto): Promise<void> {
+    const findData = await this.termsConditionM.findOne({}).lean();
+    if (!findData) {
+      await this.termsConditionM.create({ ...data });
+      return;
+    }
+
+    await this.termsConditionM.findByIdAndUpdate(findData._id, { ...data });
   }
 
   public async appImprovementSuggestion(): Promise<any> {

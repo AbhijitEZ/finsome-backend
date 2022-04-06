@@ -25,6 +25,8 @@ class AdminRoute {
         this.router.get(`${this.path}quick-contacts`, auth_middleware_1.authAdminMiddleware, this.adminController.quickContactListing);
         this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);
         this.router.post(`${this.path}privacy-policy`, (0, validation_middleware_1.default)(admin_dto_1.PrivacyPolicyDto, 'body'), auth_middleware_1.authAdminMiddleware, this.adminController.privacyPolicyUpdate);
+        this.router.get(`${this.path}terms-condition`, this.adminController.termsConditionListing);
+        this.router.post(`${this.path}terms-condition`, (0, validation_middleware_1.default)(admin_dto_1.PrivacyPolicyDto, 'body'), auth_middleware_1.authAdminMiddleware, this.adminController.termsConditionUpdate);
     }
 }
 exports.default = AdminRoute;

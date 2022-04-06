@@ -7,6 +7,7 @@ declare class AdminService {
     quickContact: import("mongoose").Model<import("../interfaces/general.interface").QuickContactInf & import("mongoose").Document<any, any, any>, {}, {}>;
     userSuggestion: import("mongoose").Model<import("../interfaces/general.interface").UserSuggestionImproveInf & import("mongoose").Document<any, any, any>, {}, {}>;
     privacyPolicy: import("mongoose").Model<import("../interfaces/general.interface").PrivacyPolicyInf & import("mongoose").Document<any, any, any>, {}, {}>;
+    termsConditionM: import("mongoose").Model<import("../interfaces/general.interface").PrivacyPolicyInf & import("mongoose").Document<any, any, any>, {}, {}>;
     adminLogin(loginDto: AdminLoginDto): Promise<{
         token: string;
     }>;
@@ -15,6 +16,8 @@ declare class AdminService {
     deleteUser(id: string): Promise<void>;
     privacyPolicyListing(): Promise<any>;
     privacyPolicyUpdate(data: PrivacyPolicyDto): Promise<void>;
+    termsConditionListing(): Promise<any>;
+    termsConditionUpdate(data: PrivacyPolicyDto): Promise<void>;
     appImprovementSuggestion(): Promise<any>;
     quickContactListing(): Promise<Record<string, any>>;
 }

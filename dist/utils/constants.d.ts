@@ -33,6 +33,7 @@ export declare const APP_ERROR_MESSAGE: {
     user_not_exists: string;
     user_not_exists_id: string;
     privacy_not_exists: string;
+    terms_not_exists: string;
     error_with_twilio: string;
     error_with_textlocal: string;
     incorrect_password: string;
@@ -51,6 +52,7 @@ export declare const FILE_LIMIT = 20000000;
 export declare const APP_IMPROVEMENT_TYPES = "app-improvement-types";
 export declare const QUICK_CONTACTS = "quick-contacts";
 export declare const PRIVACY_POLICIES = "privacy-policies";
+export declare const TERMS_CONDITIONS = "terms-conditions";
 export declare const OTP_VALIDATIONS = "otp-validations";
 export declare const USERS = "users";
 export declare const USER_SUGGESTION_IMPROVEMENTS = "user-suggestion-improvements";

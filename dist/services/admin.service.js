@@ -13,6 +13,7 @@ const date_fns_1 = require("date-fns");
 const quick_contact_1 = tslib_1.__importDefault(require("../models/quick-contact"));
 const user_suggestion_improvement_1 = tslib_1.__importDefault(require("../models/user-suggestion-improvement"));
 const privacy_policy_1 = tslib_1.__importDefault(require("../models/privacy-policy"));
+const terms_condition_1 = tslib_1.__importDefault(require("../models/terms-condition"));
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
@@ -20,6 +21,7 @@ class AdminService {
         this.quickContact = quick_contact_1.default;
         this.userSuggestion = user_suggestion_improvement_1.default;
         this.privacyPolicy = privacy_policy_1.default;
+        this.termsConditionM = terms_condition_1.default;
     }
     async adminLogin(loginDto) {
         const adminUser = await this.users.findOne({
@@ -77,6 +79,21 @@ class AdminService {
             return;
         }
         await this.privacyPolicy.findByIdAndUpdate(findData._id, Object.assign({}, data));
+    }
+    async termsConditionListing() {
+        const findData = await this.termsConditionM.findOne({}).lean();
+        if (!findData) {
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.terms_not_exists);
+        }
+        return findData;
+    }
+    async termsConditionUpdate(data) {
+        const findData = await this.termsConditionM.findOne({}).lean();
+        if (!findData) {
+            await this.termsConditionM.create(Object.assign({}, data));
+            return;
+        }
+        await this.termsConditionM.findByIdAndUpdate(findData._id, Object.assign({}, data));
     }
     async appImprovementSuggestion() {
         let allSuggestion = await this.userSuggestion
