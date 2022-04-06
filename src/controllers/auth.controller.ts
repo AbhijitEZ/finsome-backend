@@ -154,6 +154,23 @@ class AuthController {
     }
   };
 
+  public changePhoneNumber = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userData: VerifyOtpDTO = req.body;
+
+      // TODO: Would have actual OTP check after client confirmation
+      if (userData.otp !== '9999') {
+        throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
+      }
+      // @ts-ignore
+      const user = await this.authService.changePhoneNumber(userData, req.user._id);
+
+      responseJSONMapper(res, 200, { ...user }, APP_SUCCESS_MESSAGE.phone_change_success);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public notificationUpdate = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userData: NotificationDto = req.body;

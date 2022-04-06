@@ -26,6 +26,7 @@ class AuthRoute {
         this.router.post(`${this.path}change-password`, (0, validation_middleware_1.default)(users_dto_1.ChangePasswordDto, 'body'), auth_middleware_1.default, this.authController.changePassword);
         this.router.get(`${this.path}profile`, auth_middleware_1.default, this.authController.profile);
         this.router.post(`${this.path}profile`, global_1.fileUploadCB, (0, validation_middleware_1.default)(users_dto_1.ProfileUpdateDto, 'body'), auth_middleware_1.default, this.authController.editProfile);
+        this.router.post(`${this.path}change-phone-number`, (0, validation_middleware_1.default)(users_dto_1.VerifyOtpDTO, 'body'), auth_middleware_1.default, this.authController.changePhoneNumber);
         this.router.post(`${this.path}notification`, (0, validation_middleware_1.default)(users_dto_1.NotificationDto, 'body'), auth_middleware_1.default, this.authController.notificationUpdate);
         this.router.post(`${this.path}logout`, auth_middleware_1.default, this.authController.logOut);
         // SECTION: General APIS => START

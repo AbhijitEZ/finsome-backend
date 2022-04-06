@@ -4,6 +4,7 @@ export const APP_SUCCESS_MESSAGE = {
   login_success: 'Login successfully.',
   logout_success: 'Logout successfully.',
   change_password_success: 'Password updated successfully.',
+  phone_change_success: 'Phone number changed successfully.',
   delete_user_success: 'Deleted user successfully.',
   notification_update_success: 'Notification settings updated successfully.',
   update_profile_success: 'Profile updated successfully.',

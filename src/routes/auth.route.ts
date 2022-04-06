@@ -52,6 +52,12 @@ class AuthRoute implements Routes {
       this.authController.editProfile,
     );
     this.router.post(
+      `${this.path}change-phone-number`,
+      validationMiddleware(VerifyOtpDTO, 'body'),
+      authMiddleware,
+      this.authController.changePhoneNumber,
+    );
+    this.router.post(
       `${this.path}notification`,
       validationMiddleware(NotificationDto, 'body'),
       authMiddleware,

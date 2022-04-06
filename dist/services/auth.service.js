@@ -199,6 +199,13 @@ class AuthService {
         await this.users.findByIdAndUpdate(id, payload, { new: true });
         return await this.profile(id);
     }
+    async changePhoneNumber(userData, id) {
+        const findUser = await this.users.findOne({ _id: id }).lean();
+        if (!findUser)
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_not_exists);
+        await this.users.findByIdAndUpdate(id, { phone_country_code: userData.phone_country_code, phone_number: userData.phone_number }, { new: true });
+        return await this.profile(id);
+    }
     async notificationUpdate(userData, id) {
         const findUser = await this.users.findOne({ _id: id }).lean();
         if (!findUser)

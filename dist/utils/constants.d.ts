@@ -4,6 +4,7 @@ export declare const APP_SUCCESS_MESSAGE: {
     login_success: string;
     logout_success: string;
     change_password_success: string;
+    phone_change_success: string;
     delete_user_success: string;
     notification_update_success: string;
     update_profile_success: string;

@@ -249,6 +249,15 @@ class AuthService {
     return await this.profile(id);
   }
 
+  public async changePhoneNumber(userData: VerifyOtpDTO, id: string): Promise<any> {
+    const findUser = await this.users.findOne({ _id: id }).lean();
+    if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+
+    await this.users.findByIdAndUpdate(id, { phone_country_code: userData.phone_country_code, phone_number: userData.phone_number }, { new: true });
+
+    return await this.profile(id);
+  }
+
   public async notificationUpdate(userData: NotificationDto, id: string): Promise<any> {
     const findUser = await this.users.findOne({ _id: id }).lean();
     if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);

@@ -32,6 +32,7 @@ declare class AuthService {
         user: Partial<User>;
     }>;
     editProfile(userData: ProfileUpdateDto, file: Express.Multer.File, id: string): Promise<any>;
+    changePhoneNumber(userData: VerifyOtpDTO, id: string): Promise<any>;
     notificationUpdate(userData: NotificationDto, id: string): Promise<any>;
     logout(userData: User): Promise<void>;
     appImprovementTypes(): Promise<any>;
