@@ -46,6 +46,7 @@ class AdminService {
             _id: { $ne: user._id },
             role: { $ne: constants_1.USER_ROLE.ADMIN },
         })
+            .sort({ created_at: -1 })
             .select(['-password', '-updated_at', '-term_agree_timestamp'])
             .lean();
         const userSanitized = users.map(user => (Object.assign(Object.assign({}, user), { profile_photo: (0, util_1.profileImageGenerator)(user.profile_photo) })));
@@ -99,6 +100,7 @@ class AdminService {
         let allSuggestion = await this.userSuggestion
             .find({})
             .populate('user_id', ['fullname', 'phone_number'])
+            .sort({ timestamp: -1 })
             .populate('app_improve_type_id', ['_id', 'name']);
         // @ts-ignore
         allSuggestion = allSuggestion.map((suggestion) => {
@@ -118,7 +120,7 @@ class AdminService {
         return allSuggestion;
     }
     async quickContactListing() {
-        const quickContacts = await this.quickContact.find({}).lean();
+        const quickContacts = await this.quickContact.find({}).sort({ created_at: -1 }).lean();
         return quickContacts;
     }
 }

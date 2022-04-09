@@ -49,6 +49,7 @@ class AdminService {
         _id: { $ne: user._id },
         role: { $ne: USER_ROLE.ADMIN },
       })
+      .sort({ created_at: -1 })
       .select(['-password', '-updated_at', '-term_agree_timestamp'])
       .lean();
 
@@ -117,6 +118,7 @@ class AdminService {
     let allSuggestion = await this.userSuggestion
       .find({})
       .populate('user_id', ['fullname', 'phone_number'])
+      .sort({ timestamp: -1 })
       .populate('app_improve_type_id', ['_id', 'name']);
 
     // @ts-ignore
@@ -138,7 +140,7 @@ class AdminService {
   }
 
   public async quickContactListing(): Promise<Record<string, any>> {
-    const quickContacts = await this.quickContact.find({}).lean();
+    const quickContacts = await this.quickContact.find({}).sort({ created_at: -1 }).lean();
 
     return quickContacts;
   }
