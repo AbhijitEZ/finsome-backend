@@ -165,7 +165,7 @@ class AuthService {
         }
         // @ts-ignore
         if (findUser.deleted_at) {
-            throw new HttpException_1.HttpException(401, constants_1.APP_ERROR_MESSAGE.user_blocked);
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.user_blocked);
         }
         const token_data = this.createToken(findUser);
         const cookie = this.createCookie(token_data);

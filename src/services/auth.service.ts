@@ -188,7 +188,7 @@ class AuthService {
 
     // @ts-ignore
     if (findUser.deleted_at) {
-      throw new HttpException(401, APP_ERROR_MESSAGE.user_blocked);
+      throw new HttpException(400, APP_ERROR_MESSAGE.user_blocked);
     }
 
     const token_data = this.createToken(findUser);
