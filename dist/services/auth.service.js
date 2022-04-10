@@ -47,6 +47,9 @@ class AuthService {
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.user_field_exists);
     }
     async verifyPhoneNumberWithOTP(reqData, userData) {
+        const userFound = await this.users.findOne({ phone_number: reqData.phone_number });
+        if (userFound)
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.phone_exists);
         // For Change Phone number require userData
         if (userData) {
             // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
@@ -62,10 +65,6 @@ class AuthService {
             return;
         }
         else {
-            /* When used for initial signup, we would check this condition in order to update OTP Validation table */
-            const userFound = await this.users.findOne({ phone_number: reqData.phone_number });
-            if (userFound)
-                throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.phone_exists);
             // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
             if (reqData.is_testing === 'true') {
                 return;
