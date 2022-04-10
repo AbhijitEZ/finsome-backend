@@ -30,7 +30,7 @@ exports.APP_ERROR_MESSAGE = {
     username_exists: 'Username already exists use something different.',
     phone_exists: 'Phone number is already exists please use another mobile number.',
     forbidden_error: 'Forbidden to access this resource for particular user.',
-    user_blocked: 'User has been blocked by admin, contact admin to unblock.',
+    user_blocked: 'Your account has been deactivated, please contact `contact@finsom.in` to activate your account.',
     otp_invalid: 'Invalid OTP, try different one.',
     phone_invalid: 'Invalid phonenumber, try different one.',
     user_not_exists: "User doesn't exists for the following phone number.",

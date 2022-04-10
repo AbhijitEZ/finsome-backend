@@ -13,9 +13,8 @@ import {
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import AuthService from '@services/auth.service';
-import { APP_ERROR_MESSAGE, APP_SUCCESS_MESSAGE } from '@/utils/constants';
+import { APP_SUCCESS_MESSAGE } from '@/utils/constants';
 import { responseJSONMapper } from '@/utils/global';
-import { HttpException } from '@/exceptions/HttpException';
 
 class AuthController {
   public authService = new AuthService();
@@ -31,10 +30,10 @@ class AuthController {
     }
   };
 
-  public verifyPhoneNumber = async (req: Request, res: Response, next: NextFunction) => {
+  public verifyPhoneNumberWithOTP = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const reqPayload: VerifyPhoneDto = req.body;
-      await this.authService.verifyPhoneNumber(reqPayload);
+      await this.authService.verifyPhoneNumberWithOTP(reqPayload, req.user);
 
       // TODO: OTP phase would be dynamic after the client confirmation
       responseJSONMapper(res, 200, { ...reqPayload, otp: 9999 }, APP_SUCCESS_MESSAGE.sent_otp_success);
@@ -58,11 +57,6 @@ class AuthController {
   public signUpPhoneVerify = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userData: SignupPhoneDto = req.body;
-      // TODO: Would have actual OTP check after client confirmation
-      if (userData.otp !== '9999') {
-        throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
-      }
-      delete userData.otp;
       const { user } = await this.authService.signUpPhoneVerify(userData);
 
       responseJSONMapper(res, 201, { user }, APP_SUCCESS_MESSAGE.signup_phone_verify_success);
@@ -98,7 +92,7 @@ class AuthController {
   public forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const reqPayload: VerifyPhoneDto = req.body;
-      // TODO: Here Id would be changed to unquie code
+
       await this.authService.forgotPassword(reqPayload);
 
       // TODO: OTP phase would be dynamic after the client confirmation
@@ -158,10 +152,6 @@ class AuthController {
     try {
       const userData: VerifyOtpDTO = req.body;
 
-      // TODO: Would have actual OTP check after client confirmation
-      if (userData.otp !== '9999') {
-        throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
-      }
       // @ts-ignore
       const user = await this.authService.changePhoneNumber(userData, req.user._id);
 

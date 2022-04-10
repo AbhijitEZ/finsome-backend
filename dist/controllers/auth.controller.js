@@ -4,7 +4,6 @@ const tslib_1 = require("tslib");
 const auth_service_1 = tslib_1.__importDefault(require("../services/auth.service"));
 const constants_1 = require("../utils/constants");
 const global_1 = require("../utils/global");
-const HttpException_1 = require("../exceptions/HttpException");
 class AuthController {
     constructor() {
         this.authService = new auth_service_1.default();
@@ -18,10 +17,10 @@ class AuthController {
                 next(error);
             }
         };
-        this.verifyPhoneNumber = async (req, res, next) => {
+        this.verifyPhoneNumberWithOTP = async (req, res, next) => {
             try {
                 const reqPayload = req.body;
-                await this.authService.verifyPhoneNumber(reqPayload);
+                await this.authService.verifyPhoneNumberWithOTP(reqPayload, req.user);
                 // TODO: OTP phase would be dynamic after the client confirmation
                 (0, global_1.responseJSONMapper)(res, 200, Object.assign(Object.assign({}, reqPayload), { otp: 9999 }), constants_1.APP_SUCCESS_MESSAGE.sent_otp_success);
             }
@@ -43,11 +42,6 @@ class AuthController {
         this.signUpPhoneVerify = async (req, res, next) => {
             try {
                 const userData = req.body;
-                // TODO: Would have actual OTP check after client confirmation
-                if (userData.otp !== '9999') {
-                    throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.otp_invalid);
-                }
-                delete userData.otp;
                 const { user } = await this.authService.signUpPhoneVerify(userData);
                 (0, global_1.responseJSONMapper)(res, 201, { user }, constants_1.APP_SUCCESS_MESSAGE.signup_phone_verify_success);
             }
@@ -80,7 +74,6 @@ class AuthController {
         this.forgotPassword = async (req, res, next) => {
             try {
                 const reqPayload = req.body;
-                // TODO: Here Id would be changed to unquie code
                 await this.authService.forgotPassword(reqPayload);
                 // TODO: OTP phase would be dynamic after the client confirmation
                 (0, global_1.responseJSONMapper)(res, 200, Object.assign(Object.assign({}, reqPayload), { otp: 9999 }), constants_1.APP_SUCCESS_MESSAGE.sent_otp_success);
@@ -134,10 +127,6 @@ class AuthController {
         this.changePhoneNumber = async (req, res, next) => {
             try {
                 const userData = req.body;
-                // TODO: Would have actual OTP check after client confirmation
-                if (userData.otp !== '9999') {
-                    throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.otp_invalid);
-                }
                 // @ts-ignore
                 const user = await this.authService.changePhoneNumber(userData, req.user._id);
                 (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, user), constants_1.APP_SUCCESS_MESSAGE.phone_change_success);

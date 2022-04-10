@@ -5,6 +5,7 @@ export interface OtpValidationInf {
     otp: string;
     confirmed: boolean;
     created_at: Date;
+    updated_at: Date;
 }
 export interface AppImprovementInf {
     _id: string;

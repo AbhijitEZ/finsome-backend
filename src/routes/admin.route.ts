@@ -21,6 +21,7 @@ class AdminRoute implements Routes {
   private initializeRoutes() {
     this.router.post(`${this.path}login`, validationMiddleware(AdminLoginDto, 'body'), this.adminController.adminLogin);
     this.router.get(`${this.path}users`, authAdminMiddleware, this.adminController.userListing);
+    this.router.get(`${this.path}dashboard`, authAdminMiddleware, this.adminController.dashboardData);
     this.router.post(
       `${this.path}toggle-user-status`,
       validationMiddleware(ToggleUserStatusDto, 'body'),

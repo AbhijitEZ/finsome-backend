@@ -4,7 +4,7 @@ const tslib_1 = require("tslib");
 const express_1 = require("express");
 const auth_controller_1 = tslib_1.__importDefault(require("../controllers/auth.controller"));
 const users_dto_1 = require("../dtos/users.dto");
-const auth_middleware_1 = tslib_1.__importDefault(require("../middlewares/auth.middleware"));
+const auth_middleware_1 = tslib_1.__importStar(require("../middlewares/auth.middleware"));
 const validation_middleware_1 = tslib_1.__importDefault(require("../middlewares/validation.middleware"));
 const global_1 = require("../utils/global");
 class AuthRoute {
@@ -15,7 +15,7 @@ class AuthRoute {
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.router.post(`${this.path}verify-phone`, (0, validation_middleware_1.default)(users_dto_1.VerifyPhoneDto, 'body'), this.authController.verifyPhoneNumber);
+        this.router.post(`${this.path}verify-phone`, (0, validation_middleware_1.default)(users_dto_1.VerifyPhoneDto, 'body'), auth_middleware_1.authOptionalMiddleware, this.authController.verifyPhoneNumberWithOTP);
         this.router.post(`${this.path}verify-otp`, (0, validation_middleware_1.default)(users_dto_1.VerifyOtpDTO, 'body'), this.authController.verifyOTP);
         this.router.post(`${this.path}forgot-password`, (0, validation_middleware_1.default)(users_dto_1.VerifyPhoneDto, 'body'), this.authController.forgotPassword);
         this.router.post(`${this.path}reset-password`, (0, validation_middleware_1.default)(users_dto_1.ResetPasswordDto, 'body'), this.authController.resetPassword);

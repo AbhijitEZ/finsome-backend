@@ -10,8 +10,7 @@ declare class AuthService {
     quickContact: import("mongoose").Model<import("../interfaces/general.interface").QuickContactInf & import("mongoose").Document<any, any, any>, {}, {}>;
     userAppSuggestion: import("mongoose").Model<import("../interfaces/general.interface").UserSuggestionImproveInf & import("mongoose").Document<any, any, any>, {}, {}>;
     validateUserField(userData: ValidateUserFieldDto): Promise<void>;
-    verifyPhoneNumber(reqData: VerifyPhoneDto): Promise<void>;
-    verifyOtp(reqData: VerifyOtpDTO): Promise<any>;
+    verifyPhoneNumberWithOTP(reqData: VerifyPhoneDto, userData?: User): Promise<void>;
     signUpPhoneVerify(userData: SignupPhoneDto): Promise<{
         user: Partial<User>;
     }>;
@@ -26,6 +25,7 @@ declare class AuthService {
         token_data: TokenData;
     }>;
     forgotPassword(reqData: VerifyPhoneDto): Promise<void>;
+    verifyOtp(reqData: VerifyOtpDTO): Promise<any>;
     resetPassword(reqData: ResetPasswordDto): Promise<void>;
     changePassword(userData: ChangePasswordDto, id: string): Promise<void>;
     profile(id: String): Promise<{
@@ -41,5 +41,6 @@ declare class AuthService {
     addQuickContact(reqData: QuickContactDto): Promise<any>;
     createToken(user: User): TokenData;
     createCookie(tokenData: TokenData): string;
+    updateUserCodeWithSMS: (reqData: VerifyPhoneDto, existCode?: string, type?: string) => Promise<void>;
 }
 export default AuthService;

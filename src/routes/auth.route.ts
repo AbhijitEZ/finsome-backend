@@ -15,7 +15,7 @@ import {
   VerifyPhoneDto,
 } from '@dtos/users.dto';
 import { Routes } from '@interfaces/routes.interface';
-import authMiddleware from '@middlewares/auth.middleware';
+import authMiddleware, { authOptionalMiddleware } from '@middlewares/auth.middleware';
 import validationMiddleware from '@middlewares/validation.middleware';
 import { fileUploadCB } from '@/utils/global';
 
@@ -29,7 +29,12 @@ class AuthRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}verify-phone`, validationMiddleware(VerifyPhoneDto, 'body'), this.authController.verifyPhoneNumber);
+    this.router.post(
+      `${this.path}verify-phone`,
+      validationMiddleware(VerifyPhoneDto, 'body'),
+      authOptionalMiddleware,
+      this.authController.verifyPhoneNumberWithOTP,
+    );
     this.router.post(`${this.path}verify-otp`, validationMiddleware(VerifyOtpDTO, 'body'), this.authController.verifyOTP);
     this.router.post(`${this.path}forgot-password`, validationMiddleware(VerifyPhoneDto, 'body'), this.authController.forgotPassword);
     this.router.post(`${this.path}reset-password`, validationMiddleware(ResetPasswordDto, 'body'), this.authController.resetPassword);

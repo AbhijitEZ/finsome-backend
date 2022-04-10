@@ -4,7 +4,7 @@ import AuthService from '../services/auth.service';
 declare class AuthController {
     authService: AuthService;
     validateUserField: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    verifyPhoneNumber: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    verifyPhoneNumberWithOTP: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     verifyOTP: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     signUpPhoneVerify: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     signUpUserVerify: (req: Request, res: Response, next: NextFunction) => Promise<void>;

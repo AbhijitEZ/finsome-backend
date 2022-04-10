@@ -35,6 +35,35 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
   }
 };
 
+export const authOptionalMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  try {
+    const Authorization = req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null;
+
+    if (Authorization) {
+      const secretKey: string = config.get('secretKey');
+      const verificationResponse = (await verify(Authorization, secretKey)) as DataStoredInToken;
+      const userId = verificationResponse._id;
+      const findUser = await userModel.findById(userId);
+
+      if (findUser) {
+        // @ts-ignore
+        if (findUser.deleted_at) {
+          return next(new HttpException(401, APP_ERROR_MESSAGE.user_blocked));
+        }
+
+        req.user = findUser;
+        next();
+      } else {
+        next(new HttpException(401, APP_ERROR_MESSAGE.invalid_token));
+      }
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(new HttpException(401, APP_ERROR_MESSAGE.invalid_token));
+  }
+};
+
 export const authAdminMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
     const Authorization = req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null;

@@ -26,6 +26,16 @@ class AdminController {
     }
   };
 
+  public dashboardData = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.adminService.dashboardData(req.user);
+
+      res.status(200).json({ data: users });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public toggleUserStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
       await this.adminService.toggleUserStatus(req.body);

@@ -4,6 +4,7 @@ declare class AdminController {
     adminService: AdminService;
     adminLogin: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    dashboardData: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     toggleUserStatus: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     deleteUser: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     privacyPolicy: (req: Request, res: Response, next: NextFunction) => Promise<void>;

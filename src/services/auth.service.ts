@@ -1,7 +1,7 @@
 import { hash, compare } from 'bcrypt';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
-import { toDate, intervalToDuration } from 'date-fns';
+import { toDate } from 'date-fns';
 import awsHandler from '@utils/aws';
 import {
   AppImprovementUserDto,
@@ -28,7 +28,7 @@ import userSuggestionImprovementModel from '@/models/user-suggestion-improvement
 import { isEmpty } from '@utils/util';
 import { APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
 import { userResponseFilter } from '@/utils/global';
-import { createPhoneCodeToVerify } from '@/utils/phone';
+import { checkPhoneNumberCountryCodeForSMSCalling, createPhoneCodeToVerify, intervalDurationOTPCheck } from '@/utils/phone';
 import { logger } from '@/utils/logger';
 import appImprovementModel from '@/models/app-improvement-type';
 
@@ -44,56 +44,80 @@ class AuthService {
     if (userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_field_exists);
   }
 
-  public async verifyPhoneNumber(reqData: VerifyPhoneDto): Promise<void> {
-    const userFound = await this.users.findOne({ phone_number: reqData.phone_number });
-    if (userFound) throw new HttpException(409, APP_ERROR_MESSAGE.phone_exists);
-    // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
-    if (reqData.is_testing === 'true') {
-      return;
-    }
-    const phoneNumberExists = await this.otpValidation.findOne({
-      phone_number: reqData.phone_number,
-      phone_country_code: reqData.phone_country_code,
-    });
-
-    // TODO: update the sms sending logic
-    if (phoneNumberExists) {
-      if (
-        intervalToDuration({
-          start: toDate(phoneNumberExists.created_at),
-          end: toDate(new Date()),
-        }).minutes > 10
-      ) {
-        logger.info(`Phone number OTP changed for: ${reqData.phone_country_code}-${reqData.phone_number}.`);
-        await this.otpValidation.findOneAndUpdate(
-          { phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code },
-          { otp: createPhoneCodeToVerify() },
-        );
+  public async verifyPhoneNumberWithOTP(reqData: VerifyPhoneDto, userData?: User): Promise<void> {
+    // For Change Phone number require userData
+    if (userData) {
+      // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
+      if (reqData.is_testing === 'true') {
+        return;
       }
+
+      if (intervalDurationOTPCheck(userData.updated_at)) {
+        this.updateUserCodeWithSMS(reqData, undefined, 'user');
+      } else {
+        this.updateUserCodeWithSMS(reqData, userData.otp, 'user');
+      }
+
       return;
+    } else {
+      /* When used for initial signup, we would check this condition in order to update OTP Validation table */
+      const userFound = await this.users.findOne({ phone_number: reqData.phone_number });
+      if (userFound) throw new HttpException(409, APP_ERROR_MESSAGE.phone_exists);
+      // BETA_CODE: For the developer testing we are adding this flag in order to save the sms exhaustion.
+      if (reqData.is_testing === 'true') {
+        return;
+      }
+
+      const phoneNumberExists = await this.otpValidation.findOne({
+        phone_number: reqData.phone_number,
+        phone_country_code: reqData.phone_country_code,
+      });
+
+      // TODO: update the sms sending logic
+      if (phoneNumberExists) {
+        console.log('EXSITING OTP VALIDAION');
+        if (intervalDurationOTPCheck(phoneNumberExists.updated_at)) {
+          this.updateUserCodeWithSMS(reqData);
+        } else {
+          this.updateUserCodeWithSMS(reqData, phoneNumberExists.otp);
+        }
+        return;
+      }
+
+      console.log('NEW OTP VALIDAION');
+
+      const code = createPhoneCodeToVerify();
+      logger.info(`Phone number OTP changed for first time: ${reqData.phone_country_code}-${reqData.phone_number}.`);
+      checkPhoneNumberCountryCodeForSMSCalling({
+        countryCode: reqData.phone_country_code,
+        phoneNumber: reqData.phone_number,
+        codeData: { code },
+      });
+
+      await this.otpValidation.create({
+        phone_number: reqData.phone_number,
+        phone_country_code: reqData.phone_country_code,
+        otp: code,
+      });
     }
-
-    await this.otpValidation.create({
-      phone_number: reqData.phone_number,
-      phone_country_code: reqData.phone_country_code,
-      otp: createPhoneCodeToVerify(),
-    });
-  }
-
-  // TODO: This would require bypass verification for testing and Third party integration
-  public async verifyOtp(reqData: VerifyOtpDTO): Promise<any> {
-    const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
-    if (!userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
-    if (reqData.otp !== '9999') {
-      throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
-    }
-
-    return {
-      id: userFound._id,
-    };
   }
 
   public async signUpPhoneVerify(userData: SignupPhoneDto): Promise<{ user: Partial<User> }> {
+    const userPhoneCheck = await this.otpValidation.findOne({
+      phone_number: userData.phone_number,
+      phone_country_code: userData.phone_country_code,
+    });
+
+    // TODO: Would be removed in future.
+    if (!userPhoneCheck && userData.otp !== '9999') {
+      throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
+    }
+
+    // TODO: Would be removed in future for testing part.
+    if (userPhoneCheck && userData.otp !== '9999' && userData.otp !== userPhoneCheck.otp) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
+    }
+
     const hashedPassword = await hash(userData.password, 10);
     const createUserData = await this.users.create({ ...userData, password: hashedPassword, term_agree_timestamp: toDate(new Date()) });
 
@@ -182,6 +206,26 @@ class AuthService {
     if (reqData.is_testing === 'true') {
       return;
     }
+
+    if (intervalDurationOTPCheck(userFound.updated_at)) {
+      this.updateUserCodeWithSMS(reqData, undefined, 'user');
+    } else {
+      this.updateUserCodeWithSMS(reqData, userFound.otp, 'user');
+    }
+  }
+
+  public async verifyOtp(reqData: VerifyOtpDTO): Promise<any> {
+    const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
+    if (!userFound) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
+
+    // TODO: Would be removed in production in future.
+    if (reqData.otp !== '9999' && userFound.otp !== reqData.otp) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
+    }
+
+    return {
+      id: userFound._id,
+    };
   }
 
   public async resetPassword(reqData: ResetPasswordDto): Promise<void> {
@@ -253,6 +297,11 @@ class AuthService {
     const findUser = await this.users.findOne({ _id: id }).lean();
     if (!findUser) throw new HttpException(409, APP_ERROR_MESSAGE.user_not_exists);
 
+    // TODO: Would have actual OTP check after client confirmation
+    if (userData.otp !== '9999' && userData.otp !== findUser.otp) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
+    }
+
     await this.users.findByIdAndUpdate(id, { phone_country_code: userData.phone_country_code, phone_number: userData.phone_number }, { new: true });
 
     return await this.profile(id);
@@ -312,6 +361,25 @@ class AuthService {
   public createCookie(tokenData: TokenData): string {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expires_in};`;
   }
+
+  public updateUserCodeWithSMS = async (reqData: VerifyPhoneDto, existCode?: string, type?: string) => {
+    const code = existCode ? existCode : createPhoneCodeToVerify();
+    logger.info(`Phone number OTP for: ${reqData.phone_country_code}-${reqData.phone_number}.`);
+    checkPhoneNumberCountryCodeForSMSCalling({
+      countryCode: reqData.phone_country_code,
+      phoneNumber: reqData.phone_number,
+      codeData: { code },
+    });
+
+    if (!type) {
+      await this.otpValidation.findOneAndUpdate(
+        { phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code },
+        { otp: code },
+      );
+    } else if (type === 'user') {
+      await this.users.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
+    }
+  };
 }
 
 export default AuthService;

@@ -52,6 +52,40 @@ class AdminService {
         const userSanitized = users.map(user => (Object.assign(Object.assign({}, user), { profile_photo: (0, util_1.profileImageGenerator)(user.profile_photo) })));
         return userSanitized;
     }
+    async dashboardData(user) {
+        const users = await this.users
+            .find({
+            _id: { $ne: user._id },
+            role: { $ne: constants_1.USER_ROLE.ADMIN },
+        })
+            .sort({ created_at: -1 })
+            .lean();
+        const appImproves = await this.appImprovement.find({});
+        const quickContacts = await this.quickContact.find({});
+        const suggestions = await this.userSuggestion.find({});
+        let active_user = 0, inactive_user = 0, total_user = 0, completed_registered_user = 0;
+        users.map(usr => {
+            total_user = total_user + 1;
+            if (usr.deleted_at) {
+                inactive_user = inactive_user + 1;
+            }
+            if (!usr.deleted_at) {
+                active_user = active_user + 1;
+            }
+            if (usr.is_registration_complete) {
+                completed_registered_user = completed_registered_user + 1;
+            }
+        });
+        return {
+            active_user,
+            inactive_user,
+            total_user,
+            completed_registered_user,
+            app_improves: appImproves.length,
+            quick_contacts: quickContacts.length,
+            suggestions: suggestions.length,
+        };
+    }
     async toggleUserStatus(user) {
         const findUser = await this.users.findOne({ _id: user.id }).lean();
         if (!findUser)
