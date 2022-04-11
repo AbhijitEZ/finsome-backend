@@ -292,6 +292,7 @@ class AuthService {
 
     if (userData.remove_photo && profileUser?.profile_photo) {
       awsHandler.deleteProfileImage(profileUser.profile_photo);
+      payload.profile_photo = null;
     }
 
     await this.users.findByIdAndUpdate(id, payload, { new: true });

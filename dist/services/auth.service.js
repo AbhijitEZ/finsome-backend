@@ -255,6 +255,7 @@ class AuthService {
         }
         if (userData.remove_photo && (profileUser === null || profileUser === void 0 ? void 0 : profileUser.profile_photo)) {
             aws_1.default.deleteProfileImage(profileUser.profile_photo);
+            payload.profile_photo = null;
         }
         await this.users.findByIdAndUpdate(id, payload, { new: true });
         return await this.profile(id);
