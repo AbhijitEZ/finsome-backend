@@ -146,6 +146,10 @@ export class ProfileUpdateDto {
   @IsOptional()
   @IsString()
   telegram_link: string;
+
+  @IsOptional()
+  @IsString()
+  remove_photo: string;
 }
 
 export class NotificationDto {

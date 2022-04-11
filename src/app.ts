@@ -13,6 +13,8 @@ import awsHandler from '@utils/aws';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import * as Sentry from '@sentry/node';
+import * as Tracing from '@sentry/tracing';
 
 class App {
   public app: express.Application;
@@ -23,6 +25,21 @@ class App {
     this.app = express();
     this.port = process.env.PORT || 5000;
     this.env = process.env.NODE_ENV || 'development';
+
+    Sentry.init({
+      dsn: 'https://89f27eaaefca4089991ab5886e0fa0de@o1198063.ingest.sentry.io/6320676',
+      integrations: [
+        // enable HTTP calls tracing
+        new Sentry.Integrations.Http({ tracing: true }),
+        // enable Express.js middleware tracing
+        new Tracing.Integrations.Express({ app: this.app }),
+      ],
+
+      // Set tracesSampleRate to 1.0 to capture 100%
+      // of transactions for performance monitoring.
+      // We recommend adjusting this value in production
+      tracesSampleRate: 1.0,
+    });
 
     this.connectToDatabase();
     this.initializeMiddlewares();
@@ -53,6 +70,8 @@ class App {
   }
 
   private initializeMiddlewares() {
+    this.app.use(Sentry.Handlers.requestHandler());
+    this.app.use(Sentry.Handlers.tracingHandler());
     this.app.use(morgan(config.get('log.format'), { stream }));
     this.app.use(cors({ origin: config.get('cors.origin'), credentials: config.get('cors.credentials') }));
     this.app.use(hpp());
@@ -70,6 +89,7 @@ class App {
   }
 
   private initializeErrorHandling() {
+    this.app.use(Sentry.Handlers.errorHandler());
     this.app.use(errorMiddleware);
   }
 }

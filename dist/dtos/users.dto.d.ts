@@ -46,6 +46,7 @@ export declare class ProfileUpdateDto {
     youtube_link: string;
     instagram_link: string;
     telegram_link: string;
+    remove_photo: string;
 }
 export declare class NotificationDto {
     allow_notification: string;

@@ -15,11 +15,26 @@ const _databases_1 = require("./databases");
 const aws_1 = tslib_1.__importDefault(require("./utils/aws"));
 const error_middleware_1 = tslib_1.__importDefault(require("./middlewares/error.middleware"));
 const logger_1 = require("./utils/logger");
+const Sentry = tslib_1.__importStar(require("@sentry/node"));
+const Tracing = tslib_1.__importStar(require("@sentry/tracing"));
 class App {
     constructor(routes) {
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || 5000;
         this.env = process.env.NODE_ENV || 'development';
+        Sentry.init({
+            dsn: 'https://89f27eaaefca4089991ab5886e0fa0de@o1198063.ingest.sentry.io/6320676',
+            integrations: [
+                // enable HTTP calls tracing
+                new Sentry.Integrations.Http({ tracing: true }),
+                // enable Express.js middleware tracing
+                new Tracing.Integrations.Express({ app: this.app }),
+            ],
+            // Set tracesSampleRate to 1.0 to capture 100%
+            // of transactions for performance monitoring.
+            // We recommend adjusting this value in production
+            tracesSampleRate: 1.0,
+        });
         this.connectToDatabase();
         this.initializeMiddlewares();
         this.initializeRoutes(routes);
@@ -44,6 +59,8 @@ class App {
         (0, mongoose_1.connect)(_databases_1.dbConnection.url, _databases_1.dbConnection.options);
     }
     initializeMiddlewares() {
+        this.app.use(Sentry.Handlers.requestHandler());
+        this.app.use(Sentry.Handlers.tracingHandler());
         this.app.use((0, morgan_1.default)(config_1.default.get('log.format'), { stream: logger_1.stream }));
         this.app.use((0, cors_1.default)({ origin: config_1.default.get('cors.origin'), credentials: config_1.default.get('cors.credentials') }));
         this.app.use((0, hpp_1.default)());
@@ -59,6 +76,7 @@ class App {
         });
     }
     initializeErrorHandling() {
+        this.app.use(Sentry.Handlers.errorHandler());
         this.app.use(error_middleware_1.default);
     }
 }

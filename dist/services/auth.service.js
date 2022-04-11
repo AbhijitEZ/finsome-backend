@@ -243,8 +243,8 @@ class AuthService {
             instagram_link: userData.instagram_link,
             telegram_link: userData.telegram_link,
         };
+        const profileUser = await this.users.findOne({ _id: id });
         if (file) {
-            const profileUser = await this.users.findOne({ _id: id });
             // Delete the existing image from S3
             if (profileUser.profile_photo) {
                 aws_1.default.deleteProfileImage(profileUser.profile_photo);
@@ -252,6 +252,9 @@ class AuthService {
             // Add image
             const profileImage = await aws_1.default.addProfileImage(file);
             payload.profile_photo = profileImage;
+        }
+        if (userData.remove_photo && (profileUser === null || profileUser === void 0 ? void 0 : profileUser.profile_photo)) {
+            aws_1.default.deleteProfileImage(profileUser.profile_photo);
         }
         await this.users.findByIdAndUpdate(id, payload, { new: true });
         return await this.profile(id);

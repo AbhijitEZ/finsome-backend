@@ -191,6 +191,11 @@ tslib_1.__decorate([
     (0, class_validator_1.IsString)(),
     tslib_1.__metadata("design:type", String)
 ], ProfileUpdateDto.prototype, "telegram_link", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], ProfileUpdateDto.prototype, "remove_photo", void 0);
 exports.ProfileUpdateDto = ProfileUpdateDto;
 class NotificationDto {
 }
