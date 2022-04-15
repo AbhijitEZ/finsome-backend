@@ -30,9 +30,8 @@ export const checkPhoneNumberCountryCodeForSMSCalling = ({
   codeData: { code: string };
 }) => {
   switch (countryCode) {
-    // TODO: Commented this for current demo
-    // case '+91':
-    //   return indiaPhoneNumberSMSHandler('91' + phoneNumber, codeData);
+    case '+91':
+      return indiaPhoneNumberSMSHandler('91' + phoneNumber, codeData);
 
     case '+1':
       return usCanadaPhoneNumberSMSHandler('1' + phoneNumber, codeData);
@@ -43,7 +42,6 @@ export const checkPhoneNumberCountryCodeForSMSCalling = ({
 
     default:
       return usCanadaPhoneNumberSMSHandler(countryCode + phoneNumber, codeData);
-    // throw new HttpException(400, APP_ERROR_MESSAGE.phone_invalid);
   }
 };
 

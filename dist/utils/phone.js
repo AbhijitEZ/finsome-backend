@@ -21,9 +21,8 @@ const createPhoneSMSBody = (code) => `OTP code for finsom is: ${code}`;
 const createPhoneTextLocalSMSBody = (code) => `Hi there, thank you for sending your first test message from Textlocal. Get 20% off today with our code: ${code}.`;
 const checkPhoneNumberCountryCodeForSMSCalling = ({ countryCode, phoneNumber, codeData, }) => {
     switch (countryCode) {
-        // TODO: Commented this for current demo
-        // case '+91':
-        //   return indiaPhoneNumberSMSHandler('91' + phoneNumber, codeData);
+        case '+91':
+            return (0, exports.indiaPhoneNumberSMSHandler)('91' + phoneNumber, codeData);
         case '+1':
             return (0, exports.usCanadaPhoneNumberSMSHandler)('1' + phoneNumber, codeData);
         /* TODO: would be removed based on mobile request payload in future */
@@ -31,7 +30,6 @@ const checkPhoneNumberCountryCodeForSMSCalling = ({ countryCode, phoneNumber, co
             return (0, exports.usCanadaPhoneNumberSMSHandler)('1' + phoneNumber, codeData);
         default:
             return (0, exports.usCanadaPhoneNumberSMSHandler)(countryCode + phoneNumber, codeData);
-        // throw new HttpException(400, APP_ERROR_MESSAGE.phone_invalid);
     }
 };
 exports.checkPhoneNumberCountryCodeForSMSCalling = checkPhoneNumberCountryCodeForSMSCalling;
