@@ -20,6 +20,14 @@ export interface QuickContactInf {
   message: string;
 }
 
+export interface CountryInf {
+  _id: string;
+  name: string;
+  image: string;
+  emoji: string;
+  code: string;
+}
+
 export interface UserSuggestionImproveInf {
   description?: string;
   timestamp: string;
