@@ -28,6 +28,15 @@ export interface CountryInf {
   code: string;
 }
 
+export interface StockTypeInf {
+  _id: string;
+  name: string;
+  code: string;
+  s_type: string;
+  country_code?: string;
+  image?: string;
+}
+
 export interface UserSuggestionImproveInf {
   description?: string;
   timestamp: string;

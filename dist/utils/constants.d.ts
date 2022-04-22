@@ -48,10 +48,17 @@ export declare const GENDER_CONST: {
     FEMALE: string;
     OTHER: string;
 };
+export declare const STOCK_TYPE_CONST: {
+    CRYPT: string;
+    EQUITY: string;
+};
+export declare const SKIP_DEF = "0";
+export declare const LIMIT_DEF = "1";
 export declare const FILE_LIMIT = 20000000;
 export declare const APP_IMPROVEMENT_TYPES = "app-improvement-types";
 export declare const QUICK_CONTACTS = "quick-contacts";
 export declare const COUNTRIES = "countries";
+export declare const STOCK_TYPES = "stock-types";
 export declare const PRIVACY_POLICIES = "privacy-policies";
 export declare const TERMS_CONDITIONS = "terms-conditions";
 export declare const OTP_VALIDATIONS = "otp-validations";

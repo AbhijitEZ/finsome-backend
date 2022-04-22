@@ -13,6 +13,16 @@ class PostController {
       next(error);
     }
   };
+
+  public stockTypesController = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.postService.stockTypesShares(req.query);
+      responseJSONMapper(res, 200, { ...data });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default PostController;

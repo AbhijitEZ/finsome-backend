@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const express_1 = require("express");
 const post_controller_1 = tslib_1.__importDefault(require("../controllers/post.controller"));
+const validation_middleware_1 = tslib_1.__importDefault(require("../middlewares/validation.middleware"));
+const auth_middleware_1 = tslib_1.__importDefault(require("../middlewares/auth.middleware"));
+const posts_dto_1 = require("../dtos/posts.dto");
 class PostRoute {
     constructor() {
         this.path = '/post/';
@@ -12,6 +15,7 @@ class PostRoute {
     }
     initializeRoutes() {
         this.router.get(`${this.path}countries`, this.postController.countriesController);
+        this.router.get(`${this.path}stock-type`, (0, validation_middleware_1.default)(posts_dto_1.StockTypeDto, 'query'), auth_middleware_1.default, this.postController.stockTypesController);
     }
 }
 exports.default = PostRoute;

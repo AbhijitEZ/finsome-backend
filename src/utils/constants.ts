@@ -52,11 +52,20 @@ export const GENDER_CONST = {
   OTHER: 'OTHER',
 };
 
+export const STOCK_TYPE_CONST = {
+  CRYPT: 'CRYPT',
+  EQUITY: 'EQUITY',
+};
+
+export const SKIP_DEF = '0';
+export const LIMIT_DEF = '1';
+
 export const FILE_LIMIT = 20000000;
 
 export const APP_IMPROVEMENT_TYPES = 'app-improvement-types';
 export const QUICK_CONTACTS = 'quick-contacts';
 export const COUNTRIES = 'countries';
+export const STOCK_TYPES = 'stock-types';
 export const PRIVACY_POLICIES = 'privacy-policies';
 export const TERMS_CONDITIONS = 'terms-conditions';
 export const OTP_VALIDATIONS = 'otp-validations';
