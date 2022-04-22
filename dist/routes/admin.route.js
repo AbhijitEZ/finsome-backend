@@ -6,6 +6,7 @@ const validation_middleware_1 = tslib_1.__importDefault(require("../middlewares/
 const admin_dto_1 = require("../dtos/admin.dto");
 const admin_controller_1 = tslib_1.__importDefault(require("../controllers/admin.controller"));
 const auth_middleware_1 = require("../middlewares/auth.middleware");
+const posts_dto_1 = require("../dtos/posts.dto");
 /**
  * This route would only be used by the Web panel specifc to admin.
  */
@@ -24,6 +25,8 @@ class AdminRoute {
         this.router.delete(`${this.path}user/:id`, auth_middleware_1.authAdminMiddleware, this.adminController.deleteUser);
         this.router.get(`${this.path}app-improvement-suggestions`, auth_middleware_1.authAdminMiddleware, this.adminController.appImprovementSuggestion);
         this.router.get(`${this.path}quick-contacts`, auth_middleware_1.authAdminMiddleware, this.adminController.quickContactListing);
+        this.router.post(`${this.path}stock/:type`, auth_middleware_1.authAdminMiddleware, (0, validation_middleware_1.default)(posts_dto_1.StockUpdateTypeDto, 'body'), this.adminController.stockTypeAdd);
+        this.router.delete(`${this.path}stock/:type/:id`, auth_middleware_1.authAdminMiddleware, this.adminController.stockTypeDelete);
         this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);
         this.router.post(`${this.path}privacy-policy`, (0, validation_middleware_1.default)(admin_dto_1.PrivacyPolicyDto, 'body'), auth_middleware_1.authAdminMiddleware, this.adminController.privacyPolicyUpdate);
         this.router.get(`${this.path}terms-condition`, this.adminController.termsConditionListing);

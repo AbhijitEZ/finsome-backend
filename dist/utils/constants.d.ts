@@ -32,6 +32,9 @@ export declare const APP_ERROR_MESSAGE: {
     phone_invalid: string;
     user_not_exists: string;
     user_not_exists_id: string;
+    stock_type_invalid: string;
+    stock_type_code_exists: string;
+    country_code_required: string;
     privacy_not_exists: string;
     terms_not_exists: string;
     error_with_twilio: string;

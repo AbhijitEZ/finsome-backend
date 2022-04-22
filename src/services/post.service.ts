@@ -28,10 +28,12 @@ class PostService {
     const QueryCloned = stQb.toConstructor();
     const totalCountQuery = new QueryCloned();
 
-    const stocks = await stQb
-      .limit(parseInt(reqData.limit ?? LIMIT_DEF))
-      .skip(parseInt(reqData.skip ?? SKIP_DEF))
-      .exec();
+    const stocks = reqData.has_all_data
+      ? await stQb.exec()
+      : await stQb
+          .limit(parseInt(reqData.limit ?? LIMIT_DEF))
+          .skip(parseInt(reqData.skip ?? SKIP_DEF))
+          .exec();
 
     const total_count = await totalCountQuery.count();
 

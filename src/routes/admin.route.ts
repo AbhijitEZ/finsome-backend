@@ -5,6 +5,7 @@ import validationMiddleware from '@middlewares/validation.middleware';
 import { AdminLoginDto, PrivacyPolicyDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
 import AdminController from '@/controllers/admin.controller';
 import { authAdminMiddleware } from '@/middlewares/auth.middleware';
+import { StockUpdateTypeDto } from '@/dtos/posts.dto';
 
 /**
  * This route would only be used by the Web panel specifc to admin.
@@ -31,6 +32,14 @@ class AdminRoute implements Routes {
     this.router.delete(`${this.path}user/:id`, authAdminMiddleware, this.adminController.deleteUser);
     this.router.get(`${this.path}app-improvement-suggestions`, authAdminMiddleware, this.adminController.appImprovementSuggestion);
     this.router.get(`${this.path}quick-contacts`, authAdminMiddleware, this.adminController.quickContactListing);
+    this.router.post(
+      `${this.path}stock/:type`,
+      authAdminMiddleware,
+      validationMiddleware(StockUpdateTypeDto, 'body'),
+      this.adminController.stockTypeAdd,
+    );
+    this.router.delete(`${this.path}stock/:type/:id`, authAdminMiddleware, this.adminController.stockTypeDelete);
+
     this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);
     this.router.post(
       `${this.path}privacy-policy`,

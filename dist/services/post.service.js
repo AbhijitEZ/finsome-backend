@@ -26,10 +26,12 @@ class PostService {
         }
         const QueryCloned = stQb.toConstructor();
         const totalCountQuery = new QueryCloned();
-        const stocks = await stQb
-            .limit(parseInt((_a = reqData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF))
-            .skip(parseInt((_b = reqData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF))
-            .exec();
+        const stocks = reqData.has_all_data
+            ? await stQb.exec()
+            : await stQb
+                .limit(parseInt((_a = reqData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF))
+                .skip(parseInt((_b = reqData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF))
+                .exec();
         const total_count = await totalCountQuery.count();
         return { stocks, total_count };
     }

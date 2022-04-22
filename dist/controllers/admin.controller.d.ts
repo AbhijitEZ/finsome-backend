@@ -13,5 +13,7 @@ declare class AdminController {
     privacyPolicyUpdate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     appImprovementSuggestion: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     quickContactListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    stockTypeAdd: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    stockTypeDelete: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default AdminController;

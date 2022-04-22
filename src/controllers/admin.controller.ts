@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import AdminService from '@services/admin.service';
-import { APP_ERROR_MESSAGE, APP_SUCCESS_MESSAGE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, APP_SUCCESS_MESSAGE, STOCK_TYPE_CONST } from '@/utils/constants';
 import { HttpException } from '@/exceptions/HttpException';
 
 class AdminController {
@@ -117,6 +117,28 @@ class AdminController {
       const users = await this.adminService.quickContactListing();
 
       res.status(200).json({ data: users });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public stockTypeAdd = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.adminService.stockTypeAdd(req.params?.type || STOCK_TYPE_CONST.EQUITY, req.body);
+
+      res.status(200).json({ data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public stockTypeDelete = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      await this.adminService.stockTypeDelete(req.params?.type || STOCK_TYPE_CONST.EQUITY, req.params?.id);
+
+      res.status(200).json({ data: {} });
     } catch (error) {
       next(error);
     }

@@ -1,6 +1,7 @@
 /// <reference types="mongoose" />
 import { AdminLoginDto, PrivacyPolicyDto, ToggleUserStatusDto } from '../dtos/admin.dto';
 import { User } from '../interfaces/users.interface';
+import { StockUpdateTypeDto } from '../dtos/posts.dto';
 declare class AdminService {
     users: import("mongoose").Model<User & import("mongoose").Document<any, any, any>, {}, {}>;
     appImprovement: import("mongoose").Model<import("../interfaces/general.interface").AppImprovementInf & import("mongoose").Document<any, any, any>, {}, {}>;
@@ -21,5 +22,7 @@ declare class AdminService {
     termsConditionUpdate(data: PrivacyPolicyDto): Promise<void>;
     appImprovementSuggestion(): Promise<any>;
     quickContactListing(): Promise<Record<string, any>>;
+    stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any>;
+    stockTypeDelete(type: string, _id: string): Promise<any>;
 }
 export default AdminService;

@@ -3,7 +3,7 @@ import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
 import { HttpException } from '@/exceptions/HttpException';
-import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, STOCK_TYPE_CONST, USER_ROLE } from '@/utils/constants';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import appImprovementModel from '@models/app-improvement-type';
@@ -13,6 +13,8 @@ import quickContactModel from '@/models/quick-contact';
 import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
 import privacyPolicyModel from '@/models/privacy-policy';
 import termsConditionModel from '@/models/terms-condition';
+import { StockUpdateTypeDto } from '@/dtos/posts.dto';
+import stockTypeModel from '@/models/stock-types';
 
 class AdminService {
   public users = userModel;
@@ -185,6 +187,42 @@ class AdminService {
     const quickContacts = await this.quickContact.find({}).sort({ created_at: -1 }).lean();
 
     return quickContacts;
+  }
+
+  public async stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any> {
+    if (!Object.keys(STOCK_TYPE_CONST).includes(type)) {
+      throw new HttpException(404, APP_ERROR_MESSAGE.stock_type_invalid);
+    }
+
+    if (type === STOCK_TYPE_CONST.EQUITY && !reqData.country_code) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.country_code_required);
+    }
+
+    const stockExists = await stockTypeModel.findOne({ code: reqData.code });
+
+    if (stockExists) {
+      throw new HttpException(409, APP_ERROR_MESSAGE.stock_type_code_exists);
+    }
+
+    const stockNewData = await stockTypeModel.create({
+      s_type: type,
+      code: reqData.code,
+      name: reqData.name,
+      country_code: reqData.country_code || undefined,
+      image: reqData.image || undefined,
+    });
+
+    // @ts-ignore
+    return stockNewData._doc;
+  }
+
+  public async stockTypeDelete(type: string, _id: string): Promise<any> {
+    if (!Object.keys(STOCK_TYPE_CONST).includes(type)) {
+      throw new HttpException(404, APP_ERROR_MESSAGE.stock_type_invalid);
+    }
+
+    // ANCHOR This would be added on, when more models gets associated with Stock.
+    await stockTypeModel.findOneAndDelete({ _id, s_type: type }).exec();
   }
 }
 

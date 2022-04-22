@@ -14,6 +14,7 @@ const quick_contact_1 = tslib_1.__importDefault(require("../models/quick-contact
 const user_suggestion_improvement_1 = tslib_1.__importDefault(require("../models/user-suggestion-improvement"));
 const privacy_policy_1 = tslib_1.__importDefault(require("../models/privacy-policy"));
 const terms_condition_1 = tslib_1.__importDefault(require("../models/terms-condition"));
+const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
@@ -156,6 +157,34 @@ class AdminService {
     async quickContactListing() {
         const quickContacts = await this.quickContact.find({}).sort({ created_at: -1 }).lean();
         return quickContacts;
+    }
+    async stockTypeAdd(type, reqData) {
+        if (!Object.keys(constants_1.STOCK_TYPE_CONST).includes(type)) {
+            throw new HttpException_1.HttpException(404, constants_1.APP_ERROR_MESSAGE.stock_type_invalid);
+        }
+        if (type === constants_1.STOCK_TYPE_CONST.EQUITY && !reqData.country_code) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.country_code_required);
+        }
+        const stockExists = await stock_types_1.default.findOne({ code: reqData.code });
+        if (stockExists) {
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.stock_type_code_exists);
+        }
+        const stockNewData = await stock_types_1.default.create({
+            s_type: type,
+            code: reqData.code,
+            name: reqData.name,
+            country_code: reqData.country_code || undefined,
+            image: reqData.image || undefined,
+        });
+        // @ts-ignore
+        return stockNewData._doc;
+    }
+    async stockTypeDelete(type, _id) {
+        if (!Object.keys(constants_1.STOCK_TYPE_CONST).includes(type)) {
+            throw new HttpException_1.HttpException(404, constants_1.APP_ERROR_MESSAGE.stock_type_invalid);
+        }
+        // ANCHOR This would be added on, when more models gets associated with Stock.
+        await stock_types_1.default.findOneAndDelete({ _id, s_type: type }).exec();
     }
 }
 exports.default = AdminService;

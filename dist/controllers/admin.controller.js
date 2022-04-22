@@ -110,6 +110,28 @@ class AdminController {
                 next(error);
             }
         };
+        this.stockTypeAdd = async (req, res, next) => {
+            var _a;
+            try {
+                // @ts-ignore
+                const data = await this.adminService.stockTypeAdd(((_a = req.params) === null || _a === void 0 ? void 0 : _a.type) || constants_1.STOCK_TYPE_CONST.EQUITY, req.body);
+                res.status(200).json({ data });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.stockTypeDelete = async (req, res, next) => {
+            var _a, _b;
+            try {
+                // @ts-ignore
+                await this.adminService.stockTypeDelete(((_a = req.params) === null || _a === void 0 ? void 0 : _a.type) || constants_1.STOCK_TYPE_CONST.EQUITY, (_b = req.params) === null || _b === void 0 ? void 0 : _b.id);
+                res.status(200).json({ data: {} });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = AdminController;
