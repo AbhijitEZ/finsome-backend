@@ -51,6 +51,7 @@ export declare const GENDER_CONST: {
 export declare const STOCK_TYPE_CONST: {
     CRYPT: string;
     EQUITY: string;
+    OTHER: string;
 };
 export declare const SKIP_DEF = "0";
 export declare const LIMIT_DEF = "1";

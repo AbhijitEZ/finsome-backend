@@ -17,7 +17,7 @@ const stockTypeSchema = new mongoose_1.Schema({
     },
     s_type: {
         type: String,
-        enum: [constants_1.STOCK_TYPE_CONST.CRYPT, constants_1.STOCK_TYPE_CONST.EQUITY],
+        enum: Object.keys(constants_1.STOCK_TYPE_CONST),
         required: true,
     },
     image: {

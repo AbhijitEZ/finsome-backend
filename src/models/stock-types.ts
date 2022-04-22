@@ -18,7 +18,7 @@ const stockTypeSchema: Schema = new Schema(
     },
     s_type: {
       type: String,
-      enum: [STOCK_TYPE_CONST.CRYPT, STOCK_TYPE_CONST.EQUITY],
+      enum: Object.keys(STOCK_TYPE_CONST),
       required: true,
     },
     image: {

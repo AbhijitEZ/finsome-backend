@@ -54,6 +54,7 @@ exports.GENDER_CONST = {
 exports.STOCK_TYPE_CONST = {
     CRYPT: 'CRYPT',
     EQUITY: 'EQUITY',
+    OTHER: 'OTHER',
 };
 exports.SKIP_DEF = '0';
 exports.LIMIT_DEF = '1';

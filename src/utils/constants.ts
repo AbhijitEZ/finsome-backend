@@ -55,6 +55,7 @@ export const GENDER_CONST = {
 export const STOCK_TYPE_CONST = {
   CRYPT: 'CRYPT',
   EQUITY: 'EQUITY',
+  OTHER: 'OTHER',
 };
 
 export const SKIP_DEF = '0';
