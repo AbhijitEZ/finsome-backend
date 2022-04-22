@@ -25,8 +25,8 @@ tslib_1.__decorate([
 ], StockTypeDto.prototype, "country_code", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    tslib_1.__metadata("design:type", Boolean)
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
 ], StockTypeDto.prototype, "has_all_data", void 0);
 exports.StockTypeDto = StockTypeDto;
 class StockUpdateTypeDto {

@@ -17,8 +17,8 @@ export class StockTypeDto extends PaginationDto {
   country_code?: string;
 
   @IsOptional()
-  @IsBoolean()
-  has_all_data?: boolean;
+  @IsString()
+  has_all_data?: string;
 }
 
 export class StockUpdateTypeDto {
