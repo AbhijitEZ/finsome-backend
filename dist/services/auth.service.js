@@ -28,11 +28,12 @@ class AuthService {
         this.updateUserCodeWithSMS = async (reqData, existCode, type) => {
             const code = existCode ? existCode : (0, phone_1.createPhoneCodeToVerify)();
             logger_1.logger.info(`Phone number OTP for: ${reqData.phone_country_code}-${reqData.phone_number}.`);
-            (0, phone_1.checkPhoneNumberCountryCodeForSMSCalling)({
-                countryCode: reqData.phone_country_code,
-                phoneNumber: reqData.phone_number,
-                codeData: { code },
-            });
+            // TODO: Would be uncommented in future
+            // checkPhoneNumberCountryCodeForSMSCalling({
+            //   countryCode: reqData.phone_country_code,
+            //   phoneNumber: reqData.phone_number,
+            //   codeData: { code },
+            // });
             if (!type) {
                 await this.otpValidation.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
             }
@@ -87,11 +88,12 @@ class AuthService {
             console.log('NEW OTP VALIDAION');
             const code = (0, phone_1.createPhoneCodeToVerify)();
             logger_1.logger.info(`Phone number OTP changed for first time: ${reqData.phone_country_code}-${reqData.phone_number}.`);
-            (0, phone_1.checkPhoneNumberCountryCodeForSMSCalling)({
-                countryCode: reqData.phone_country_code,
-                phoneNumber: reqData.phone_number,
-                codeData: { code },
-            });
+            // TODO: Would be uncommented in future
+            // checkPhoneNumberCountryCodeForSMSCalling({
+            //   countryCode: reqData.phone_country_code,
+            //   phoneNumber: reqData.phone_number,
+            //   codeData: { code },
+            // });
             await this.otpValidation.create({
                 phone_number: reqData.phone_number,
                 phone_country_code: reqData.phone_country_code,

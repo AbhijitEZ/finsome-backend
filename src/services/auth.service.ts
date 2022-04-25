@@ -28,7 +28,7 @@ import userSuggestionImprovementModel from '@/models/user-suggestion-improvement
 import { isEmpty } from '@utils/util';
 import { APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
 import { userResponseFilter } from '@/utils/global';
-import { checkPhoneNumberCountryCodeForSMSCalling, createPhoneCodeToVerify, intervalDurationOTPCheck } from '@/utils/phone';
+import { createPhoneCodeToVerify, intervalDurationOTPCheck } from '@/utils/phone';
 import { logger } from '@/utils/logger';
 import appImprovementModel from '@/models/app-improvement-type';
 
@@ -88,11 +88,12 @@ class AuthService {
 
       const code = createPhoneCodeToVerify();
       logger.info(`Phone number OTP changed for first time: ${reqData.phone_country_code}-${reqData.phone_number}.`);
-      checkPhoneNumberCountryCodeForSMSCalling({
-        countryCode: reqData.phone_country_code,
-        phoneNumber: reqData.phone_number,
-        codeData: { code },
-      });
+      // TODO: Would be uncommented in future
+      // checkPhoneNumberCountryCodeForSMSCalling({
+      //   countryCode: reqData.phone_country_code,
+      //   phoneNumber: reqData.phone_number,
+      //   codeData: { code },
+      // });
 
       await this.otpValidation.create({
         phone_number: reqData.phone_number,
@@ -371,11 +372,12 @@ class AuthService {
   public updateUserCodeWithSMS = async (reqData: VerifyPhoneDto, existCode?: string, type?: string) => {
     const code = existCode ? existCode : createPhoneCodeToVerify();
     logger.info(`Phone number OTP for: ${reqData.phone_country_code}-${reqData.phone_number}.`);
-    checkPhoneNumberCountryCodeForSMSCalling({
-      countryCode: reqData.phone_country_code,
-      phoneNumber: reqData.phone_number,
-      codeData: { code },
-    });
+    // TODO: Would be uncommented in future
+    // checkPhoneNumberCountryCodeForSMSCalling({
+    //   countryCode: reqData.phone_country_code,
+    //   phoneNumber: reqData.phone_number,
+    //   codeData: { code },
+    // });
 
     if (!type) {
       await this.otpValidation.findOneAndUpdate(
