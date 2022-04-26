@@ -15,6 +15,9 @@ import privacyPolicyModel from '@/models/privacy-policy';
 import termsConditionModel from '@/models/terms-condition';
 import { StockUpdateTypeDto } from '@/dtos/posts.dto';
 import stockTypeModel from '@/models/stock-types';
+import fs from 'fs';
+import { parse as csvParser } from 'csv-parse/sync';
+import { logger } from '@sentry/utils';
 
 class AdminService {
   public users = userModel;
@@ -223,6 +226,49 @@ class AdminService {
 
     // ANCHOR This would be added on, when more models gets associated with Stock.
     await stockTypeModel.findOneAndDelete({ _id, s_type: type }).exec();
+  }
+
+  public async stockTypeUpload(type: string, path: string): Promise<any> {
+    if (!Object.keys(STOCK_TYPE_CONST).includes(type)) {
+      throw new HttpException(404, APP_ERROR_MESSAGE.stock_type_invalid);
+    }
+
+    const fileContent = await fs.readFileSync(path);
+
+    const csvRecords = csvParser(fileContent, { columns: true });
+
+    const finalRecords = [];
+
+    await Promise.all(
+      csvRecords.map(async (rec: any) => {
+        const stockExists = await stockTypeModel.findOne({ code: rec.code });
+        if (type === STOCK_TYPE_CONST.EQUITY && !rec.country_code) {
+          throw new HttpException(400, APP_ERROR_MESSAGE.country_code_required);
+        }
+
+        if (stockExists) {
+          throw new HttpException(409, APP_ERROR_MESSAGE.stock_type_code_exists);
+        }
+
+        if (!rec.image) {
+          delete rec.image;
+        }
+
+        finalRecords.push({ ...rec, s_type: type });
+      }),
+    );
+
+    await stockTypeModel.insertMany(finalRecords);
+
+    // Async process
+    fs.unlink(path, err => {
+      if (err) {
+        logger.error('ERROR while unlinking file from the temp csv');
+        console.log(err);
+      }
+
+      logger.info('Removal of file from temp location in server');
+    });
   }
 }
 

@@ -6,6 +6,7 @@ import { AdminLoginDto, PrivacyPolicyDto, ToggleUserStatusDto } from '@/dtos/adm
 import AdminController from '@/controllers/admin.controller';
 import { authAdminMiddleware } from '@/middlewares/auth.middleware';
 import { StockUpdateTypeDto } from '@/dtos/posts.dto';
+import { fileUploadCSVCB } from '@/utils/global';
 
 /**
  * This route would only be used by the Web panel specifc to admin.
@@ -21,6 +22,7 @@ class AdminRoute implements Routes {
 
   private initializeRoutes() {
     this.router.post(`${this.path}login`, validationMiddleware(AdminLoginDto, 'body'), this.adminController.adminLogin);
+    /* User */
     this.router.get(`${this.path}users`, authAdminMiddleware, this.adminController.userListing);
     this.router.get(`${this.path}dashboard`, authAdminMiddleware, this.adminController.dashboardData);
     this.router.post(
@@ -30,8 +32,14 @@ class AdminRoute implements Routes {
       this.adminController.toggleUserStatus,
     );
     this.router.delete(`${this.path}user/:id`, authAdminMiddleware, this.adminController.deleteUser);
+    /* !User */
+
+    /* App Suggestion and Contacts */
     this.router.get(`${this.path}app-improvement-suggestions`, authAdminMiddleware, this.adminController.appImprovementSuggestion);
     this.router.get(`${this.path}quick-contacts`, authAdminMiddleware, this.adminController.quickContactListing);
+    /* !App Suggestion and Contacts */
+
+    /* Stocks */
     this.router.post(
       `${this.path}stock/:type`,
       authAdminMiddleware,
@@ -39,7 +47,10 @@ class AdminRoute implements Routes {
       this.adminController.stockTypeAdd,
     );
     this.router.delete(`${this.path}stock/:type/:id`, authAdminMiddleware, this.adminController.stockTypeDelete);
+    this.router.post(`${this.path}stock-upload/:type`, authAdminMiddleware, fileUploadCSVCB, this.adminController.stockTypeUpload);
+    /* !Stocks */
 
+    /* Policies */
     this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);
     this.router.post(
       `${this.path}privacy-policy`,
@@ -54,6 +65,7 @@ class AdminRoute implements Routes {
       authAdminMiddleware,
       this.adminController.termsConditionUpdate,
     );
+    /* !Policies */
   }
 }
 

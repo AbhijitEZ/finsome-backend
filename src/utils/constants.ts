@@ -6,6 +6,7 @@ export const APP_SUCCESS_MESSAGE = {
   change_password_success: 'Password updated successfully.',
   phone_change_success: 'Phone number changed successfully.',
   delete_user_success: 'Deleted user successfully.',
+  csv_upload_success: 'CSV upload for stocks successfully.',
   notification_update_success: 'Notification settings updated successfully.',
   update_profile_success: 'Profile updated successfully.',
   validate_user_field_success: 'No user exists with following field.',
@@ -42,6 +43,7 @@ export const APP_ERROR_MESSAGE = {
   error_with_textlocal: 'Error with Text Local need to debug further.',
   incorrect_password: 'It is wrong password please enter correct password.',
   incorrect_img_format: 'Incorrect image format, use valid one.',
+  incorrect_csv_format: 'Incorrect CSV format, use valid one.',
 };
 
 export const USER_ROLE = {
