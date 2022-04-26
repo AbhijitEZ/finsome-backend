@@ -15,6 +15,9 @@ const user_suggestion_improvement_1 = tslib_1.__importDefault(require("../models
 const privacy_policy_1 = tslib_1.__importDefault(require("../models/privacy-policy"));
 const terms_condition_1 = tslib_1.__importDefault(require("../models/terms-condition"));
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
+const fs_1 = tslib_1.__importDefault(require("fs"));
+const sync_1 = require("csv-parse/sync");
+const utils_1 = require("@sentry/utils");
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
@@ -185,6 +188,36 @@ class AdminService {
         }
         // ANCHOR This would be added on, when more models gets associated with Stock.
         await stock_types_1.default.findOneAndDelete({ _id, s_type: type }).exec();
+    }
+    async stockTypeUpload(type, path) {
+        if (!Object.keys(constants_1.STOCK_TYPE_CONST).includes(type)) {
+            throw new HttpException_1.HttpException(404, constants_1.APP_ERROR_MESSAGE.stock_type_invalid);
+        }
+        const fileContent = await fs_1.default.readFileSync(path);
+        const csvRecords = (0, sync_1.parse)(fileContent, { columns: true });
+        const finalRecords = [];
+        await Promise.all(csvRecords.map(async (rec) => {
+            const stockExists = await stock_types_1.default.findOne({ code: rec.code });
+            if (type === constants_1.STOCK_TYPE_CONST.EQUITY && !rec.country_code) {
+                throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.country_code_required);
+            }
+            if (stockExists) {
+                throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.stock_type_code_exists);
+            }
+            if (!rec.image) {
+                delete rec.image;
+            }
+            finalRecords.push(Object.assign(Object.assign({}, rec), { s_type: type }));
+        }));
+        await stock_types_1.default.insertMany(finalRecords);
+        // Async process
+        fs_1.default.unlink(path, err => {
+            if (err) {
+                utils_1.logger.error('ERROR while unlinking file from the temp csv');
+                console.log(err);
+            }
+            utils_1.logger.info('Removal of file from temp location in server');
+        });
     }
 }
 exports.default = AdminService;

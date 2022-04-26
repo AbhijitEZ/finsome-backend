@@ -24,5 +24,6 @@ declare class AdminService {
     quickContactListing(): Promise<Record<string, any>>;
     stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any>;
     stockTypeDelete(type: string, _id: string): Promise<any>;
+    stockTypeUpload(type: string, path: string): Promise<any>;
 }
 export default AdminService;

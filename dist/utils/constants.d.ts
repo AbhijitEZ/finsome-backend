@@ -6,6 +6,7 @@ export declare const APP_SUCCESS_MESSAGE: {
     change_password_success: string;
     phone_change_success: string;
     delete_user_success: string;
+    csv_upload_success: string;
     notification_update_success: string;
     update_profile_success: string;
     validate_user_field_success: string;
@@ -41,6 +42,7 @@ export declare const APP_ERROR_MESSAGE: {
     error_with_textlocal: string;
     incorrect_password: string;
     incorrect_img_format: string;
+    incorrect_csv_format: string;
 };
 export declare const USER_ROLE: {
     ADMIN: string;

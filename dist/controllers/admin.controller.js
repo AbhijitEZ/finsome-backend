@@ -132,6 +132,17 @@ class AdminController {
                 next(error);
             }
         };
+        this.stockTypeUpload = async (req, res, next) => {
+            var _a;
+            try {
+                // @ts-ignore
+                await this.adminService.stockTypeUpload(((_a = req.params) === null || _a === void 0 ? void 0 : _a.type) || constants_1.STOCK_TYPE_CONST.EQUITY, req.file.path);
+                res.status(200).json({ data: {}, message: constants_1.APP_SUCCESS_MESSAGE.csv_upload_success });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = AdminController;
