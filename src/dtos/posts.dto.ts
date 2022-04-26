@@ -1,5 +1,5 @@
-import { STOCK_TYPE_CONST } from '@/utils/constants';
-import { IsBoolean, IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ANALYSIS_TYPE_CONST, STOCK_TYPE_CONST, TRADE_TYPE_CONST } from '@/utils/constants';
+import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from './general.dto';
 
 export class StockTypeDto extends PaginationDto {
@@ -38,4 +38,21 @@ export class StockUpdateTypeDto {
   @IsOptional()
   @IsString()
   country_code?: string;
+}
+
+export class UserConfigurationDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(Object.keys(STOCK_TYPE_CONST))
+  stock_type: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(Object.keys(ANALYSIS_TYPE_CONST))
+  analysis_type: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(Object.keys(TRADE_TYPE_CONST))
+  trade_type: string;
 }

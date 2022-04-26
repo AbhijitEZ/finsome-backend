@@ -61,12 +61,25 @@ export const STOCK_TYPE_CONST = {
   OTHER: 'OTHER',
 };
 
+export const ANALYSIS_TYPE_CONST = {
+  FUNCTIONAL: 'FUNCTIONAL',
+  TECHNICAL: 'TECHNICAL',
+};
+
+export const TRADE_TYPE_CONST = {
+  INTRADAY: 'INTRADAY',
+  SWING: 'SWING',
+  POSITIONAL: 'POSITIONAL',
+  LONG: 'LONG',
+};
+
 export const SKIP_DEF = '0';
 export const LIMIT_DEF = '1';
 
 export const FILE_LIMIT = 20000000;
 
 export const APP_IMPROVEMENT_TYPES = 'app-improvement-types';
+export const USER_CONFIGURATIONS = 'user-configurations';
 export const QUICK_CONTACTS = 'quick-contacts';
 export const COUNTRIES = 'countries';
 export const STOCK_TYPES = 'stock-types';

@@ -46,3 +46,11 @@ export interface PrivacyPolicyInf {
   _id: string;
   content: string;
 }
+
+export interface UserConfigurationInf {
+  _id: string;
+  user_id: string;
+  stock_type: string;
+  analysis_type: string;
+  trade_type: string;
+}

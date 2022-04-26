@@ -56,10 +56,21 @@ export declare const STOCK_TYPE_CONST: {
     EQUITY: string;
     OTHER: string;
 };
+export declare const ANALYSIS_TYPE_CONST: {
+    FUNCTIONAL: string;
+    TECHNICAL: string;
+};
+export declare const TRADE_TYPE_CONST: {
+    INTRADAY: string;
+    SWING: string;
+    POSITIONAL: string;
+    LONG: string;
+};
 export declare const SKIP_DEF = "0";
 export declare const LIMIT_DEF = "1";
 export declare const FILE_LIMIT = 20000000;
 export declare const APP_IMPROVEMENT_TYPES = "app-improvement-types";
+export declare const USER_CONFIGURATIONS = "user-configurations";
 export declare const QUICK_CONTACTS = "quick-contacts";
 export declare const COUNTRIES = "countries";
 export declare const STOCK_TYPES = "stock-types";

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.profileImageFolder = exports.USER_SUGGESTION_IMPROVEMENTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.STOCK_TYPES = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
+exports.profileImageFolder = exports.USER_SUGGESTION_IMPROVEMENTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.STOCK_TYPES = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.USER_CONFIGURATIONS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.TRADE_TYPE_CONST = exports.ANALYSIS_TYPE_CONST = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
 exports.APP_SUCCESS_MESSAGE = {
     signup_phone_verify_success: 'Signup phone verified successfully.',
     signup_success: 'Signup successfully.',
@@ -59,10 +59,21 @@ exports.STOCK_TYPE_CONST = {
     EQUITY: 'EQUITY',
     OTHER: 'OTHER',
 };
+exports.ANALYSIS_TYPE_CONST = {
+    FUNCTIONAL: 'FUNCTIONAL',
+    TECHNICAL: 'TECHNICAL',
+};
+exports.TRADE_TYPE_CONST = {
+    INTRADAY: 'INTRADAY',
+    SWING: 'SWING',
+    POSITIONAL: 'POSITIONAL',
+    LONG: 'LONG',
+};
 exports.SKIP_DEF = '0';
 exports.LIMIT_DEF = '1';
 exports.FILE_LIMIT = 20000000;
 exports.APP_IMPROVEMENT_TYPES = 'app-improvement-types';
+exports.USER_CONFIGURATIONS = 'user-configurations';
 exports.QUICK_CONTACTS = 'quick-contacts';
 exports.COUNTRIES = 'countries';
 exports.STOCK_TYPES = 'stock-types';

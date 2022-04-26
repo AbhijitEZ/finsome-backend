@@ -3,11 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const countries_1 = tslib_1.__importDefault(require("../models/countries"));
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
+const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
 const constants_1 = require("../utils/constants");
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
         this.stockTypesObj = stock_types_1.default;
+        this.userConfigObj = user_configurations_1.default;
     }
     async countriesGetAll() {
         const countries = await this.countryObj.find({}).lean();
@@ -34,6 +36,19 @@ class PostService {
                 .exec();
         const total_count = await totalCountQuery.count();
         return { stocks, total_count };
+    }
+    async userConfigListing(_id) {
+        const userConfig = await this.userConfigObj.findOne({ user_id: _id }).lean();
+        return userConfig || {};
+    }
+    async userConfigUpdate(_id, reqData) {
+        const userConfig = await this.userConfigObj.findOne({ user_id: _id }).lean();
+        if (userConfig) {
+            return userConfig;
+        }
+        const newConfig = await this.userConfigObj.create(Object.assign({}, reqData));
+        // @ts-ignore
+        return newConfig._doc;
     }
 }
 exports.default = PostService;

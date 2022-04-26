@@ -11,3 +11,8 @@ export declare class StockUpdateTypeDto {
     image?: string;
     country_code?: string;
 }
+export declare class UserConfigurationDto {
+    stock_type: string;
+    analysis_type: string;
+    trade_type: string;
+}

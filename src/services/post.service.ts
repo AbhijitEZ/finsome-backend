@@ -1,11 +1,13 @@
-import { StockTypeDto } from '@/dtos/posts.dto';
+import { StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
 import countryModel from '@/models/countries';
 import stockTypeModel from '@/models/stock-types';
+import userConfigurationModel from '@/models/user-configurations';
 import { LIMIT_DEF, SKIP_DEF, STOCK_TYPE_CONST } from '@/utils/constants';
 
 class PostService {
   public countryObj = countryModel;
   public stockTypesObj = stockTypeModel;
+  public userConfigObj = userConfigurationModel;
 
   public async countriesGetAll(): Promise<any[]> {
     const countries = await this.countryObj.find({}).lean();
@@ -38,6 +40,25 @@ class PostService {
     const total_count = await totalCountQuery.count();
 
     return { stocks, total_count };
+  }
+
+  public async userConfigListing(_id: string): Promise<any> {
+    const userConfig = await this.userConfigObj.findOne({ user_id: _id }).lean();
+
+    return userConfig || {};
+  }
+
+  public async userConfigUpdate(_id: string, reqData: UserConfigurationDto): Promise<any> {
+    const userConfig = await this.userConfigObj.findOne({ user_id: _id }).lean();
+
+    if (userConfig) {
+      return userConfig;
+    }
+
+    const newConfig = await this.userConfigObj.create({ ...reqData });
+
+    // @ts-ignore
+    return newConfig._doc;
   }
 }
 
