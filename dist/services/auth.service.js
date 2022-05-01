@@ -18,6 +18,7 @@ const global_1 = require("../utils/global");
 const phone_1 = require("../utils/phone");
 const logger_1 = require("../utils/logger");
 const app_improvement_type_1 = tslib_1.__importDefault(require("../models/app-improvement-type"));
+const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
 class AuthService {
     constructor() {
         this.users = users_model_1.default;
@@ -39,6 +40,12 @@ class AuthService {
             }
             else if (type === 'user') {
                 await this.users.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
+            }
+        };
+        this.asyncUserCreationProcess = async (id) => {
+            const configExists = await user_configurations_1.default.findOne({ user_id: id });
+            if (!configExists) {
+                user_configurations_1.default.create({ user_id: id, account_type: constants_1.ACCOUNT_TYPE_CONST.PUBLIC });
             }
         };
     }
@@ -145,6 +152,7 @@ class AuthService {
         if (!updateUserData) {
             throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.user_id_not_exits);
         }
+        this.asyncUserCreationProcess(updateUserData._id);
         const token_data = this.createToken(updateUserData);
         const cookie = this.createCookie(token_data);
         // @ts-ignore
@@ -169,6 +177,7 @@ class AuthService {
         if (findUser.deleted_at) {
             throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.user_blocked);
         }
+        this.asyncUserCreationProcess(findUser._id);
         const token_data = this.createToken(findUser);
         const cookie = this.createCookie(token_data);
         const userResFilter = (0, global_1.userResponseFilter)(findUser);

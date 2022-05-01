@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.profileImageFolder = exports.USER_SUGGESTION_IMPROVEMENTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.STOCK_TYPES = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.USER_CONFIGURATIONS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.TRADE_TYPE_CONST = exports.ANALYSIS_TYPE_CONST = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
+exports.profileImageFolder = exports.USER_SUGGESTION_IMPROVEMENTS = exports.POSTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.STOCK_TYPES = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.USER_CONFIGURATIONS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.ACCOUNT_TYPE_CONST = exports.STOCK_RECOMMENDED_CONST = exports.TRADE_TYPE_CONST = exports.ANALYSIS_TYPE_CONST = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
 exports.APP_SUCCESS_MESSAGE = {
     signup_phone_verify_success: 'Signup phone verified successfully.',
     signup_success: 'Signup successfully.',
@@ -71,6 +71,14 @@ exports.TRADE_TYPE_CONST = {
     POSITIONAL: 'POSITIONAL',
     LONG: 'LONG',
 };
+exports.STOCK_RECOMMENDED_CONST = {
+    SHORT: 'SHORT',
+    LONG: 'LONG',
+};
+exports.ACCOUNT_TYPE_CONST = {
+    PUBLIC: 'PUBLIC',
+    PRIVATE: 'PRIVATE',
+};
 exports.SKIP_DEF = '0';
 exports.LIMIT_DEF = '1';
 exports.FILE_LIMIT = 20000000;
@@ -83,6 +91,7 @@ exports.PRIVACY_POLICIES = 'privacy-policies';
 exports.TERMS_CONDITIONS = 'terms-conditions';
 exports.OTP_VALIDATIONS = 'otp-validations';
 exports.USERS = 'users';
+exports.POSTS = 'posts';
 exports.USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';
 exports.profileImageFolder = 'profile-img/';
 //# sourceMappingURL=constants.js.map

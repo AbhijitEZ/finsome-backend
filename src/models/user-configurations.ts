@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { UserConfigurationInf } from '@interfaces/general.interface';
-import { ANALYSIS_TYPE_CONST, STOCK_TYPE_CONST, TRADE_TYPE_CONST, USERS, USER_CONFIGURATIONS } from '@/utils/constants';
+import { ACCOUNT_TYPE_CONST, ANALYSIS_TYPE_CONST, STOCK_TYPE_CONST, TRADE_TYPE_CONST, USERS, USER_CONFIGURATIONS } from '@/utils/constants';
 
 const userConfigurationSchema: Schema = new Schema(
   {
@@ -19,6 +19,11 @@ const userConfigurationSchema: Schema = new Schema(
     trade_type: {
       type: String,
       enum: Object.keys(TRADE_TYPE_CONST),
+    },
+    account_type: {
+      type: String,
+      enum: Object.keys(ACCOUNT_TYPE_CONST),
+      default: ACCOUNT_TYPE_CONST.PUBLIC,
     },
   },
   {

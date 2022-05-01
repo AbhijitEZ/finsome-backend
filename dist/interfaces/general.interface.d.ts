@@ -36,6 +36,13 @@ export interface UserSuggestionImproveInf {
     description?: string;
     timestamp: string;
 }
+export interface PostsInf {
+    user_id: string;
+    stock_type: string;
+    analysis_type?: string;
+    trade_type?: string;
+    stock_recommended_type?: string;
+}
 export interface PrivacyPolicyInf {
     _id: string;
     content: string;
@@ -46,4 +53,5 @@ export interface UserConfigurationInf {
     stock_type: string;
     analysis_type: string;
     trade_type: string;
+    account_type: string;
 }

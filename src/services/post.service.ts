@@ -52,7 +52,9 @@ class PostService {
     const userConfig = await this.userConfigObj.findOne({ user_id: _id }).lean();
 
     if (userConfig) {
-      return userConfig;
+      const newConfig = await this.userConfigObj.findByIdAndUpdate(userConfig._id, { ...reqData }, { new: true });
+      // @ts-ignore
+      return newConfig._doc;
     }
 
     const newConfig = await this.userConfigObj.create({ ...reqData });

@@ -75,6 +75,16 @@ export const TRADE_TYPE_CONST = {
   LONG: 'LONG',
 };
 
+export const STOCK_RECOMMENDED_CONST = {
+  SHORT: 'SHORT',
+  LONG: 'LONG',
+};
+
+export const ACCOUNT_TYPE_CONST = {
+  PUBLIC: 'PUBLIC',
+  PRIVATE: 'PRIVATE',
+};
+
 export const SKIP_DEF = '0';
 export const LIMIT_DEF = '1';
 
@@ -89,6 +99,7 @@ export const PRIVACY_POLICIES = 'privacy-policies';
 export const TERMS_CONDITIONS = 'terms-conditions';
 export const OTP_VALIDATIONS = 'otp-validations';
 export const USERS = 'users';
+export const POSTS = 'posts';
 export const USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';
 
 export const profileImageFolder = 'profile-img/';

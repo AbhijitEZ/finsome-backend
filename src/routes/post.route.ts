@@ -20,7 +20,7 @@ class PostRoute implements Routes {
     this.router.get(`${this.path}user-configurations`, authMiddleware, this.postController.userConfigurationListing);
     this.router.post(
       `${this.path}user-configurations`,
-      validationMiddleware(UserConfigurationDto, 'query'),
+      validationMiddleware(UserConfigurationDto, 'body'),
       authMiddleware,
       this.postController.userConfigurationUpdate,
     );

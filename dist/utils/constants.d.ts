@@ -68,6 +68,14 @@ export declare const TRADE_TYPE_CONST: {
     POSITIONAL: string;
     LONG: string;
 };
+export declare const STOCK_RECOMMENDED_CONST: {
+    SHORT: string;
+    LONG: string;
+};
+export declare const ACCOUNT_TYPE_CONST: {
+    PUBLIC: string;
+    PRIVATE: string;
+};
 export declare const SKIP_DEF = "0";
 export declare const LIMIT_DEF = "1";
 export declare const FILE_LIMIT = 20000000;
@@ -80,5 +88,6 @@ export declare const PRIVACY_POLICIES = "privacy-policies";
 export declare const TERMS_CONDITIONS = "terms-conditions";
 export declare const OTP_VALIDATIONS = "otp-validations";
 export declare const USERS = "users";
+export declare const POSTS = "posts";
 export declare const USER_SUGGESTION_IMPROVEMENTS = "user-suggestion-improvements";
 export declare const profileImageFolder = "profile-img/";

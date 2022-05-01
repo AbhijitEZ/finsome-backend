@@ -72,5 +72,11 @@ tslib_1.__decorate([
     (0, class_validator_1.IsIn)(Object.keys(constants_1.TRADE_TYPE_CONST)),
     tslib_1.__metadata("design:type", String)
 ], UserConfigurationDto.prototype, "trade_type", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsIn)(Object.keys(constants_1.ACCOUNT_TYPE_CONST)),
+    tslib_1.__metadata("design:type", String)
+], UserConfigurationDto.prototype, "account_type", void 0);
 exports.UserConfigurationDto = UserConfigurationDto;
 //# sourceMappingURL=posts.dto.js.map

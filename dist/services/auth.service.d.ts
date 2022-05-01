@@ -42,5 +42,6 @@ declare class AuthService {
     createToken(user: User): TokenData;
     createCookie(tokenData: TokenData): string;
     updateUserCodeWithSMS: (reqData: VerifyPhoneDto, existCode?: string, type?: string) => Promise<void>;
+    private asyncUserCreationProcess;
 }
 export default AuthService;

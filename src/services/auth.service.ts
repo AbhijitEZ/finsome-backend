@@ -26,11 +26,12 @@ import otpValidationModel from '@models/otp-validation.model';
 import quickContactModel from '@models/quick-contact';
 import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
 import { isEmpty } from '@utils/util';
-import { APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
+import { ACCOUNT_TYPE_CONST, APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
 import { userResponseFilter } from '@/utils/global';
 import { createPhoneCodeToVerify, intervalDurationOTPCheck } from '@/utils/phone';
 import { logger } from '@/utils/logger';
 import appImprovementModel from '@/models/app-improvement-type';
+import userConfigurationModel from '@/models/user-configurations';
 
 class AuthService {
   public users = userModel;
@@ -162,6 +163,8 @@ class AuthService {
       throw new HttpException(400, APP_ERROR_MESSAGE.user_id_not_exits);
     }
 
+    this.asyncUserCreationProcess(updateUserData._id);
+
     const token_data = this.createToken(updateUserData);
     const cookie = this.createCookie(token_data);
 
@@ -191,6 +194,8 @@ class AuthService {
     if (findUser.deleted_at) {
       throw new HttpException(400, APP_ERROR_MESSAGE.user_blocked);
     }
+
+    this.asyncUserCreationProcess(findUser._id);
 
     const token_data = this.createToken(findUser);
     const cookie = this.createCookie(token_data);
@@ -386,6 +391,13 @@ class AuthService {
       );
     } else if (type === 'user') {
       await this.users.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
+    }
+  };
+
+  private asyncUserCreationProcess = async (id: string) => {
+    const configExists = await userConfigurationModel.findOne({ user_id: id });
+    if (!configExists) {
+      userConfigurationModel.create({ user_id: id, account_type: ACCOUNT_TYPE_CONST.PUBLIC });
     }
   };
 }

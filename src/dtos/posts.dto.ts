@@ -1,4 +1,4 @@
-import { ANALYSIS_TYPE_CONST, STOCK_TYPE_CONST, TRADE_TYPE_CONST } from '@/utils/constants';
+import { ACCOUNT_TYPE_CONST, ANALYSIS_TYPE_CONST, STOCK_TYPE_CONST, TRADE_TYPE_CONST } from '@/utils/constants';
 import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from './general.dto';
 
@@ -55,4 +55,9 @@ export class UserConfigurationDto {
   @IsString()
   @IsIn(Object.keys(TRADE_TYPE_CONST))
   trade_type: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(Object.keys(ACCOUNT_TYPE_CONST))
+  account_type: string;
 }
