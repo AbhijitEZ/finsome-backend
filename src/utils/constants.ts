@@ -85,6 +85,11 @@ export const ACCOUNT_TYPE_CONST = {
   PRIVATE: 'PRIVATE',
 };
 
+export const ASSET_TYPE_CONST = {
+  IMAGE: 'IMAGE',
+  VIDEO: 'VIDEO',
+};
+
 export const SKIP_DEF = '0';
 export const LIMIT_DEF = '1';
 

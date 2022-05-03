@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const countries_1 = tslib_1.__importDefault(require("../models/countries"));
+const posts_1 = tslib_1.__importDefault(require("../models/posts"));
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
 const constants_1 = require("../utils/constants");
@@ -51,6 +52,13 @@ class PostService {
         const newConfig = await this.userConfigObj.create(Object.assign(Object.assign({}, reqData), { user_id: _id }));
         // @ts-ignore
         return newConfig._doc;
+    }
+    async postCreate(_id, reqData) {
+        // WAYROUND PATCH
+        const payloadNew = Object.assign(Object.assign({}, reqData), { is_recommended: reqData.is_recommended === 'true' ? true : false });
+        const postNew = await posts_1.default.create(Object.assign({ user_id: _id }, payloadNew));
+        // @ts-ignore
+        return postNew._doc;
     }
 }
 exports.default = PostService;

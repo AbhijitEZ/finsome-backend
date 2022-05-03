@@ -15,9 +15,10 @@ class PostRoute {
     }
     initializeRoutes() {
         this.router.get(`${this.path}countries`, this.postController.countriesController);
-        this.router.get(`${this.path}stock-type`, (0, validation_middleware_1.default)(posts_dto_1.StockTypeDto, 'query'), auth_middleware_1.default, this.postController.stockTypesController);
+        this.router.get(`${this.path}stock-type`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.StockTypeDto, 'query'), this.postController.stockTypesController);
         this.router.get(`${this.path}user-configurations`, auth_middleware_1.default, this.postController.userConfigurationListing);
-        this.router.post(`${this.path}user-configurations`, (0, validation_middleware_1.default)(posts_dto_1.UserConfigurationDto, 'body'), auth_middleware_1.default, this.postController.userConfigurationUpdate);
+        this.router.post(`${this.path}user-configurations`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.UserConfigurationDto, 'body'), this.postController.userConfigurationUpdate);
+        this.router.post(`${this.path}create`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.PostCreateDto, 'body'), this.postController.postCreate);
     }
 }
 exports.default = PostRoute;

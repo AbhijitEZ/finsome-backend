@@ -7,6 +7,11 @@ const postsSch = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         ref: constants_1.USERS,
     },
+    /* Stock/Equity id */
+    security_id: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: constants_1.STOCK_TYPES,
+    },
     stock_type: {
         type: String,
         enum: Object.keys(constants_1.STOCK_TYPE_CONST),
@@ -23,6 +28,30 @@ const postsSch = new mongoose_1.Schema({
         type: String,
         enum: Object.keys(constants_1.STOCK_RECOMMENDED_CONST),
     },
+    is_recommended: {
+        type: Boolean,
+        default: false,
+    },
+    buy_recommend_amount: {
+        type: String,
+    },
+    sell_recommend_amount: {
+        type: String,
+    },
+    caption: {
+        type: String,
+    },
+    assets: [
+        {
+            asset_type: {
+                type: String,
+                enum: Object.keys(constants_1.ASSET_TYPE_CONST),
+            },
+            link: {
+                type: String,
+            },
+        },
+    ],
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 });

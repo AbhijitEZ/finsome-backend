@@ -17,3 +17,14 @@ export declare class UserConfigurationDto {
     trade_type: string;
     account_type: string;
 }
+export declare class PostCreateDto {
+    stock_type: string;
+    analysis_type: string;
+    trade_type: string;
+    security_id: string;
+    stock_recommended_type: string;
+    is_recommended: string;
+    buy_recommend_amount: string;
+    sell_recommend_amount: string;
+    caption: string;
+}

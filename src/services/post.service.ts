@@ -1,5 +1,6 @@
-import { StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
+import { PostCreateDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
 import countryModel from '@/models/countries';
+import postsModel from '@/models/posts';
 import stockTypeModel from '@/models/stock-types';
 import userConfigurationModel from '@/models/user-configurations';
 import { LIMIT_DEF, SKIP_DEF, STOCK_TYPE_CONST } from '@/utils/constants';
@@ -61,6 +62,16 @@ class PostService {
 
     // @ts-ignore
     return newConfig._doc;
+  }
+
+  public async postCreate(_id: string, reqData: PostCreateDto): Promise<any> {
+    // WAYROUND PATCH
+    const payloadNew = { ...reqData, is_recommended: reqData.is_recommended === 'true' ? true : false };
+
+    const postNew = await postsModel.create({ user_id: _id, ...payloadNew });
+
+    // @ts-ignore
+    return postNew._doc;
   }
 }
 

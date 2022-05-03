@@ -6,5 +6,6 @@ declare class PostController {
     stockTypesController: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userConfigurationListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userConfigurationUpdate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    postCreate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default PostController;
