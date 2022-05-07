@@ -7,7 +7,7 @@ import { APP_ERROR_MESSAGE, STOCK_TYPE_CONST, USER_ROLE } from '@/utils/constant
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import appImprovementModel from '@models/app-improvement-type';
-import { profileImageGenerator } from '@/utils/util';
+import { fileUnSyncFromLocalStroage, profileImageGenerator } from '@/utils/util';
 import { toDate } from 'date-fns';
 import quickContactModel from '@/models/quick-contact';
 import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
@@ -17,7 +17,6 @@ import { StockUpdateTypeDto } from '@/dtos/posts.dto';
 import stockTypeModel from '@/models/stock-types';
 import fs from 'fs';
 import { parse as csvParser } from 'csv-parse/sync';
-import { logger } from '@sentry/utils';
 
 class AdminService {
   public users = userModel;
@@ -260,15 +259,7 @@ class AdminService {
 
     await stockTypeModel.insertMany(finalRecords);
 
-    // Async process
-    fs.unlink(path, err => {
-      if (err) {
-        logger.error('ERROR while unlinking file from the temp csv');
-        console.log(err);
-      }
-
-      logger.info('Removal of file from temp location in server');
-    });
+    fileUnSyncFromLocalStroage(path);
   }
 }
 

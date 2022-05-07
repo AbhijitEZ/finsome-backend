@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import { nanoid } from 'nanoid';
-import { APP_ERROR_MESSAGE, profileImageFolder } from './constants';
+import { APP_ERROR_MESSAGE, APP_SUCCESS_MESSAGE, profileImageFolder } from './constants';
 import { logger } from './logger';
 
 class AWSHandler {
@@ -30,14 +30,14 @@ class AWSHandler {
       });
   }
 
-  public async addProfileImage(file: Express.Multer.File) {
+  public async addAssets(file: Express.Multer.File, imageFolder = profileImageFolder, fileContent = null) {
     const imageName = nanoid(12) + '_' + file.originalname;
     const s3 = new AWS.S3();
 
     const uploadOptions = {
       Bucket: process.env.S3_BUCKET,
-      Key: profileImageFolder + imageName,
-      Body: file.buffer,
+      Key: imageFolder + imageName,
+      Body: fileContent || file.buffer,
       ContentType: file.mimetype,
       ACL: 'public-read',
     };
@@ -45,6 +45,7 @@ class AWSHandler {
     await s3
       .upload(uploadOptions)
       .promise()
+      .then(() => logger.info(APP_SUCCESS_MESSAGE.assets_image_success))
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .catch(error => {
         console.log(error, 'error');

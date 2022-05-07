@@ -4,6 +4,7 @@ import PostController from '@/controllers/post.controller';
 import validationMiddleware from '@/middlewares/validation.middleware';
 import authMiddleware from '@/middlewares/auth.middleware';
 import { PostCreateDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
+import { fileUploadPostCB } from '@/utils/global';
 
 class PostRoute implements Routes {
   public path = '/post/';
@@ -24,7 +25,13 @@ class PostRoute implements Routes {
       validationMiddleware(UserConfigurationDto, 'body'),
       this.postController.userConfigurationUpdate,
     );
-    this.router.post(`${this.path}create`, authMiddleware, validationMiddleware(PostCreateDto, 'body'), this.postController.postCreate);
+    this.router.post(
+      `${this.path}create`,
+      authMiddleware,
+      fileUploadPostCB,
+      validationMiddleware(PostCreateDto, 'body'),
+      this.postController.postCreate,
+    );
   }
 }
 

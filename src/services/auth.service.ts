@@ -292,7 +292,7 @@ class AuthService {
       }
 
       // Add image
-      const profileImage = await awsHandler.addProfileImage(file);
+      const profileImage = await awsHandler.addAssets(file);
       payload.profile_photo = profileImage;
     }
 

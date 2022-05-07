@@ -1,4 +1,6 @@
-import { profileImageFolder } from './constants';
+import fs from 'fs';
+import { postAssetsFolder, profileImageFolder } from './constants';
+import { logger } from './logger';
 
 /**
  * @method isEmpty
@@ -22,4 +24,19 @@ export const isEmpty = (value: string | number | object): boolean => {
 
 export const profileImageGenerator = (imageName: string) => {
   return imageName ? `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${profileImageFolder}${imageName}` : null;
+};
+
+export const postAssetsGenerator = (imageName: string) => {
+  return imageName ? `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${postAssetsFolder}${imageName}` : null;
+};
+
+export const fileUnSyncFromLocalStroage = (path: string) => {
+  fs.unlink(path, err => {
+    if (err) {
+      logger.error('ERROR while unlinking file from the temp ' + path);
+      console.log(err);
+    }
+
+    logger.info('Removal of file from temp location in server: ' + path);
+  });
 };

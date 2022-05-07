@@ -47,7 +47,7 @@ class PostController {
   public postCreate = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.postService.postCreate(req.user?._id, req.body);
+      const data = await this.postService.postCreate(req.user?._id, req.body, req.files);
       responseJSONMapper(res, 200, { ...data });
     } catch (error) {
       next(error);

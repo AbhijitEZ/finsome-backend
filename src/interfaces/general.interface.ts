@@ -48,6 +48,9 @@ export interface PostsInf {
   analysis_type?: string;
   trade_type?: string;
   stock_recommended_type?: string;
+  post_images?: Array<string>;
+  post_vids?: Array<string>;
+  post_thumbs?: Array<string>;
 }
 
 export interface PrivacyPolicyInf {

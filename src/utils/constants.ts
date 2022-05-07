@@ -14,6 +14,7 @@ export const APP_SUCCESS_MESSAGE = {
   sent_otp_success: 'OTP sent to you phone number.',
   password_reset_success: 'Password Reset successfully.',
   verify_otp_success: 'OTP is verified.',
+  assets_image_success: 'Assests has been uploaded successfully.',
 };
 
 export const APP_ERROR_MESSAGE = {
@@ -44,6 +45,7 @@ export const APP_ERROR_MESSAGE = {
   incorrect_password: 'It is wrong password please enter correct password.',
   incorrect_img_format: 'Incorrect image format, use valid one.',
   incorrect_csv_format: 'Incorrect CSV format, use valid one.',
+  incorrect_format: 'Incorrect format, use valid one.',
 };
 
 export const USER_ROLE = {
@@ -94,6 +96,7 @@ export const SKIP_DEF = '0';
 export const LIMIT_DEF = '1';
 
 export const FILE_LIMIT = 20000000;
+export const FILE_COUNT_POST = 10;
 
 export const APP_IMPROVEMENT_TYPES = 'app-improvement-types';
 export const USER_CONFIGURATIONS = 'user-configurations';
@@ -108,3 +111,4 @@ export const POSTS = 'posts';
 export const USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';
 
 export const profileImageFolder = 'profile-img/';
+export const postAssetsFolder = 'post/';

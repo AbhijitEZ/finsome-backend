@@ -1,9 +1,14 @@
 import { PostCreateDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
 import countryModel from '@/models/countries';
 import postsModel from '@/models/posts';
+import awsHandler from '@utils/aws';
+import fs from 'fs';
 import stockTypeModel from '@/models/stock-types';
 import userConfigurationModel from '@/models/user-configurations';
-import { LIMIT_DEF, SKIP_DEF, STOCK_TYPE_CONST } from '@/utils/constants';
+import { isEmpty } from 'lodash';
+import { LIMIT_DEF, postAssetsFolder, SKIP_DEF, STOCK_TYPE_CONST } from '@/utils/constants';
+import { fileUnSyncFromLocalStroage } from '@/utils/util';
+import { postResponseFilter } from '@/utils/global';
 
 class PostService {
   public countryObj = countryModel;
@@ -64,14 +69,66 @@ class PostService {
     return newConfig._doc;
   }
 
-  public async postCreate(_id: string, reqData: PostCreateDto): Promise<any> {
+  public async postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any> {
     // WAYROUND PATCH
-    const payloadNew = { ...reqData, is_recommended: reqData.is_recommended === 'true' ? true : false };
+    const payloadNew: any = { ...reqData, is_recommended: reqData.is_recommended === 'true' ? true : false };
+    let post_images = [],
+      post_thumbs = [],
+      post_vids = [];
+
+    /* At present everything is synchronous */
+    if (!isEmpty(files)) {
+      if (files?.post_images?.length) {
+        post_images = await Promise.all(
+          files?.post_images?.map(async file => {
+            const fileContent = await fs.readFileSync(file.path);
+            const fileData = await awsHandler.addAssets(file, postAssetsFolder, fileContent);
+            return fileData;
+          }),
+        );
+      }
+
+      if (files?.post_thumbs?.length) {
+        post_thumbs = await Promise.all(
+          files?.post_thumbs?.map(async file => {
+            const fileContent = await fs.readFileSync(file.path);
+            const fileData = await awsHandler.addAssets(file, postAssetsFolder, fileContent);
+            return fileData;
+          }),
+        );
+      }
+
+      if (files?.post_vids?.length) {
+        post_vids = await Promise.all(
+          files?.post_vids?.map(async file => {
+            const fileContent = await fs.readFileSync(file.path);
+            const fileData = await awsHandler.addAssets(file, postAssetsFolder, fileContent);
+            return fileData;
+          }),
+        );
+      }
+    }
+
+    payloadNew.post_images = post_images;
+    payloadNew.post_thumbs = post_thumbs;
+    payloadNew.post_vids = post_vids;
 
     const postNew = await postsModel.create({ user_id: _id, ...payloadNew });
 
+    if (!isEmpty(files)) {
+      files?.post_images?.map(file => {
+        fileUnSyncFromLocalStroage(file.path);
+      });
+      files?.post_vids?.map(file => {
+        fileUnSyncFromLocalStroage(file.path);
+      });
+      files?.post_thumbs?.map(file => {
+        fileUnSyncFromLocalStroage(file.path);
+      });
+    }
+
     // @ts-ignore
-    return postNew._doc;
+    return postResponseFilter(postNew._doc);
   }
 }
 

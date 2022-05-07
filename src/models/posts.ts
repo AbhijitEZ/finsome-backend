@@ -1,15 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { PostsInf } from '@interfaces/general.interface';
-import {
-  ANALYSIS_TYPE_CONST,
-  ASSET_TYPE_CONST,
-  POSTS,
-  STOCK_RECOMMENDED_CONST,
-  STOCK_TYPES,
-  STOCK_TYPE_CONST,
-  TRADE_TYPE_CONST,
-  USERS,
-} from '@/utils/constants';
+import { ANALYSIS_TYPE_CONST, POSTS, STOCK_RECOMMENDED_CONST, STOCK_TYPES, STOCK_TYPE_CONST, TRADE_TYPE_CONST, USERS } from '@/utils/constants';
 
 const postsSch: Schema = new Schema(
   {
@@ -51,15 +42,19 @@ const postsSch: Schema = new Schema(
     caption: {
       type: String,
     },
-    assets: [
+    post_images: [
       {
-        asset_type: {
-          type: String,
-          enum: Object.keys(ASSET_TYPE_CONST),
-        },
-        link: {
-          type: String,
-        },
+        type: String,
+      },
+    ],
+    post_thumbs: [
+      {
+        type: String,
+      },
+    ],
+    post_vids: [
+      {
+        type: String,
       },
     ],
   },
