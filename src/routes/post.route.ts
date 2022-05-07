@@ -32,6 +32,7 @@ class PostRoute implements Routes {
       validationMiddleware(PostCreateDto, 'body'),
       this.postController.postCreate,
     );
+    this.router.get(`${this.path}explore`, authMiddleware, this.postController.postExplore);
   }
 }
 

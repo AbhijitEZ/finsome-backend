@@ -58,6 +58,11 @@ class PostService {
         // @ts-ignore
         return newConfig._doc;
     }
+    async postExplore(_id) {
+        const postsListing = await posts_1.default.find({ deleted_at: undefined }).populate('user_id', ['fullname', 'email']).lean();
+        const postsMapping = postsListing.map(post => (0, global_1.postResponseFilter)(post));
+        return postsMapping;
+    }
     async postCreate(_id, reqData, files) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         // WAYROUND PATCH

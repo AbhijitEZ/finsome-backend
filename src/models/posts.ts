@@ -57,6 +57,9 @@ const postsSch: Schema = new Schema(
         type: String,
       },
     ],
+    deleted_at: {
+      type: Date,
+    },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

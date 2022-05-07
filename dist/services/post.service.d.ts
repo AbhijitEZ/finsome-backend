@@ -9,6 +9,7 @@ declare class PostService {
     stockTypesShares(reqData: StockTypeDto): Promise<any>;
     userConfigListing(_id: string): Promise<any>;
     userConfigUpdate(_id: string, reqData: UserConfigurationDto): Promise<any>;
+    postExplore(_id: string): Promise<any>;
     postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any>;
 }
 export default PostService;

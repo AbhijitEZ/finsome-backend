@@ -45,6 +45,7 @@ export interface PostsInf {
     post_images?: Array<string>;
     post_vids?: Array<string>;
     post_thumbs?: Array<string>;
+    deleted_at?: Date;
 }
 export interface PrivacyPolicyInf {
     _id: string;

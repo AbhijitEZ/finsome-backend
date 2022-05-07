@@ -69,6 +69,14 @@ class PostService {
     return newConfig._doc;
   }
 
+  public async postExplore(_id: string): Promise<any> {
+    const postsListing = await postsModel.find({ deleted_at: undefined }).populate('user_id', ['fullname', 'email']).lean();
+
+    const postsMapping = postsListing.map(post => postResponseFilter(post));
+
+    return postsMapping;
+  }
+
   public async postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any> {
     // WAYROUND PATCH
     const payloadNew: any = { ...reqData, is_recommended: reqData.is_recommended === 'true' ? true : false };
