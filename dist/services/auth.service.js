@@ -261,7 +261,7 @@ class AuthService {
                 aws_1.default.deleteProfileImage(profileUser.profile_photo);
             }
             // Add image
-            const profileImage = await aws_1.default.addProfileImage(file);
+            const profileImage = await aws_1.default.addAssets(file);
             payload.profile_photo = profileImage;
         }
         if (userData.remove_photo && (profileUser === null || profileUser === void 0 ? void 0 : profileUser.profile_photo)) {

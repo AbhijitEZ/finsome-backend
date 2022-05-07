@@ -17,7 +17,6 @@ const terms_condition_1 = tslib_1.__importDefault(require("../models/terms-condi
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 const fs_1 = tslib_1.__importDefault(require("fs"));
 const sync_1 = require("csv-parse/sync");
-const utils_1 = require("@sentry/utils");
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
@@ -210,14 +209,7 @@ class AdminService {
             finalRecords.push(Object.assign(Object.assign({}, rec), { s_type: type }));
         }));
         await stock_types_1.default.insertMany(finalRecords);
-        // Async process
-        fs_1.default.unlink(path, err => {
-            if (err) {
-                utils_1.logger.error('ERROR while unlinking file from the temp csv');
-                console.log(err);
-            }
-            utils_1.logger.info('Removal of file from temp location in server');
-        });
+        (0, util_1.fileUnSyncFromLocalStroage)(path);
     }
 }
 exports.default = AdminService;

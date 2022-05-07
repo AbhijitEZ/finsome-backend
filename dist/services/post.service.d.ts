@@ -1,3 +1,4 @@
+/// <reference types="multer" />
 /// <reference types="mongoose" />
 import { PostCreateDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
 declare class PostService {
@@ -8,6 +9,6 @@ declare class PostService {
     stockTypesShares(reqData: StockTypeDto): Promise<any>;
     userConfigListing(_id: string): Promise<any>;
     userConfigUpdate(_id: string, reqData: UserConfigurationDto): Promise<any>;
-    postCreate(_id: string, reqData: PostCreateDto): Promise<any>;
+    postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any>;
 }
 export default PostService;

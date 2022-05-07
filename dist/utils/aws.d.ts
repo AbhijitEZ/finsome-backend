@@ -3,7 +3,7 @@ declare class AWSHandler {
     constructor();
     init(): void;
     deleteProfileImage(profilePhoto: string): void;
-    addProfileImage(file: Express.Multer.File): Promise<string>;
+    addAssets(file: Express.Multer.File, imageFolder?: string, fileContent?: any): Promise<string>;
 }
 declare const _default: AWSHandler;
 export default _default;

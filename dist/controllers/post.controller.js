@@ -51,7 +51,7 @@ class PostController {
             var _a;
             try {
                 // @ts-ignore
-                const data = await this.postService.postCreate((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.body);
+                const data = await this.postService.postCreate((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.body, req.files);
                 (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, data));
             }
             catch (error) {

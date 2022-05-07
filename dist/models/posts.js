@@ -41,15 +41,19 @@ const postsSch = new mongoose_1.Schema({
     caption: {
         type: String,
     },
-    assets: [
+    post_images: [
         {
-            asset_type: {
-                type: String,
-                enum: Object.keys(constants_1.ASSET_TYPE_CONST),
-            },
-            link: {
-                type: String,
-            },
+            type: String,
+        },
+    ],
+    post_thumbs: [
+        {
+            type: String,
+        },
+    ],
+    post_vids: [
+        {
+            type: String,
         },
     ],
 }, {

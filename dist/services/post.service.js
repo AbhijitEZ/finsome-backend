@@ -3,9 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const countries_1 = tslib_1.__importDefault(require("../models/countries"));
 const posts_1 = tslib_1.__importDefault(require("../models/posts"));
+const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
+const fs_1 = tslib_1.__importDefault(require("fs"));
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
+const lodash_1 = require("lodash");
 const constants_1 = require("../utils/constants");
+const util_1 = require("../utils/util");
+const global_1 = require("../utils/global");
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -53,12 +58,52 @@ class PostService {
         // @ts-ignore
         return newConfig._doc;
     }
-    async postCreate(_id, reqData) {
+    async postCreate(_id, reqData, files) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         // WAYROUND PATCH
         const payloadNew = Object.assign(Object.assign({}, reqData), { is_recommended: reqData.is_recommended === 'true' ? true : false });
+        let post_images = [], post_thumbs = [], post_vids = [];
+        /* At present everything is synchronous */
+        if (!(0, lodash_1.isEmpty)(files)) {
+            if ((_a = files === null || files === void 0 ? void 0 : files.post_images) === null || _a === void 0 ? void 0 : _a.length) {
+                post_images = await Promise.all((_b = files === null || files === void 0 ? void 0 : files.post_images) === null || _b === void 0 ? void 0 : _b.map(async (file) => {
+                    const fileContent = await fs_1.default.readFileSync(file.path);
+                    const fileData = await aws_1.default.addAssets(file, constants_1.postAssetsFolder, fileContent);
+                    return fileData;
+                }));
+            }
+            if ((_c = files === null || files === void 0 ? void 0 : files.post_thumbs) === null || _c === void 0 ? void 0 : _c.length) {
+                post_thumbs = await Promise.all((_d = files === null || files === void 0 ? void 0 : files.post_thumbs) === null || _d === void 0 ? void 0 : _d.map(async (file) => {
+                    const fileContent = await fs_1.default.readFileSync(file.path);
+                    const fileData = await aws_1.default.addAssets(file, constants_1.postAssetsFolder, fileContent);
+                    return fileData;
+                }));
+            }
+            if ((_e = files === null || files === void 0 ? void 0 : files.post_vids) === null || _e === void 0 ? void 0 : _e.length) {
+                post_vids = await Promise.all((_f = files === null || files === void 0 ? void 0 : files.post_vids) === null || _f === void 0 ? void 0 : _f.map(async (file) => {
+                    const fileContent = await fs_1.default.readFileSync(file.path);
+                    const fileData = await aws_1.default.addAssets(file, constants_1.postAssetsFolder, fileContent);
+                    return fileData;
+                }));
+            }
+        }
+        payloadNew.post_images = post_images;
+        payloadNew.post_thumbs = post_thumbs;
+        payloadNew.post_vids = post_vids;
         const postNew = await posts_1.default.create(Object.assign({ user_id: _id }, payloadNew));
+        if (!(0, lodash_1.isEmpty)(files)) {
+            (_g = files === null || files === void 0 ? void 0 : files.post_images) === null || _g === void 0 ? void 0 : _g.map(file => {
+                (0, util_1.fileUnSyncFromLocalStroage)(file.path);
+            });
+            (_h = files === null || files === void 0 ? void 0 : files.post_vids) === null || _h === void 0 ? void 0 : _h.map(file => {
+                (0, util_1.fileUnSyncFromLocalStroage)(file.path);
+            });
+            (_j = files === null || files === void 0 ? void 0 : files.post_thumbs) === null || _j === void 0 ? void 0 : _j.map(file => {
+                (0, util_1.fileUnSyncFromLocalStroage)(file.path);
+            });
+        }
         // @ts-ignore
-        return postNew._doc;
+        return (0, global_1.postResponseFilter)(postNew._doc);
     }
 }
 exports.default = PostService;

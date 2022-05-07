@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userResponseFilter = exports.fileUploadCSVCB = exports.fileUploadCB = exports.responseJSONMapper = void 0;
+exports.postResponseFilter = exports.userResponseFilter = exports.fileUploadPostCB = exports.fileUploadCSVCB = exports.fileUploadCB = exports.responseJSONMapper = void 0;
 const tslib_1 = require("tslib");
 const HttpException_1 = require("../exceptions/HttpException");
 const multer_1 = tslib_1.__importDefault(require("multer"));
@@ -29,8 +29,22 @@ const uploadFileFilter = (req, file, cb) => {
         cb(new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.incorrect_img_format), false);
     }
 };
+// @ts-ignore
+const uploadPostFileFilter = (req, file, cb) => {
+    if (file.mimetype.match(/(image\/jpeg|image\/png|image\/heif|image\/tiff|image\/webp|image\/x-panasonic-raw|video\/mp4|application\/x-mpegURL|video\/quicktime|video\/MP2T|video\/3gpp|video\/x-msvideo|video\/x-ms-wmv)$/)) {
+        cb(null, true);
+    }
+    else {
+        cb(new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.incorrect_format), false);
+    }
+};
 exports.fileUploadCB = (0, multer_1.default)({ storage: multer_1.default.memoryStorage(), fileFilter: uploadFileFilter, limits: { fileSize: constants_1.FILE_LIMIT } }).single('image');
 exports.fileUploadCSVCB = (0, multer_1.default)({ dest: os_1.default.tmpdir(), fileFilter: uploadCSVFileFilter, limits: { fileSize: constants_1.FILE_LIMIT } }).single('document');
+exports.fileUploadPostCB = (0, multer_1.default)({ dest: os_1.default.tmpdir(), fileFilter: uploadPostFileFilter }).fields([
+    { name: 'post_images', maxCount: constants_1.FILE_COUNT_POST },
+    { name: 'post_vids', maxCount: constants_1.FILE_COUNT_POST },
+    { name: 'post_thumbs', maxCount: constants_1.FILE_COUNT_POST },
+]);
 const userResponseFilter = (userData) => {
     const user = Object.assign({}, userData);
     delete user.password;
@@ -42,4 +56,19 @@ const userResponseFilter = (userData) => {
     return user;
 };
 exports.userResponseFilter = userResponseFilter;
+const postResponseFilter = (postData) => {
+    var _a, _b, _c, _d, _e, _f;
+    const post = Object.assign({}, postData);
+    if ((_a = post.post_images) === null || _a === void 0 ? void 0 : _a.length) {
+        post.post_images = (_b = post.post_images) === null || _b === void 0 ? void 0 : _b.map(img => (0, util_1.postAssetsGenerator)(img));
+    }
+    if ((_c = post.post_thumbs) === null || _c === void 0 ? void 0 : _c.length) {
+        post.post_thumbs = (_d = post.post_thumbs) === null || _d === void 0 ? void 0 : _d.map(img => (0, util_1.postAssetsGenerator)(img));
+    }
+    if ((_e = post.post_vids) === null || _e === void 0 ? void 0 : _e.length) {
+        post.post_vids = (_f = post.post_vids) === null || _f === void 0 ? void 0 : _f.map(vid => (0, util_1.postAssetsGenerator)(vid));
+    }
+    return post;
+};
+exports.postResponseFilter = postResponseFilter;
 //# sourceMappingURL=global.js.map

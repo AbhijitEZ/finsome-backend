@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.profileImageFolder = exports.USER_SUGGESTION_IMPROVEMENTS = exports.POSTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.STOCK_TYPES = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.USER_CONFIGURATIONS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.ASSET_TYPE_CONST = exports.ACCOUNT_TYPE_CONST = exports.STOCK_RECOMMENDED_CONST = exports.TRADE_TYPE_CONST = exports.ANALYSIS_TYPE_CONST = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
+exports.postAssetsFolder = exports.profileImageFolder = exports.USER_SUGGESTION_IMPROVEMENTS = exports.POSTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.STOCK_TYPES = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.USER_CONFIGURATIONS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_COUNT_POST = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.ASSET_TYPE_CONST = exports.ACCOUNT_TYPE_CONST = exports.STOCK_RECOMMENDED_CONST = exports.TRADE_TYPE_CONST = exports.ANALYSIS_TYPE_CONST = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
 exports.APP_SUCCESS_MESSAGE = {
     signup_phone_verify_success: 'Signup phone verified successfully.',
     signup_success: 'Signup successfully.',
@@ -17,6 +17,7 @@ exports.APP_SUCCESS_MESSAGE = {
     sent_otp_success: 'OTP sent to you phone number.',
     password_reset_success: 'Password Reset successfully.',
     verify_otp_success: 'OTP is verified.',
+    assets_image_success: 'Assests has been uploaded successfully.',
 };
 exports.APP_ERROR_MESSAGE = {
     invalid_token: 'Invalid token, please login agian.',
@@ -46,6 +47,7 @@ exports.APP_ERROR_MESSAGE = {
     incorrect_password: 'It is wrong password please enter correct password.',
     incorrect_img_format: 'Incorrect image format, use valid one.',
     incorrect_csv_format: 'Incorrect CSV format, use valid one.',
+    incorrect_format: 'Incorrect format, use valid one.',
 };
 exports.USER_ROLE = {
     ADMIN: 'ADMIN',
@@ -86,6 +88,7 @@ exports.ASSET_TYPE_CONST = {
 exports.SKIP_DEF = '0';
 exports.LIMIT_DEF = '1';
 exports.FILE_LIMIT = 20000000;
+exports.FILE_COUNT_POST = 10;
 exports.APP_IMPROVEMENT_TYPES = 'app-improvement-types';
 exports.USER_CONFIGURATIONS = 'user-configurations';
 exports.QUICK_CONTACTS = 'quick-contacts';
@@ -98,4 +101,5 @@ exports.USERS = 'users';
 exports.POSTS = 'posts';
 exports.USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';
 exports.profileImageFolder = 'profile-img/';
+exports.postAssetsFolder = 'post/';
 //# sourceMappingURL=constants.js.map

@@ -6,6 +6,7 @@ const post_controller_1 = tslib_1.__importDefault(require("../controllers/post.c
 const validation_middleware_1 = tslib_1.__importDefault(require("../middlewares/validation.middleware"));
 const auth_middleware_1 = tslib_1.__importDefault(require("../middlewares/auth.middleware"));
 const posts_dto_1 = require("../dtos/posts.dto");
+const global_1 = require("../utils/global");
 class PostRoute {
     constructor() {
         this.path = '/post/';
@@ -18,7 +19,7 @@ class PostRoute {
         this.router.get(`${this.path}stock-type`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.StockTypeDto, 'query'), this.postController.stockTypesController);
         this.router.get(`${this.path}user-configurations`, auth_middleware_1.default, this.postController.userConfigurationListing);
         this.router.post(`${this.path}user-configurations`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.UserConfigurationDto, 'body'), this.postController.userConfigurationUpdate);
-        this.router.post(`${this.path}create`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.PostCreateDto, 'body'), this.postController.postCreate);
+        this.router.post(`${this.path}create`, auth_middleware_1.default, global_1.fileUploadPostCB, (0, validation_middleware_1.default)(posts_dto_1.PostCreateDto, 'body'), this.postController.postCreate);
     }
 }
 exports.default = PostRoute;
