@@ -96,7 +96,8 @@ class PostService {
             },
             {
                 $match: {
-                    user_id: _id,
+                    /* For getting all the data, would be used for admin panel */
+                    user_id: (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) ? { $ne: null } : _id,
                     deleted_at: undefined,
                 },
             },
