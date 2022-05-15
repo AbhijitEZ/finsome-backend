@@ -3,7 +3,7 @@ import { Routes } from '@interfaces/routes.interface';
 import PostController from '@/controllers/post.controller';
 import validationMiddleware from '@/middlewares/validation.middleware';
 import authMiddleware from '@/middlewares/auth.middleware';
-import { PostCreateDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
+import { PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
 import { fileUploadPostCB } from '@/utils/global';
 
 class PostRoute implements Routes {
@@ -33,6 +33,7 @@ class PostRoute implements Routes {
       this.postController.postCreate,
     );
     this.router.get(`${this.path}explore`, authMiddleware, this.postController.postExplore);
+    this.router.get(`${this.path}home`, authMiddleware, validationMiddleware(PostHomeDto, 'query'), this.postController.postHome);
   }
 }
 

@@ -103,3 +103,44 @@ export class PostCreateDto {
   @IsString()
   caption: string;
 }
+
+export class PostHomeDto extends PaginationDto {
+  @IsOptional()
+  @IsString()
+  @IsIn(Object.keys(STOCK_TYPE_CONST))
+  type: string;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  date?: string;
+
+  @IsOptional()
+  @IsString()
+  stock_id?: string;
+
+  @IsOptional()
+  @IsString()
+  country_code?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(Object.keys(ANALYSIS_TYPE_CONST))
+  analysis_type: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(Object.keys(TRADE_TYPE_CONST))
+  trade_type: string;
+
+  @IsOptional()
+  @IsString()
+  is_recommended: string;
+
+  @IsOptional()
+  @IsString()
+  has_all_data?: string;
+}

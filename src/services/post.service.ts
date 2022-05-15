@@ -1,19 +1,43 @@
-import { PostCreateDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
+import { PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
 import countryModel from '@/models/countries';
 import postsModel from '@/models/posts';
 import awsHandler from '@utils/aws';
 import fs from 'fs';
 import stockTypeModel from '@/models/stock-types';
 import userConfigurationModel from '@/models/user-configurations';
-import { isEmpty } from 'lodash';
-import { LIMIT_DEF, postAssetsFolder, SKIP_DEF, STOCK_TYPE_CONST } from '@/utils/constants';
+import isEmpty from 'lodash.isempty';
+import { DEFAULT_TIMEZONE, LIMIT_DEF, postAssetsFolder, SKIP_DEF, STOCK_TYPES, STOCK_TYPE_CONST, USERS } from '@/utils/constants';
 import { fileUnSyncFromLocalStroage } from '@/utils/util';
 import { postResponseFilter } from '@/utils/global';
+import { addDays, parseISO, toDate } from 'date-fns';
+import { convertToLocalTime } from 'date-fns-timezone';
 
 class PostService {
   public countryObj = countryModel;
   public stockTypesObj = stockTypeModel;
   public userConfigObj = userConfigurationModel;
+  public postsObj = postsModel;
+  public postResObj = {
+    _id: 1,
+    is_recommended: 1,
+    post_images: 1,
+    post_thumbs: 1,
+    post_vids: 1,
+    user_id: 1,
+    stock_type: 1,
+    analysis_type: 1,
+    trade_type: 1,
+    security_id: 1,
+    stock_recommended_type: 1,
+    buy_recommend_amount: 1,
+    sell_recommend_amount: 1,
+    caption: 1,
+    created_at: 1,
+    updated_at: 1,
+    created_at_tz: { $dateToString: { date: '$created_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+    user: 1,
+    security: 1,
+  };
 
   public async countriesGetAll(): Promise<any[]> {
     const countries = await this.countryObj.find({}).lean();
@@ -69,10 +93,119 @@ class PostService {
     return newConfig._doc;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async postExplore(_id: string): Promise<any> {
     const postsListing = await postsModel.find({ deleted_at: undefined }).populate('user_id', ['fullname', 'email']).lean();
 
     const postsMapping = postsListing.map(post => postResponseFilter(post));
+
+    return postsMapping;
+  }
+
+  public async postHome(_id: string, queryData: PostHomeDto): Promise<any> {
+    const postsQb = this.postsObj.aggregate([
+      {
+        $project: this.postResObj,
+      },
+      {
+        $match: {
+          user_id: _id,
+          deleted_at: undefined,
+        },
+      },
+      {
+        $lookup: {
+          from: USERS,
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user',
+          pipeline: [{ $project: { _id: 1, fullname: 1, email: 1 } }],
+        },
+      },
+      { $unwind: '$user' },
+      {
+        $lookup: {
+          from: STOCK_TYPES,
+          localField: 'security_id',
+          foreignField: '_id',
+          as: 'security',
+          pipeline: [{ $project: { _id: 1, s_type: 1, name: 1, country_code: 1 } }],
+        },
+      },
+      { $unwind: '$security' },
+      /* TODO: This needs to be updated according to views and comment */
+      { $sort: { created_at: -1 } },
+    ]);
+
+    if (queryData.type) {
+      postsQb.append({
+        $match: {
+          'security.s_type': queryData.type,
+        },
+      });
+    }
+
+    if (queryData.country_code) {
+      postsQb.append({
+        $match: {
+          'security.country_code': queryData.country_code,
+        },
+      });
+    }
+    if (queryData.is_recommended) {
+      postsQb.append({
+        $match: {
+          is_recommended: true,
+        },
+      });
+    }
+    if (queryData.analysis_type) {
+      postsQb.append({
+        $match: {
+          analysis_type: queryData.analysis_type,
+        },
+      });
+    }
+    if (queryData.trade_type) {
+      postsQb.append({
+        $match: {
+          trade_type: queryData.trade_type,
+        },
+      });
+    }
+    if (queryData.stock_id) {
+      postsQb.append({
+        $match: {
+          'security._id': queryData.stock_id,
+        },
+      });
+    }
+
+    /* NOTE: Require testing for the different timezone */
+    if (queryData.date) {
+      const date = queryData.date + 'T00:00:00.Z';
+      postsQb.append({
+        $match: {
+          created_at: {
+            $gte: convertToLocalTime(toDate(parseISO(date)), { timeZone: DEFAULT_TIMEZONE }),
+            $lt: addDays(convertToLocalTime(toDate(parseISO(date)), { timeZone: DEFAULT_TIMEZONE }), 1),
+          },
+        },
+      });
+    }
+
+    if (!queryData.has_all_data) {
+      postsQb.append({
+        $limit: parseInt(queryData.limit ?? LIMIT_DEF),
+      });
+      postsQb.append({
+        $skip: parseInt(queryData.skip ?? SKIP_DEF),
+      });
+    }
+
+    const posts = await postsQb.exec();
+
+    const postsMapping = posts.map(post => postResponseFilter(post));
 
     return postsMapping;
   }

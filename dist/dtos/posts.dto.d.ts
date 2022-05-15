@@ -28,3 +28,14 @@ export declare class PostCreateDto {
     sell_recommend_amount: string;
     caption: string;
 }
+export declare class PostHomeDto extends PaginationDto {
+    type: string;
+    search?: string;
+    date?: string;
+    stock_id?: string;
+    country_code?: string;
+    analysis_type: string;
+    trade_type: string;
+    is_recommended: string;
+    has_all_data?: string;
+}

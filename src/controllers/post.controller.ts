@@ -57,7 +57,17 @@ class PostController {
   public postExplore = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.postService.postExplore(req.user?._id);
+      const data = await this.postService.postExplore();
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public postHome = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.postService.postHome(req.user?._id, req.query);
       responseJSONMapper(res, 200, data);
     } catch (error) {
       next(error);

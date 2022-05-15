@@ -7,15 +7,39 @@ const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
 const fs_1 = tslib_1.__importDefault(require("fs"));
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
-const lodash_1 = require("lodash");
+const lodash_isempty_1 = tslib_1.__importDefault(require("lodash.isempty"));
 const constants_1 = require("../utils/constants");
 const util_1 = require("../utils/util");
 const global_1 = require("../utils/global");
+const date_fns_1 = require("date-fns");
+const date_fns_timezone_1 = require("date-fns-timezone");
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
         this.stockTypesObj = stock_types_1.default;
         this.userConfigObj = user_configurations_1.default;
+        this.postsObj = posts_1.default;
+        this.postResObj = {
+            _id: 1,
+            is_recommended: 1,
+            post_images: 1,
+            post_thumbs: 1,
+            post_vids: 1,
+            user_id: 1,
+            stock_type: 1,
+            analysis_type: 1,
+            trade_type: 1,
+            security_id: 1,
+            stock_recommended_type: 1,
+            buy_recommend_amount: 1,
+            sell_recommend_amount: 1,
+            caption: 1,
+            created_at: 1,
+            updated_at: 1,
+            created_at_tz: { $dateToString: { date: '$created_at', timezone: constants_1.DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+            user: 1,
+            security: 1,
+        };
     }
     async countriesGetAll() {
         const countries = await this.countryObj.find({}).lean();
@@ -58,9 +82,111 @@ class PostService {
         // @ts-ignore
         return newConfig._doc;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async postExplore(_id) {
         const postsListing = await posts_1.default.find({ deleted_at: undefined }).populate('user_id', ['fullname', 'email']).lean();
         const postsMapping = postsListing.map(post => (0, global_1.postResponseFilter)(post));
+        return postsMapping;
+    }
+    async postHome(_id, queryData) {
+        var _a, _b;
+        const postsQb = this.postsObj.aggregate([
+            {
+                $project: this.postResObj,
+            },
+            {
+                $match: {
+                    user_id: _id,
+                    deleted_at: undefined,
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USERS,
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user',
+                    pipeline: [{ $project: { _id: 1, fullname: 1, email: 1 } }],
+                },
+            },
+            { $unwind: '$user' },
+            {
+                $lookup: {
+                    from: constants_1.STOCK_TYPES,
+                    localField: 'security_id',
+                    foreignField: '_id',
+                    as: 'security',
+                    pipeline: [{ $project: { _id: 1, s_type: 1, name: 1, country_code: 1 } }],
+                },
+            },
+            { $unwind: '$security' },
+            /* TODO: This needs to be updated according to views and comment */
+            { $sort: { created_at: -1 } },
+        ]);
+        if (queryData.type) {
+            postsQb.append({
+                $match: {
+                    'security.s_type': queryData.type,
+                },
+            });
+        }
+        if (queryData.country_code) {
+            postsQb.append({
+                $match: {
+                    'security.country_code': queryData.country_code,
+                },
+            });
+        }
+        if (queryData.is_recommended) {
+            postsQb.append({
+                $match: {
+                    is_recommended: true,
+                },
+            });
+        }
+        if (queryData.analysis_type) {
+            postsQb.append({
+                $match: {
+                    analysis_type: queryData.analysis_type,
+                },
+            });
+        }
+        if (queryData.trade_type) {
+            postsQb.append({
+                $match: {
+                    trade_type: queryData.trade_type,
+                },
+            });
+        }
+        if (queryData.stock_id) {
+            postsQb.append({
+                $match: {
+                    'security._id': queryData.stock_id,
+                },
+            });
+        }
+        /* NOTE: Require testing for the different timezone */
+        if (queryData.date) {
+            const date = queryData.date + 'T00:00:00.Z';
+            postsQb.append({
+                $match: {
+                    created_at: {
+                        $gte: (0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)((0, date_fns_1.parseISO)(date)), { timeZone: constants_1.DEFAULT_TIMEZONE }),
+                        $lt: (0, date_fns_1.addDays)((0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)((0, date_fns_1.parseISO)(date)), { timeZone: constants_1.DEFAULT_TIMEZONE }), 1),
+                    },
+                },
+            });
+        }
+        if (!queryData.has_all_data) {
+            postsQb.append({
+                $limit: parseInt((_a = queryData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF),
+            });
+            postsQb.append({
+                $skip: parseInt((_b = queryData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF),
+            });
+        }
+        const posts = await postsQb.exec();
+        const postsMapping = posts.map(post => (0, global_1.postResponseFilter)(post));
         return postsMapping;
     }
     async postCreate(_id, reqData, files) {
@@ -69,7 +195,7 @@ class PostService {
         const payloadNew = Object.assign(Object.assign({}, reqData), { is_recommended: reqData.is_recommended === 'true' ? true : false });
         let post_images = [], post_thumbs = [], post_vids = [];
         /* At present everything is synchronous */
-        if (!(0, lodash_1.isEmpty)(files)) {
+        if (!(0, lodash_isempty_1.default)(files)) {
             if ((_a = files === null || files === void 0 ? void 0 : files.post_images) === null || _a === void 0 ? void 0 : _a.length) {
                 post_images = await Promise.all((_b = files === null || files === void 0 ? void 0 : files.post_images) === null || _b === void 0 ? void 0 : _b.map(async (file) => {
                     const fileContent = await fs_1.default.readFileSync(file.path);
@@ -96,7 +222,7 @@ class PostService {
         payloadNew.post_thumbs = post_thumbs;
         payloadNew.post_vids = post_vids;
         const postNew = await posts_1.default.create(Object.assign({ user_id: _id }, payloadNew));
-        if (!(0, lodash_1.isEmpty)(files)) {
+        if (!(0, lodash_isempty_1.default)(files)) {
             (_g = files === null || files === void 0 ? void 0 : files.post_images) === null || _g === void 0 ? void 0 : _g.map(file => {
                 (0, util_1.fileUnSyncFromLocalStroage)(file.path);
             });

@@ -93,7 +93,7 @@ export const ASSET_TYPE_CONST = {
 };
 
 export const SKIP_DEF = '0';
-export const LIMIT_DEF = '1';
+export const LIMIT_DEF = '10';
 
 export const FILE_LIMIT = 20000000;
 export const FILE_COUNT_POST = 10;
@@ -112,3 +112,5 @@ export const USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';
 
 export const profileImageFolder = 'profile-img/';
 export const postAssetsFolder = 'post/';
+
+export const DEFAULT_TIMEZONE = 'Asia/Kolkata';

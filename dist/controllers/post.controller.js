@@ -59,10 +59,20 @@ class PostController {
             }
         };
         this.postExplore = async (req, res, next) => {
+            try {
+                // @ts-ignore
+                const data = await this.postService.postExplore();
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.postHome = async (req, res, next) => {
             var _a;
             try {
                 // @ts-ignore
-                const data = await this.postService.postExplore((_a = req.user) === null || _a === void 0 ? void 0 : _a._id);
+                const data = await this.postService.postHome((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.query);
                 (0, global_1.responseJSONMapper)(res, 200, data);
             }
             catch (error) {

@@ -83,7 +83,7 @@ export declare const ASSET_TYPE_CONST: {
     VIDEO: string;
 };
 export declare const SKIP_DEF = "0";
-export declare const LIMIT_DEF = "1";
+export declare const LIMIT_DEF = "10";
 export declare const FILE_LIMIT = 20000000;
 export declare const FILE_COUNT_POST = 10;
 export declare const APP_IMPROVEMENT_TYPES = "app-improvement-types";
@@ -99,3 +99,4 @@ export declare const POSTS = "posts";
 export declare const USER_SUGGESTION_IMPROVEMENTS = "user-suggestion-improvements";
 export declare const profileImageFolder = "profile-img/";
 export declare const postAssetsFolder = "post/";
+export declare const DEFAULT_TIMEZONE = "Asia/Kolkata";

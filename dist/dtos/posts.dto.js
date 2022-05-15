@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PostCreateDto = exports.UserConfigurationDto = exports.StockUpdateTypeDto = exports.StockTypeDto = void 0;
+exports.PostHomeDto = exports.PostCreateDto = exports.UserConfigurationDto = exports.StockUpdateTypeDto = exports.StockTypeDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
@@ -131,4 +131,55 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], PostCreateDto.prototype, "caption", void 0);
 exports.PostCreateDto = PostCreateDto;
+class PostHomeDto extends general_dto_1.PaginationDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsIn)(Object.keys(constants_1.STOCK_TYPE_CONST)),
+    tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "type", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "search", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "date", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "stock_id", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "country_code", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsIn)(Object.keys(constants_1.ANALYSIS_TYPE_CONST)),
+    tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "analysis_type", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsIn)(Object.keys(constants_1.TRADE_TYPE_CONST)),
+    tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "trade_type", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "is_recommended", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "has_all_data", void 0);
+exports.PostHomeDto = PostHomeDto;
 //# sourceMappingURL=posts.dto.js.map
