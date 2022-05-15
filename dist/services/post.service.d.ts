@@ -12,11 +12,9 @@ declare class PostService {
         post_images: number;
         post_thumbs: number;
         post_vids: number;
-        user_id: number;
         stock_type: number;
         analysis_type: number;
         trade_type: number;
-        security_id: number;
         stock_recommended_type: number;
         buy_recommend_amount: number;
         sell_recommend_amount: number;
