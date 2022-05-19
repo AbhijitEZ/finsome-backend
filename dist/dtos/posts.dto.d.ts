@@ -22,6 +22,7 @@ export declare class PostCreateDto {
     analysis_type: string;
     trade_type: string;
     security_id: string;
+    post_security_ids: string[];
     stock_recommended_type: string;
     is_recommended: string;
     buy_recommend_amount: string;
@@ -32,7 +33,7 @@ export declare class PostHomeDto extends PaginationDto {
     type: string;
     search?: string;
     date?: string;
-    stock_id?: string;
+    stock_ids?: string[];
     country_code?: string;
     analysis_type: string;
     trade_type: string;

@@ -13,6 +13,7 @@ const util_1 = require("../utils/util");
 const global_1 = require("../utils/global");
 const date_fns_1 = require("date-fns");
 const date_fns_timezone_1 = require("date-fns-timezone");
+const post_stocks_1 = tslib_1.__importDefault(require("../models/post-stocks"));
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -27,6 +28,7 @@ class PostService {
             post_vids: 1,
             user_id: 1,
             stock_type: 1,
+            post_stock: 1,
             analysis_type: 1,
             trade_type: 1,
             security_id: 1,
@@ -113,28 +115,42 @@ class PostService {
             { $unwind: '$user' },
             {
                 $lookup: {
+                    from: constants_1.POST_STOCKS,
+                    localField: '_id',
+                    foreignField: 'post_id',
+                    as: 'post_stock',
+                },
+            },
+            {
+                $lookup: {
                     from: constants_1.STOCK_TYPES,
-                    localField: 'security_id',
+                    localField: 'post_stock.stock_id',
                     foreignField: '_id',
                     as: 'security',
                     pipeline: [{ $project: { _id: 1, s_type: 1, name: 1, country_code: 1 } }],
                 },
             },
-            { $unwind: '$security' },
+            {
+                $unset: ['post_stock'],
+            },
             /* TODO: This needs to be updated according to views and comment */
             { $sort: { created_at: -1 } },
         ]);
         if (queryData.type) {
             postsQb.append({
                 $match: {
-                    'security.s_type': queryData.type,
+                    stock_type: queryData.type,
                 },
             });
         }
         if (queryData.country_code) {
             postsQb.append({
                 $match: {
-                    'security.country_code': queryData.country_code,
+                    security: {
+                        $elemMatch: {
+                            country_code: queryData.country_code,
+                        },
+                    },
                 },
             });
         }
@@ -159,10 +175,16 @@ class PostService {
                 },
             });
         }
-        if (queryData.stock_id) {
+        if (queryData.stock_ids) {
             postsQb.append({
                 $match: {
-                    'security._id': queryData.stock_id,
+                    security: {
+                        $elemMatch: {
+                            stock_id: {
+                                $in: queryData.stock_ids,
+                            },
+                        },
+                    },
                 },
             });
         }
@@ -191,7 +213,7 @@ class PostService {
         return postsMapping;
     }
     async postCreate(_id, reqData, files) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         // WAYROUND PATCH
         const payloadNew = Object.assign(Object.assign({}, reqData), { is_recommended: reqData.is_recommended === 'true' ? true : false });
         let post_images = [], post_thumbs = [], post_vids = [];
@@ -223,14 +245,18 @@ class PostService {
         payloadNew.post_thumbs = post_thumbs;
         payloadNew.post_vids = post_vids;
         const postNew = await posts_1.default.create(Object.assign({ user_id: _id }, payloadNew));
+        if ((_g = reqData.post_security_ids) === null || _g === void 0 ? void 0 : _g.length) {
+            const postSecurityIds = reqData.post_security_ids.map(security => ({ post_id: postNew._id, stock_id: security }));
+            await post_stocks_1.default.insertMany(postSecurityIds);
+        }
         if (!(0, lodash_isempty_1.default)(files)) {
-            (_g = files === null || files === void 0 ? void 0 : files.post_images) === null || _g === void 0 ? void 0 : _g.map(file => {
+            (_h = files === null || files === void 0 ? void 0 : files.post_images) === null || _h === void 0 ? void 0 : _h.map(file => {
                 (0, util_1.fileUnSyncFromLocalStroage)(file.path);
             });
-            (_h = files === null || files === void 0 ? void 0 : files.post_vids) === null || _h === void 0 ? void 0 : _h.map(file => {
+            (_j = files === null || files === void 0 ? void 0 : files.post_vids) === null || _j === void 0 ? void 0 : _j.map(file => {
                 (0, util_1.fileUnSyncFromLocalStroage)(file.path);
             });
-            (_j = files === null || files === void 0 ? void 0 : files.post_thumbs) === null || _j === void 0 ? void 0 : _j.map(file => {
+            (_k = files === null || files === void 0 ? void 0 : files.post_thumbs) === null || _k === void 0 ? void 0 : _k.map(file => {
                 (0, util_1.fileUnSyncFromLocalStroage)(file.path);
             });
         }

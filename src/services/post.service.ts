@@ -6,11 +6,12 @@ import fs from 'fs';
 import stockTypeModel from '@/models/stock-types';
 import userConfigurationModel from '@/models/user-configurations';
 import isEmpty from 'lodash.isempty';
-import { DEFAULT_TIMEZONE, LIMIT_DEF, postAssetsFolder, SKIP_DEF, STOCK_TYPES, STOCK_TYPE_CONST, USERS } from '@/utils/constants';
+import { DEFAULT_TIMEZONE, LIMIT_DEF, postAssetsFolder, POST_STOCKS, SKIP_DEF, STOCK_TYPES, STOCK_TYPE_CONST, USERS } from '@/utils/constants';
 import { fileUnSyncFromLocalStroage } from '@/utils/util';
 import { postResponseFilter } from '@/utils/global';
 import { addDays, parseISO, toDate } from 'date-fns';
 import { convertToLocalTime } from 'date-fns-timezone';
+import postStockModel from '@/models/post-stocks';
 
 class PostService {
   public countryObj = countryModel;
@@ -25,6 +26,7 @@ class PostService {
     post_vids: 1,
     user_id: 1,
     stock_type: 1,
+    post_stock: 1,
     analysis_type: 1,
     trade_type: 1,
     security_id: 1,
@@ -126,14 +128,24 @@ class PostService {
       { $unwind: '$user' },
       {
         $lookup: {
+          from: POST_STOCKS,
+          localField: '_id',
+          foreignField: 'post_id',
+          as: 'post_stock',
+        },
+      },
+      {
+        $lookup: {
           from: STOCK_TYPES,
-          localField: 'security_id',
+          localField: 'post_stock.stock_id',
           foreignField: '_id',
           as: 'security',
           pipeline: [{ $project: { _id: 1, s_type: 1, name: 1, country_code: 1 } }],
         },
       },
-      { $unwind: '$security' },
+      {
+        $unset: ['post_stock'],
+      },
       /* TODO: This needs to be updated according to views and comment */
       { $sort: { created_at: -1 } },
     ]);
@@ -141,7 +153,7 @@ class PostService {
     if (queryData.type) {
       postsQb.append({
         $match: {
-          'security.s_type': queryData.type,
+          stock_type: queryData.type,
         },
       });
     }
@@ -149,7 +161,11 @@ class PostService {
     if (queryData.country_code) {
       postsQb.append({
         $match: {
-          'security.country_code': queryData.country_code,
+          security: {
+            $elemMatch: {
+              country_code: queryData.country_code,
+            },
+          },
         },
       });
     }
@@ -174,10 +190,16 @@ class PostService {
         },
       });
     }
-    if (queryData.stock_id) {
+    if (queryData.stock_ids) {
       postsQb.append({
         $match: {
-          'security._id': queryData.stock_id,
+          security: {
+            $elemMatch: {
+              stock_id: {
+                $in: queryData.stock_ids,
+              },
+            },
+          },
         },
       });
     }
@@ -256,6 +278,11 @@ class PostService {
     payloadNew.post_vids = post_vids;
 
     const postNew = await postsModel.create({ user_id: _id, ...payloadNew });
+
+    if (reqData.post_security_ids?.length) {
+      const postSecurityIds = reqData.post_security_ids.map(security => ({ post_id: postNew._id, stock_id: security }));
+      await postStockModel.insertMany(postSecurityIds);
+    }
 
     if (!isEmpty(files)) {
       files?.post_images?.map(file => {

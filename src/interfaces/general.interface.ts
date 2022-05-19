@@ -59,6 +59,13 @@ export interface PrivacyPolicyInf {
   content: string;
 }
 
+export interface PostStocksInf {
+  _id: string;
+  post_id: string;
+  stock_id: string;
+  deleted_at?: string;
+}
+
 export interface UserConfigurationInf {
   _id: string;
   user_id: string;

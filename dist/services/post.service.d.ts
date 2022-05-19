@@ -14,6 +14,7 @@ declare class PostService {
         post_vids: number;
         user_id: number;
         stock_type: number;
+        post_stock: number;
         analysis_type: number;
         trade_type: number;
         security_id: number;

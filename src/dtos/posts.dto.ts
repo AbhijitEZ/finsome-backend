@@ -83,6 +83,10 @@ export class PostCreateDto {
   security_id: string;
 
   @IsOptional()
+  @IsString({ each: true })
+  post_security_ids: string[];
+
+  @IsOptional()
   @IsString()
   @IsIn(Object.keys(STOCK_RECOMMENDED_CONST))
   stock_recommended_type: string;
@@ -119,8 +123,8 @@ export class PostHomeDto extends PaginationDto {
   date?: string;
 
   @IsOptional()
-  @IsString()
-  stock_id?: string;
+  @IsString({ each: true })
+  stock_ids?: string[];
 
   @IsOptional()
   @IsString()

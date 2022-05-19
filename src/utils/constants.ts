@@ -102,6 +102,7 @@ export const APP_IMPROVEMENT_TYPES = 'app-improvement-types';
 export const USER_CONFIGURATIONS = 'user-configurations';
 export const QUICK_CONTACTS = 'quick-contacts';
 export const COUNTRIES = 'countries';
+export const POST_STOCKS = 'post-stocks';
 export const STOCK_TYPES = 'stock-types';
 export const PRIVACY_POLICIES = 'privacy-policies';
 export const TERMS_CONDITIONS = 'terms-conditions';

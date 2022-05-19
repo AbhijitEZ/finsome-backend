@@ -90,6 +90,7 @@ export declare const APP_IMPROVEMENT_TYPES = "app-improvement-types";
 export declare const USER_CONFIGURATIONS = "user-configurations";
 export declare const QUICK_CONTACTS = "quick-contacts";
 export declare const COUNTRIES = "countries";
+export declare const POST_STOCKS = "post-stocks";
 export declare const STOCK_TYPES = "stock-types";
 export declare const PRIVACY_POLICIES = "privacy-policies";
 export declare const TERMS_CONDITIONS = "terms-conditions";
