@@ -109,7 +109,7 @@ class PostService {
                     localField: 'user_id',
                     foreignField: '_id',
                     as: 'user',
-                    pipeline: [{ $project: { _id: 1, fullname: 1, email: 1 } }],
+                    pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
                 },
             },
             { $unwind: '$user' },

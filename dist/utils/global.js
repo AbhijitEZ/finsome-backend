@@ -57,16 +57,21 @@ const userResponseFilter = (userData) => {
 };
 exports.userResponseFilter = userResponseFilter;
 const postResponseFilter = (postData) => {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
     const post = Object.assign({}, postData);
-    if ((_a = post.post_images) === null || _a === void 0 ? void 0 : _a.length) {
-        post.post_images = (_b = post.post_images) === null || _b === void 0 ? void 0 : _b.map(img => (0, util_1.postAssetsGenerator)(img));
+    // @ts-ignore
+    if ((_a = post === null || post === void 0 ? void 0 : post.user) === null || _a === void 0 ? void 0 : _a.profile_photo) {
+        // @ts-ignore
+        post.user.profile_photo = (0, util_1.profileImageGenerator)(post.user.profile_photo);
     }
-    if ((_c = post.post_thumbs) === null || _c === void 0 ? void 0 : _c.length) {
-        post.post_thumbs = (_d = post.post_thumbs) === null || _d === void 0 ? void 0 : _d.map(img => (0, util_1.postAssetsGenerator)(img));
+    if ((_b = post.post_images) === null || _b === void 0 ? void 0 : _b.length) {
+        post.post_images = (_c = post.post_images) === null || _c === void 0 ? void 0 : _c.map(img => (0, util_1.postAssetsGenerator)(img));
     }
-    if ((_e = post.post_vids) === null || _e === void 0 ? void 0 : _e.length) {
-        post.post_vids = (_f = post.post_vids) === null || _f === void 0 ? void 0 : _f.map(vid => (0, util_1.postAssetsGenerator)(vid));
+    if ((_d = post.post_thumbs) === null || _d === void 0 ? void 0 : _d.length) {
+        post.post_thumbs = (_e = post.post_thumbs) === null || _e === void 0 ? void 0 : _e.map(img => (0, util_1.postAssetsGenerator)(img));
+    }
+    if ((_f = post.post_vids) === null || _f === void 0 ? void 0 : _f.length) {
+        post.post_vids = (_g = post.post_vids) === null || _g === void 0 ? void 0 : _g.map(vid => (0, util_1.postAssetsGenerator)(vid));
     }
     return post;
 };

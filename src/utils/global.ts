@@ -67,6 +67,12 @@ export const userResponseFilter = (userData: User): Partial<User> => {
 export const postResponseFilter = (postData: PostsInf): Partial<PostsInf> => {
   const post = { ...postData };
 
+  // @ts-ignore
+  if (post?.user?.profile_photo) {
+    // @ts-ignore
+    post.user.profile_photo = profileImageGenerator(post.user.profile_photo);
+  }
+
   if (post.post_images?.length) {
     post.post_images = post.post_images?.map(img => postAssetsGenerator(img));
   }
