@@ -92,6 +92,7 @@ export declare const QUICK_CONTACTS = "quick-contacts";
 export declare const COUNTRIES = "countries";
 export declare const POST_STOCKS = "post-stocks";
 export declare const STOCK_TYPES = "stock-types";
+export declare const COMMENTS = "comments";
 export declare const PRIVACY_POLICIES = "privacy-policies";
 export declare const TERMS_CONDITIONS = "terms-conditions";
 export declare const OTP_VALIDATIONS = "otp-validations";

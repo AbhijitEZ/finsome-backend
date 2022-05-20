@@ -1,4 +1,8 @@
 import { PaginationDto } from './general.dto';
+export declare class IdPaginationDto extends PaginationDto {
+    id: string;
+    has_all_data: boolean;
+}
 export declare class StockTypeDto extends PaginationDto {
     type: string;
     search?: string;
@@ -39,4 +43,9 @@ export declare class PostHomeDto extends PaginationDto {
     trade_type: string;
     is_recommended: string;
     has_all_data?: string;
+}
+export declare class CommentsAddDto {
+    post_id: string;
+    parent_id: string;
+    message: string;
 }

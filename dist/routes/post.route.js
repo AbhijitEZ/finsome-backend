@@ -22,7 +22,8 @@ class PostRoute {
         this.router.post(`${this.path}create`, auth_middleware_1.default, global_1.fileUploadPostCB, (0, validation_middleware_1.default)(posts_dto_1.PostCreateDto, 'body'), this.postController.postCreate);
         this.router.get(`${this.path}explore`, auth_middleware_1.default, this.postController.postExplore);
         this.router.get(`${this.path}home`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.PostHomeDto, 'query'), this.postController.postHome);
-        this.router.get(`${this.path}comment`, auth_middleware_1.default, this.postController.commentListing);
+        this.router.post(`${this.path}comment`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.CommentsAddDto, 'body'), this.postController.commentAdd);
+        this.router.get(`${this.path}comment`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.IdPaginationDto, 'query'), this.postController.commentListing);
     }
 }
 exports.default = PostRoute;

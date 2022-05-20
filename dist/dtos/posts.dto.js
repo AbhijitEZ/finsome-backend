@@ -1,10 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PostHomeDto = exports.PostCreateDto = exports.UserConfigurationDto = exports.StockUpdateTypeDto = exports.StockTypeDto = void 0;
+exports.CommentsAddDto = exports.PostHomeDto = exports.PostCreateDto = exports.UserConfigurationDto = exports.StockUpdateTypeDto = exports.StockTypeDto = exports.IdPaginationDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
 const general_dto_1 = require("./general.dto");
+class IdPaginationDto extends general_dto_1.PaginationDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], IdPaginationDto.prototype, "id", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    tslib_1.__metadata("design:type", Boolean)
+], IdPaginationDto.prototype, "has_all_data", void 0);
+exports.IdPaginationDto = IdPaginationDto;
 class StockTypeDto extends general_dto_1.PaginationDto {
 }
 tslib_1.__decorate([
@@ -187,4 +200,22 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], PostHomeDto.prototype, "has_all_data", void 0);
 exports.PostHomeDto = PostHomeDto;
+class CommentsAddDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], CommentsAddDto.prototype, "post_id", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], CommentsAddDto.prototype, "parent_id", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], CommentsAddDto.prototype, "message", void 0);
+exports.CommentsAddDto = CommentsAddDto;
 //# sourceMappingURL=posts.dto.js.map

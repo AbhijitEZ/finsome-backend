@@ -57,6 +57,14 @@ export interface PostStocksInf {
     stock_id: string;
     deleted_at?: string;
 }
+export interface CommentsInf {
+    _id: string;
+    post_id: string;
+    user_id: string;
+    message: string;
+    parent_id: null | string;
+    deleted_at?: string;
+}
 export interface UserConfigurationInf {
     _id: string;
     user_id: string;

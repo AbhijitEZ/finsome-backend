@@ -14,6 +14,8 @@ const global_1 = require("../utils/global");
 const date_fns_1 = require("date-fns");
 const date_fns_timezone_1 = require("date-fns-timezone");
 const post_stocks_1 = tslib_1.__importDefault(require("../models/post-stocks"));
+const comments_1 = tslib_1.__importDefault(require("../models/comments"));
+const mongoose_1 = require("mongoose");
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -263,52 +265,82 @@ class PostService {
         // @ts-ignore
         return (0, global_1.postResponseFilter)(postNew._doc);
     }
-    async commentListing(_id, reqData) {
-        const comments = [
+    async commentListing(userId, reqData) {
+        var _a, _b;
+        const commentQB = comments_1.default.aggregate([
             {
-                _id: '34naldfadvanlksdkf',
-                parent_id: null,
-                message: 'Hello how are you doing in this awesome day.',
-                created_at: '2022-05-19T04:23:13.363+00:00',
-                updated_at: '2022-05-19T04:23:13.363+00:00',
-                user: {
-                    _id: '34naldfadvanlksdk1',
-                    fullname: 'Abhijit Ezhava',
-                    email: 'abhijitez@yopmail.com',
-                    profile_photo: null,
+                $match: {
+                    post_id: new mongoose_1.Types.ObjectId(reqData.id),
+                    parent_id: { $eq: null },
+                    deleted_at: undefined,
                 },
-                reply: [],
             },
             {
-                _id: '34naldfadvanlksdk2',
-                parent_id: null,
-                message: 'Another day.',
-                created_at: '2022-05-19T04:23:13.363+00:00',
-                updated_at: '2022-05-19T04:23:13.363+00:00',
-                user: {
-                    _id: '34naldfadvanlksdk1',
-                    fullname: 'Abhijit Ezhava',
-                    email: 'abhijitez@yopmail.com',
-                    profile_photo: null,
+                $lookup: {
+                    from: constants_1.USERS,
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user',
+                    pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
                 },
-                reply: [
-                    {
-                        _id: '34naldfadvanlksdk3',
-                        parent_id: '34naldfadvanlksdk2',
-                        message: 'Another day reply.',
-                        created_at: '2022-05-19T04:23:13.363+00:00',
-                        updated_at: '2022-05-19T04:23:13.363+00:00',
-                        user: {
-                            _id: '343aldfadvanlksdk7',
-                            fullname: 'Abhijit yt',
-                            email: 'abhijityt@yopmail.com',
-                            profile_photo: null,
+            },
+            { $unwind: '$user' },
+            {
+                $lookup: {
+                    from: constants_1.POSTS,
+                    localField: 'post_id',
+                    foreignField: '_id',
+                    as: 'post',
+                    pipeline: [{ $project: { _id: 1 } }],
+                },
+            },
+            { $unwind: '$post' },
+            {
+                $lookup: {
+                    from: constants_1.COMMENTS,
+                    localField: '_id',
+                    foreignField: 'parent_id',
+                    as: 'reply',
+                    pipeline: [
+                        { $project: { _id: 1, post_id: 1, user_id: 1, message: 1 } },
+                        {
+                            $lookup: {
+                                from: constants_1.USERS,
+                                localField: 'user_id',
+                                foreignField: '_id',
+                                as: 'reply_user',
+                                pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
+                            },
                         },
-                    },
-                ],
+                        { $unwind: '$reply_user' },
+                    ],
+                },
             },
-        ];
-        return comments;
+            {
+                $unset: ['user_id', 'post_id'],
+            },
+        ]);
+        if (!reqData.has_all_data) {
+            commentQB.append({
+                $limit: parseInt((_a = reqData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF),
+            });
+            commentQB.append({
+                $skip: parseInt((_b = reqData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF),
+            });
+        }
+        const commentsData = await commentQB.exec();
+        return commentsData !== null && commentsData !== void 0 ? commentsData : [];
+    }
+    async commentAdd(userId, reqData) {
+        var _a;
+        const newComment = await comments_1.default.create({
+            user_id: userId,
+            post_id: reqData.post_id,
+            message: reqData.message,
+            parent_id: (_a = reqData.parent_id) !== null && _a !== void 0 ? _a : null,
+        });
+        // @ts-ignore
+        return newComment._doc;
     }
 }
 exports.default = PostService;

@@ -1,6 +1,16 @@
 import { ACCOUNT_TYPE_CONST, ANALYSIS_TYPE_CONST, STOCK_RECOMMENDED_CONST, STOCK_TYPE_CONST, TRADE_TYPE_CONST } from '@/utils/constants';
-import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from './general.dto';
+
+export class IdPaginationDto extends PaginationDto {
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @IsOptional()
+  @IsBoolean()
+  has_all_data: boolean;
+}
 
 export class StockTypeDto extends PaginationDto {
   @IsNotEmpty()
@@ -147,4 +157,18 @@ export class PostHomeDto extends PaginationDto {
   @IsOptional()
   @IsString()
   has_all_data?: string;
+}
+
+export class CommentsAddDto {
+  @IsNotEmpty()
+  @IsString()
+  post_id: string;
+
+  @IsOptional()
+  @IsString()
+  parent_id: string;
+
+  @IsNotEmpty()
+  @IsString()
+  message: string;
 }

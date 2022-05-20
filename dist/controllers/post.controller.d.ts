@@ -10,5 +10,6 @@ declare class PostController {
     postExplore: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postHome: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     commentListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    commentAdd: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default PostController;
