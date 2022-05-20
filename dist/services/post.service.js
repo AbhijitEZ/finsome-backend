@@ -263,6 +263,53 @@ class PostService {
         // @ts-ignore
         return (0, global_1.postResponseFilter)(postNew._doc);
     }
+    async commentListing(_id, reqData) {
+        const comments = [
+            {
+                _id: '34naldfadvanlksdkf',
+                parent_id: null,
+                message: 'Hello how are you doing in this awesome day.',
+                created_at: '2022-05-19T04:23:13.363+00:00',
+                updated_at: '2022-05-19T04:23:13.363+00:00',
+                user: {
+                    _id: '34naldfadvanlksdk1',
+                    fullname: 'Abhijit Ezhava',
+                    email: 'abhijitez@yopmail.com',
+                    profile_photo: null,
+                },
+                reply: [],
+            },
+            {
+                _id: '34naldfadvanlksdk2',
+                parent_id: null,
+                message: 'Another day.',
+                created_at: '2022-05-19T04:23:13.363+00:00',
+                updated_at: '2022-05-19T04:23:13.363+00:00',
+                user: {
+                    _id: '34naldfadvanlksdk1',
+                    fullname: 'Abhijit Ezhava',
+                    email: 'abhijitez@yopmail.com',
+                    profile_photo: null,
+                },
+                reply: [
+                    {
+                        _id: '34naldfadvanlksdk3',
+                        parent_id: '34naldfadvanlksdk2',
+                        message: 'Another day reply.',
+                        created_at: '2022-05-19T04:23:13.363+00:00',
+                        updated_at: '2022-05-19T04:23:13.363+00:00',
+                        user: {
+                            _id: '343aldfadvanlksdk7',
+                            fullname: 'Abhijit yt',
+                            email: 'abhijityt@yopmail.com',
+                            profile_photo: null,
+                        },
+                    },
+                ],
+            },
+        ];
+        return comments;
+    }
 }
 exports.default = PostService;
 //# sourceMappingURL=post.service.js.map

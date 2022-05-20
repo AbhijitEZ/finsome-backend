@@ -34,6 +34,7 @@ class PostRoute implements Routes {
     );
     this.router.get(`${this.path}explore`, authMiddleware, this.postController.postExplore);
     this.router.get(`${this.path}home`, authMiddleware, validationMiddleware(PostHomeDto, 'query'), this.postController.postHome);
+    this.router.get(`${this.path}comment`, authMiddleware, this.postController.commentListing);
   }
 }
 

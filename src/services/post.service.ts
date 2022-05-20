@@ -299,6 +299,55 @@ class PostService {
     // @ts-ignore
     return postResponseFilter(postNew._doc);
   }
+
+  public async commentListing(_id: string, reqData: any): Promise<any> {
+    const comments = [
+      {
+        _id: '34naldfadvanlksdkf',
+        parent_id: null,
+        message: 'Hello how are you doing in this awesome day.',
+        created_at: '2022-05-19T04:23:13.363+00:00',
+        updated_at: '2022-05-19T04:23:13.363+00:00',
+        user: {
+          _id: '34naldfadvanlksdk1',
+          fullname: 'Abhijit Ezhava',
+          email: 'abhijitez@yopmail.com',
+          profile_photo: null,
+        },
+        reply: [],
+      },
+      {
+        _id: '34naldfadvanlksdk2',
+        parent_id: null,
+        message: 'Another day.',
+        created_at: '2022-05-19T04:23:13.363+00:00',
+        updated_at: '2022-05-19T04:23:13.363+00:00',
+        user: {
+          _id: '34naldfadvanlksdk1',
+          fullname: 'Abhijit Ezhava',
+          email: 'abhijitez@yopmail.com',
+          profile_photo: null,
+        },
+        reply: [
+          {
+            _id: '34naldfadvanlksdk3',
+            parent_id: '34naldfadvanlksdk2',
+            message: 'Another day reply.',
+            created_at: '2022-05-19T04:23:13.363+00:00',
+            updated_at: '2022-05-19T04:23:13.363+00:00',
+            user: {
+              _id: '343aldfadvanlksdk7',
+              fullname: 'Abhijit yt',
+              email: 'abhijityt@yopmail.com',
+              profile_photo: null,
+            },
+          },
+        ],
+      },
+    ];
+
+    return comments;
+  }
 }
 
 export default PostService;
