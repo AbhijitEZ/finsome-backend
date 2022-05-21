@@ -4,8 +4,8 @@ import multer from 'multer';
 import os from 'os';
 import { User } from '@interfaces/users.interface';
 import { APP_ERROR_MESSAGE, FILE_COUNT_POST, FILE_LIMIT } from './constants';
-import { postAssetsGenerator, profileImageGenerator } from './util';
-import { PostsInf } from '@/interfaces/general.interface';
+import { dateFormatter, postAssetsGenerator, profileImageGenerator } from './util';
+import { CommentsInf, PostsInf } from '@/interfaces/general.interface';
 
 export const responseJSONMapper = (res: Response, statusCode: number, data: any, message?: string) => {
   res.status(statusCode).json({ data, message: message || '' });
@@ -64,13 +64,17 @@ export const userResponseFilter = (userData: User): Partial<User> => {
   return user;
 };
 
-export const postResponseFilter = (postData: PostsInf): Partial<PostsInf> => {
+export const postResponseMapper = (postData: PostsInf): Partial<PostsInf> => {
   const post = { ...postData };
 
   // @ts-ignore
   if (post?.user?.profile_photo) {
     // @ts-ignore
     post.user.profile_photo = profileImageGenerator(post.user.profile_photo);
+  }
+
+  if (post?.created_at_tz) {
+    post.created_at_tz = dateFormatter(post.created_at_tz);
   }
 
   if (post.post_images?.length) {
@@ -84,4 +88,16 @@ export const postResponseFilter = (postData: PostsInf): Partial<PostsInf> => {
   }
 
   return post;
+};
+
+export const commentResponseMapper = (comment: CommentsInf) => {
+  if (comment.created_at_tz) {
+    comment.created_at_tz = dateFormatter(comment.created_at_tz);
+  }
+
+  if (comment.reply) {
+    comment.reply = comment.reply.map(data => ({ ...data, created_at_tz: data.created_at_tz ? dateFormatter(data.created_at_tz) : undefined }));
+  }
+
+  return comment;
 };

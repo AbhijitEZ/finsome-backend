@@ -44,6 +44,19 @@ class PostService {
             user: 1,
             security: 1,
         };
+        this.commentResObj = {
+            _id: 1,
+            parent_id: 1,
+            message: 1,
+            created_at: 1,
+            updated_at: 1,
+            user_id: 1,
+            post_id: 1,
+            created_at_tz: { $dateToString: { date: '$created_at', timezone: constants_1.DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+            user: 1,
+            post: 1,
+            reply: 1,
+        };
     }
     async countriesGetAll() {
         const countries = await this.countryObj.find({}).lean();
@@ -89,7 +102,7 @@ class PostService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async postExplore(_id) {
         const postsListing = await posts_1.default.find({ deleted_at: undefined }).populate('user_id', ['fullname', 'email']).lean();
-        const postsMapping = postsListing.map(post => (0, global_1.postResponseFilter)(post));
+        const postsMapping = postsListing.map(post => (0, global_1.postResponseMapper)(post));
         return postsMapping;
     }
     async postHome(_id, queryData) {
@@ -211,7 +224,7 @@ class PostService {
             });
         }
         const posts = await postsQb.exec();
-        const postsMapping = posts.map(post => (0, global_1.postResponseFilter)(post));
+        const postsMapping = posts.map(post => (0, global_1.postResponseMapper)(post));
         return postsMapping;
     }
     async postCreate(_id, reqData, files) {
@@ -263,11 +276,14 @@ class PostService {
             });
         }
         // @ts-ignore
-        return (0, global_1.postResponseFilter)(postNew._doc);
+        return (0, global_1.postResponseMapper)(postNew._doc);
     }
     async commentListing(userId, reqData) {
-        var _a, _b;
+        var _a, _b, _c;
         const commentQB = comments_1.default.aggregate([
+            {
+                $project: this.commentResObj,
+            },
             {
                 $match: {
                     post_id: new mongoose_1.Types.ObjectId(reqData.id),
@@ -302,7 +318,16 @@ class PostService {
                     foreignField: 'parent_id',
                     as: 'reply',
                     pipeline: [
-                        { $project: { _id: 1, post_id: 1, user_id: 1, message: 1 } },
+                        {
+                            $project: {
+                                _id: 1,
+                                post_id: 1,
+                                user_id: 1,
+                                message: 1,
+                                created_at: 1,
+                                created_at_tz: { $dateToString: { date: '$created_at', timezone: constants_1.DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+                            },
+                        },
                         {
                             $lookup: {
                                 from: constants_1.USERS,
@@ -328,8 +353,9 @@ class PostService {
                 $skip: parseInt((_b = reqData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF),
             });
         }
-        const commentsData = await commentQB.exec();
-        return commentsData !== null && commentsData !== void 0 ? commentsData : [];
+        let commentsData = await commentQB.exec();
+        commentsData = (_c = commentsData === null || commentsData === void 0 ? void 0 : commentsData.map(comm => (0, global_1.commentResponseMapper)(comm))) !== null && _c !== void 0 ? _c : [];
+        return commentsData;
     }
     async commentAdd(userId, reqData) {
         var _a;

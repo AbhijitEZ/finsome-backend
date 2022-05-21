@@ -1,3 +1,4 @@
+import { format, parseISO } from 'date-fns';
 import fs from 'fs';
 import { postAssetsFolder, profileImageFolder } from './constants';
 import { logger } from './logger';
@@ -39,4 +40,8 @@ export const fileUnSyncFromLocalStroage = (path: string) => {
 
     logger.info('Removal of file from temp location in server: ' + path);
   });
+};
+
+export const dateFormatter = (date: string) => {
+  return format(parseISO(date), 'yyyy-MM-dd hh:mm aaa');
 };

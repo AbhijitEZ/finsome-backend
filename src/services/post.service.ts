@@ -19,7 +19,7 @@ import {
   USERS,
 } from '@/utils/constants';
 import { fileUnSyncFromLocalStroage } from '@/utils/util';
-import { postResponseFilter } from '@/utils/global';
+import { commentResponseMapper, postResponseMapper } from '@/utils/global';
 import { addDays, parseISO, toDate } from 'date-fns';
 import { convertToLocalTime } from 'date-fns-timezone';
 import postStockModel from '@/models/post-stocks';
@@ -52,6 +52,19 @@ class PostService {
     created_at_tz: { $dateToString: { date: '$created_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
     user: 1,
     security: 1,
+  };
+  public commentResObj = {
+    _id: 1,
+    parent_id: 1,
+    message: 1,
+    created_at: 1,
+    updated_at: 1,
+    user_id: 1,
+    post_id: 1,
+    created_at_tz: { $dateToString: { date: '$created_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+    user: 1,
+    post: 1,
+    reply: 1,
   };
 
   public async countriesGetAll(): Promise<any[]> {
@@ -112,7 +125,7 @@ class PostService {
   public async postExplore(_id: string): Promise<any> {
     const postsListing = await postsModel.find({ deleted_at: undefined }).populate('user_id', ['fullname', 'email']).lean();
 
-    const postsMapping = postsListing.map(post => postResponseFilter(post));
+    const postsMapping = postsListing.map(post => postResponseMapper(post));
 
     return postsMapping;
   }
@@ -241,7 +254,7 @@ class PostService {
 
     const posts = await postsQb.exec();
 
-    const postsMapping = posts.map(post => postResponseFilter(post));
+    const postsMapping = posts.map(post => postResponseMapper(post));
 
     return postsMapping;
   }
@@ -310,11 +323,14 @@ class PostService {
     }
 
     // @ts-ignore
-    return postResponseFilter(postNew._doc);
+    return postResponseMapper(postNew._doc);
   }
 
   public async commentListing(userId: string, reqData: IdPaginationDto): Promise<any> {
     const commentQB = commentsModel.aggregate([
+      {
+        $project: this.commentResObj,
+      },
       {
         $match: {
           post_id: new Types.ObjectId(reqData.id),
@@ -349,7 +365,16 @@ class PostService {
           foreignField: 'parent_id',
           as: 'reply',
           pipeline: [
-            { $project: { _id: 1, post_id: 1, user_id: 1, message: 1 } },
+            {
+              $project: {
+                _id: 1,
+                post_id: 1,
+                user_id: 1,
+                message: 1,
+                created_at: 1,
+                created_at_tz: { $dateToString: { date: '$created_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+              },
+            },
             {
               $lookup: {
                 from: USERS,
@@ -377,9 +402,10 @@ class PostService {
       });
     }
 
-    const commentsData = await commentQB.exec();
+    let commentsData = await commentQB.exec();
+    commentsData = commentsData?.map(comm => commentResponseMapper(comm)) ?? [];
 
-    return commentsData ?? [];
+    return commentsData;
   }
 
   public async commentAdd(userId: string, reqData: CommentsAddDto): Promise<any> {

@@ -46,6 +46,7 @@ export interface PostsInf {
     post_vids?: Array<string>;
     post_thumbs?: Array<string>;
     deleted_at?: Date;
+    created_at_tz?: string;
 }
 export interface PrivacyPolicyInf {
     _id: string;
@@ -63,7 +64,10 @@ export interface CommentsInf {
     user_id: string;
     message: string;
     parent_id: null | string;
+    created_at: string;
     deleted_at?: string;
+    reply?: Array<CommentsInf>;
+    created_at_tz?: string;
 }
 export interface UserConfigurationInf {
     _id: string;

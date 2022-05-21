@@ -8,3 +8,4 @@ export declare const isEmpty: (value: string | number | object) => boolean;
 export declare const profileImageGenerator: (imageName: string) => string;
 export declare const postAssetsGenerator: (imageName: string) => string;
 export declare const fileUnSyncFromLocalStroage: (path: string) => void;
+export declare const dateFormatter: (date: string) => string;

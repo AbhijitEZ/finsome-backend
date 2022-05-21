@@ -34,6 +34,25 @@ declare class PostService {
         user: number;
         security: number;
     };
+    commentResObj: {
+        _id: number;
+        parent_id: number;
+        message: number;
+        created_at: number;
+        updated_at: number;
+        user_id: number;
+        post_id: number;
+        created_at_tz: {
+            $dateToString: {
+                date: string;
+                timezone: string;
+                format: string;
+            };
+        };
+        user: number;
+        post: number;
+        reply: number;
+    };
     countriesGetAll(): Promise<any[]>;
     stockTypesShares(reqData: StockTypeDto): Promise<any>;
     userConfigListing(_id: string): Promise<any>;

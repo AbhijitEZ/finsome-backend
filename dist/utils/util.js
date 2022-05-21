@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fileUnSyncFromLocalStroage = exports.postAssetsGenerator = exports.profileImageGenerator = exports.isEmpty = void 0;
+exports.dateFormatter = exports.fileUnSyncFromLocalStroage = exports.postAssetsGenerator = exports.profileImageGenerator = exports.isEmpty = void 0;
 const tslib_1 = require("tslib");
+const date_fns_1 = require("date-fns");
 const fs_1 = tslib_1.__importDefault(require("fs"));
 const constants_1 = require("./constants");
 const logger_1 = require("./logger");
@@ -47,4 +48,8 @@ const fileUnSyncFromLocalStroage = (path) => {
     });
 };
 exports.fileUnSyncFromLocalStroage = fileUnSyncFromLocalStroage;
+const dateFormatter = (date) => {
+    return (0, date_fns_1.format)((0, date_fns_1.parseISO)(date), 'yyyy-MM-dd hh:mm aaa');
+};
+exports.dateFormatter = dateFormatter;
 //# sourceMappingURL=util.js.map

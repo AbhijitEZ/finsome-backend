@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postResponseFilter = exports.userResponseFilter = exports.fileUploadPostCB = exports.fileUploadCSVCB = exports.fileUploadCB = exports.responseJSONMapper = void 0;
+exports.commentResponseMapper = exports.postResponseMapper = exports.userResponseFilter = exports.fileUploadPostCB = exports.fileUploadCSVCB = exports.fileUploadCB = exports.responseJSONMapper = void 0;
 const tslib_1 = require("tslib");
 const HttpException_1 = require("../exceptions/HttpException");
 const multer_1 = tslib_1.__importDefault(require("multer"));
@@ -56,13 +56,16 @@ const userResponseFilter = (userData) => {
     return user;
 };
 exports.userResponseFilter = userResponseFilter;
-const postResponseFilter = (postData) => {
+const postResponseMapper = (postData) => {
     var _a, _b, _c, _d, _e, _f, _g;
     const post = Object.assign({}, postData);
     // @ts-ignore
     if ((_a = post === null || post === void 0 ? void 0 : post.user) === null || _a === void 0 ? void 0 : _a.profile_photo) {
         // @ts-ignore
         post.user.profile_photo = (0, util_1.profileImageGenerator)(post.user.profile_photo);
+    }
+    if (post === null || post === void 0 ? void 0 : post.created_at_tz) {
+        post.created_at_tz = (0, util_1.dateFormatter)(post.created_at_tz);
     }
     if ((_b = post.post_images) === null || _b === void 0 ? void 0 : _b.length) {
         post.post_images = (_c = post.post_images) === null || _c === void 0 ? void 0 : _c.map(img => (0, util_1.postAssetsGenerator)(img));
@@ -75,5 +78,15 @@ const postResponseFilter = (postData) => {
     }
     return post;
 };
-exports.postResponseFilter = postResponseFilter;
+exports.postResponseMapper = postResponseMapper;
+const commentResponseMapper = (comment) => {
+    if (comment.created_at_tz) {
+        comment.created_at_tz = (0, util_1.dateFormatter)(comment.created_at_tz);
+    }
+    if (comment.reply) {
+        comment.reply = comment.reply.map(data => (Object.assign(Object.assign({}, data), { created_at_tz: data.created_at_tz ? (0, util_1.dateFormatter)(data.created_at_tz) : undefined })));
+    }
+    return comment;
+};
+exports.commentResponseMapper = commentResponseMapper;
 //# sourceMappingURL=global.js.map
