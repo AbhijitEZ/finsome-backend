@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { CommentsAddDto, IdPaginationDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
+import { CommentsAddDto, IdPaginationDto, LikePostDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
 declare class PostService {
     countryObj: import("mongoose").Model<import("../interfaces/general.interface").CountryInf & import("mongoose").Document<any, any, any>, {}, {}>;
     stockTypesObj: import("mongoose").Model<import("../interfaces/general.interface").StockTypeInf & import("mongoose").Document<any, any, any>, {}, {}>;
@@ -33,6 +33,8 @@ declare class PostService {
         };
         user: number;
         security: number;
+        likes: number;
+        total_likes: number;
     };
     commentResObj: {
         _id: number;
@@ -62,5 +64,6 @@ declare class PostService {
     postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any>;
     commentListing(userId: string, reqData: IdPaginationDto): Promise<any>;
     commentAdd(userId: string, reqData: CommentsAddDto): Promise<any>;
+    postLikeUpdate(userId: string, reqData: LikePostDto): Promise<any>;
 }
 export default PostService;

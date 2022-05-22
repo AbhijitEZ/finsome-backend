@@ -49,3 +49,7 @@ export declare class CommentsAddDto {
     parent_id: string;
     message: string;
 }
+export declare class LikePostDto {
+    like: boolean;
+    post_id: string;
+}

@@ -1,4 +1,4 @@
-import { CommentsAddDto, IdPaginationDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
+import { CommentsAddDto, IdPaginationDto, LikePostDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
 import countryModel from '@/models/countries';
 import postsModel from '@/models/posts';
 import awsHandler from '@utils/aws';
@@ -7,8 +7,10 @@ import stockTypeModel from '@/models/stock-types';
 import userConfigurationModel from '@/models/user-configurations';
 import isEmpty from 'lodash.isempty';
 import {
+  APP_ERROR_MESSAGE,
   COMMENTS,
   DEFAULT_TIMEZONE,
+  LIKES,
   LIMIT_DEF,
   postAssetsFolder,
   POSTS,
@@ -25,6 +27,8 @@ import { convertToLocalTime } from 'date-fns-timezone';
 import postStockModel from '@/models/post-stocks';
 import commentsModel from '@/models/comments';
 import { Types } from 'mongoose';
+import likesModel from '@/models/likes';
+import { HttpException } from '@/exceptions/HttpException';
 
 class PostService {
   public countryObj = countryModel;
@@ -52,6 +56,8 @@ class PostService {
     created_at_tz: { $dateToString: { date: '$created_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
     user: 1,
     security: 1,
+    likes: 1,
+    total_likes: 1,
   };
   public commentResObj = {
     _id: 1,
@@ -170,10 +176,28 @@ class PostService {
         },
       },
       {
-        $unset: ['post_stock'],
+        $lookup: {
+          from: LIKES,
+          localField: '_id',
+          foreignField: 'post_id',
+          as: 'likes',
+          pipeline: [
+            {
+              $count: 'total_count',
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          total_likes: { $size: '$likes' },
+        },
+      },
+      {
+        $unset: ['likes', 'post_stock'],
       },
       /* TODO: This needs to be updated according to views and comment */
-      { $sort: { created_at: -1 } },
+      { $sort: { created_at: -1, total_likes: -1 } },
     ]);
 
     if (queryData.type) {
@@ -418,6 +442,46 @@ class PostService {
 
     // @ts-ignore
     return newComment._doc;
+  }
+
+  public async postLikeUpdate(userId: string, reqData: LikePostDto): Promise<any> {
+    const likeExistsForUser = await likesModel.findOne({
+      user_id: userId,
+      post_id: reqData.post_id,
+    });
+
+    if (reqData.like && likeExistsForUser) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.post_like_exists);
+    }
+
+    if (!reqData.like && !likeExistsForUser) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.post_not_like_exists);
+    }
+
+    if (reqData.like) {
+      await likesModel.create({ user_id: userId, post_id: reqData.post_id });
+    } else {
+      await likesModel.deleteOne({ user_id: userId, post_id: reqData.post_id });
+    }
+
+    let likeQb = likesModel.aggregate([
+      {
+        $match: {
+          user_id: {
+            $eq: new Types.ObjectId(userId),
+          },
+          post_id: {
+            $eq: new Types.ObjectId(reqData.post_id),
+          },
+        },
+      },
+      {
+        $count: 'total_count',
+      },
+    ]);
+
+    likeQb = await likeQb.exec();
+    return likeQb?.[0]?.total_count ?? 0;
   }
 }
 

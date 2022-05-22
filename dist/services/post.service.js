@@ -16,6 +16,8 @@ const date_fns_timezone_1 = require("date-fns-timezone");
 const post_stocks_1 = tslib_1.__importDefault(require("../models/post-stocks"));
 const comments_1 = tslib_1.__importDefault(require("../models/comments"));
 const mongoose_1 = require("mongoose");
+const likes_1 = tslib_1.__importDefault(require("../models/likes"));
+const HttpException_1 = require("../exceptions/HttpException");
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -43,6 +45,8 @@ class PostService {
             created_at_tz: { $dateToString: { date: '$created_at', timezone: constants_1.DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
             user: 1,
             security: 1,
+            likes: 1,
+            total_likes: 1,
         };
         this.commentResObj = {
             _id: 1,
@@ -146,10 +150,28 @@ class PostService {
                 },
             },
             {
-                $unset: ['post_stock'],
+                $lookup: {
+                    from: constants_1.LIKES,
+                    localField: '_id',
+                    foreignField: 'post_id',
+                    as: 'likes',
+                    pipeline: [
+                        {
+                            $count: 'total_count',
+                        },
+                    ],
+                },
+            },
+            {
+                $addFields: {
+                    total_likes: { $size: '$likes' },
+                },
+            },
+            {
+                $unset: ['likes', 'post_stock'],
             },
             /* TODO: This needs to be updated according to views and comment */
-            { $sort: { created_at: -1 } },
+            { $sort: { created_at: -1, total_likes: -1 } },
         ]);
         if (queryData.type) {
             postsQb.append({
@@ -367,6 +389,42 @@ class PostService {
         });
         // @ts-ignore
         return newComment._doc;
+    }
+    async postLikeUpdate(userId, reqData) {
+        var _a, _b;
+        const likeExistsForUser = await likes_1.default.findOne({
+            user_id: userId,
+            post_id: reqData.post_id,
+        });
+        if (reqData.like && likeExistsForUser) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.post_like_exists);
+        }
+        if (!reqData.like && !likeExistsForUser) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.post_not_like_exists);
+        }
+        if (reqData.like) {
+            await likes_1.default.create({ user_id: userId, post_id: reqData.post_id });
+        }
+        else {
+            await likes_1.default.deleteOne({ user_id: userId, post_id: reqData.post_id });
+        }
+        let likeQb = likes_1.default.aggregate([
+            {
+                $match: {
+                    user_id: {
+                        $eq: new mongoose_1.Types.ObjectId(userId),
+                    },
+                    post_id: {
+                        $eq: new mongoose_1.Types.ObjectId(reqData.post_id),
+                    },
+                },
+            },
+            {
+                $count: 'total_count',
+            },
+        ]);
+        likeQb = await likeQb.exec();
+        return (_b = (_a = likeQb === null || likeQb === void 0 ? void 0 : likeQb[0]) === null || _a === void 0 ? void 0 : _a.total_count) !== null && _b !== void 0 ? _b : 0;
     }
 }
 exports.default = PostService;

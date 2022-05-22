@@ -101,6 +101,17 @@ class PostController {
                 next(error);
             }
         };
+        this.postLikeUpdate = async (req, res, next) => {
+            var _a;
+            try {
+                // @ts-ignore
+                const data = await this.postService.postLikeUpdate((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.body);
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = PostController;

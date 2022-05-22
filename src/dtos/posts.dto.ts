@@ -172,3 +172,13 @@ export class CommentsAddDto {
   @IsString()
   message: string;
 }
+
+export class LikePostDto {
+  @IsNotEmpty()
+  @IsBoolean()
+  like: boolean;
+
+  @IsNotEmpty()
+  @IsString()
+  post_id: string;
+}

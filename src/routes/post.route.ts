@@ -3,7 +3,7 @@ import { Routes } from '@interfaces/routes.interface';
 import PostController from '@/controllers/post.controller';
 import validationMiddleware from '@/middlewares/validation.middleware';
 import authMiddleware from '@/middlewares/auth.middleware';
-import { CommentsAddDto, IdPaginationDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
+import { CommentsAddDto, IdPaginationDto, LikePostDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
 import { fileUploadPostCB } from '@/utils/global';
 
 class PostRoute implements Routes {
@@ -36,6 +36,7 @@ class PostRoute implements Routes {
     this.router.get(`${this.path}home`, authMiddleware, validationMiddleware(PostHomeDto, 'query'), this.postController.postHome);
     this.router.post(`${this.path}comment`, authMiddleware, validationMiddleware(CommentsAddDto, 'body'), this.postController.commentAdd);
     this.router.get(`${this.path}comment`, authMiddleware, validationMiddleware(IdPaginationDto, 'query'), this.postController.commentListing);
+    this.router.post(`${this.path}like`, authMiddleware, validationMiddleware(LikePostDto, 'body'), this.postController.postLikeUpdate);
   }
 }
 

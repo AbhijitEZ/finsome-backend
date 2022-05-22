@@ -67,6 +67,13 @@ export interface PostStocksInf {
   deleted_at?: string;
 }
 
+export interface LikesInf {
+  _id: string;
+  post_id: string;
+  user_id: string;
+  deleted_at?: string;
+}
+
 export interface CommentsInf {
   _id: string;
   post_id: string;
