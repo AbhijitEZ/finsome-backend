@@ -239,10 +239,21 @@ class PostService {
         }
         if (!queryData.has_all_data) {
             postsQb.append({
-                $limit: parseInt((_a = queryData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF),
-            });
-            postsQb.append({
-                $skip: parseInt((_b = queryData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF),
+                $facet: {
+                    totalRecords: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    result: [
+                        {
+                            $skip: parseInt((_a = queryData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
+                        },
+                        {
+                            $limit: parseInt((_b = queryData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
+                        },
+                    ],
+                },
             });
         }
         const posts = await postsQb.exec();

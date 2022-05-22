@@ -269,10 +269,21 @@ class PostService {
 
     if (!queryData.has_all_data) {
       postsQb.append({
-        $limit: parseInt(queryData.limit ?? LIMIT_DEF),
-      });
-      postsQb.append({
-        $skip: parseInt(queryData.skip ?? SKIP_DEF),
+        $facet: {
+          totalRecords: [
+            {
+              $count: 'total',
+            },
+          ],
+          result: [
+            {
+              $skip: parseInt(queryData.skip ?? SKIP_DEF),
+            },
+            {
+              $limit: parseInt(queryData.limit ?? LIMIT_DEF),
+            },
+          ],
+        },
       });
     }
 
