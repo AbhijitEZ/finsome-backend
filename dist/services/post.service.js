@@ -157,7 +157,9 @@ class PostService {
                     as: 'likes',
                     pipeline: [
                         {
-                            $count: 'total_count',
+                            $project: {
+                                user_id: 1,
+                            },
                         },
                     ],
                 },
@@ -168,11 +170,47 @@ class PostService {
                 },
             },
             {
+                $lookup: {
+                    from: constants_1.LIKES,
+                    localField: '_id',
+                    foreignField: 'post_id',
+                    as: 'likes_status',
+                    pipeline: [
+                        {
+                            $match: {
+                                user_id: (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) ? { $ne: null } : new mongoose_1.Types.ObjectId(_id),
+                            },
+                        },
+                        {
+                            $addFields: {
+                                status: {
+                                    $eq: ['$user_id', _id],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: -1,
+                                status: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
                 $unset: ['likes', 'post_stock'],
             },
             /* TODO: This needs to be updated according to views and comment */
-            { $sort: { created_at: -1, total_likes: -1 } },
+            { $sort: { total_likes: -1, created_at: -1 } },
         ]);
+        if (!(queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data)) {
+            postsQb.append({
+                $unwind: {
+                    path: '$likes_status',
+                    preserveNullAndEmptyArrays: true,
+                },
+            });
+        }
         if (queryData.type) {
             postsQb.append({
                 $match: {
@@ -256,6 +294,18 @@ class PostService {
                 },
             });
         }
+        if (queryData.has_all_data) {
+            postsQb.append({
+                $facet: {
+                    totalRecords: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    result: [],
+                },
+            });
+        }
         const posts = await postsQb.exec();
         const total_count = (_f = (_e = (_d = (_c = posts === null || posts === void 0 ? void 0 : posts[0]) === null || _c === void 0 ? void 0 : _c.totalRecords) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.total) !== null && _f !== void 0 ? _f : 0;
         const result = (_h = (_g = posts === null || posts === void 0 ? void 0 : posts[0]) === null || _g === void 0 ? void 0 : _g.result) !== null && _h !== void 0 ? _h : [];
@@ -314,7 +364,7 @@ class PostService {
         return (0, global_1.postResponseMapper)(postNew._doc);
     }
     async commentListing(userId, reqData) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         const commentQB = comments_1.default.aggregate([
             {
                 $project: this.commentResObj,
@@ -382,15 +432,40 @@ class PostService {
         ]);
         if (!reqData.has_all_data) {
             commentQB.append({
-                $limit: parseInt((_a = reqData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF),
+                $facet: {
+                    totalRecords: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    result: [
+                        {
+                            $skip: parseInt((_a = reqData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
+                        },
+                        {
+                            $limit: parseInt((_b = reqData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
+                        },
+                    ],
+                },
             });
+        }
+        if (reqData.has_all_data) {
             commentQB.append({
-                $skip: parseInt((_b = reqData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF),
+                $facet: {
+                    totalRecords: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    result: [],
+                },
             });
         }
         let commentsData = await commentQB.exec();
-        commentsData = (_c = commentsData === null || commentsData === void 0 ? void 0 : commentsData.map(comm => (0, global_1.commentResponseMapper)(comm))) !== null && _c !== void 0 ? _c : [];
-        return commentsData;
+        const total_count = (_f = (_e = (_d = (_c = commentsData === null || commentsData === void 0 ? void 0 : commentsData[0]) === null || _c === void 0 ? void 0 : _c.totalRecords) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.total) !== null && _f !== void 0 ? _f : 0;
+        const result = (_h = (_g = commentsData === null || commentsData === void 0 ? void 0 : commentsData[0]) === null || _g === void 0 ? void 0 : _g.result) !== null && _h !== void 0 ? _h : [];
+        commentsData = (_j = result === null || result === void 0 ? void 0 : result.map(comm => (0, global_1.commentResponseMapper)(comm))) !== null && _j !== void 0 ? _j : [];
+        return { result: commentsData, total_count };
     }
     async commentAdd(userId, reqData) {
         var _a;
