@@ -288,10 +288,12 @@ class PostService {
     }
 
     const posts = await postsQb.exec();
+    const total_count = posts?.[0]?.totalRecords?.[0]?.total ?? 0;
+    const result = posts?.[0]?.result ?? [];
 
-    const postsMapping = posts.map(post => postResponseMapper(post));
+    const postsMapping = result.map(post => postResponseMapper(post));
 
-    return postsMapping;
+    return { result: postsMapping, total_count };
   }
 
   public async postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any> {

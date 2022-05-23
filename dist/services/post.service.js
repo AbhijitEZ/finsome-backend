@@ -110,7 +110,7 @@ class PostService {
         return postsMapping;
     }
     async postHome(_id, queryData) {
-        var _a, _b;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         const postsQb = this.postsObj.aggregate([
             {
                 $project: this.postResObj,
@@ -257,8 +257,10 @@ class PostService {
             });
         }
         const posts = await postsQb.exec();
-        const postsMapping = posts.map(post => (0, global_1.postResponseMapper)(post));
-        return postsMapping;
+        const total_count = (_f = (_e = (_d = (_c = posts === null || posts === void 0 ? void 0 : posts[0]) === null || _c === void 0 ? void 0 : _c.totalRecords) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.total) !== null && _f !== void 0 ? _f : 0;
+        const result = (_h = (_g = posts === null || posts === void 0 ? void 0 : posts[0]) === null || _g === void 0 ? void 0 : _g.result) !== null && _h !== void 0 ? _h : [];
+        const postsMapping = result.map(post => (0, global_1.postResponseMapper)(post));
+        return { result: postsMapping, total_count };
     }
     async postCreate(_id, reqData, files) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
