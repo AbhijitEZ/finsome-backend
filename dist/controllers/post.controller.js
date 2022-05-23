@@ -112,6 +112,17 @@ class PostController {
                 next(error);
             }
         };
+        this.commentDelete = async (req, res, next) => {
+            var _a, _b, _c;
+            try {
+                // @ts-ignore
+                const data = await this.postService.commentDelete((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.postId, (_c = req.params) === null || _c === void 0 ? void 0 : _c.id);
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = PostController;

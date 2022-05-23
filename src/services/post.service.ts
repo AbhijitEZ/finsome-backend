@@ -58,6 +58,8 @@ class PostService {
     security: 1,
     likes: 1,
     total_likes: 1,
+    comments: 1,
+    total_comments: 1,
   };
   public commentResObj = {
     _id: 1,
@@ -197,6 +199,26 @@ class PostService {
       },
       {
         $lookup: {
+          from: COMMENTS,
+          localField: '_id',
+          foreignField: 'post_id',
+          as: 'comments',
+          pipeline: [
+            {
+              $project: {
+                user_id: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          total_comments: { $size: '$comments' },
+        },
+      },
+      {
+        $lookup: {
           from: LIKES,
           localField: '_id',
           foreignField: 'post_id',
@@ -224,7 +246,7 @@ class PostService {
         },
       },
       {
-        $unset: ['likes', 'post_stock'],
+        $unset: ['likes', 'comments', 'post_stock'],
       },
       /* TODO: This needs to be updated according to views and comment */
       { $sort: { total_likes: -1, created_at: -1 } },
@@ -481,6 +503,11 @@ class PostService {
       {
         $unset: ['user_id', 'post_id'],
       },
+      {
+        $sort: {
+          created_at: -1,
+        },
+      },
     ]);
 
     if (!reqData.has_all_data) {
@@ -526,15 +553,41 @@ class PostService {
   }
 
   public async commentAdd(userId: string, reqData: CommentsAddDto): Promise<any> {
-    const newComment = await commentsModel.create({
+    await commentsModel.create({
       user_id: userId,
       post_id: reqData.post_id,
       message: reqData.message,
       parent_id: reqData.parent_id ?? null,
     });
 
+    const commentCounts = await commentsModel.countDocuments({
+      post_id: reqData.post_id,
+    });
+
     // @ts-ignore
-    return newComment._doc;
+    return commentCounts;
+  }
+
+  public async commentDelete(userId: string, postId: string, commentId: string): Promise<any> {
+    const commentCheck = await commentsModel.findOne({
+      _id: new Types.ObjectId(commentId),
+      user_id: userId,
+    });
+
+    if (!commentCheck) {
+      throw new HttpException(403, APP_ERROR_MESSAGE.user_not_auth);
+    }
+
+    await commentsModel.deleteOne({
+      _id: new Types.ObjectId(commentId),
+    });
+
+    const commentCounts = await commentsModel.countDocuments({
+      post_id: postId,
+    });
+
+    // @ts-ignore
+    return commentCounts;
   }
 
   public async postLikeUpdate(userId: string, reqData: LikePostDto): Promise<any> {

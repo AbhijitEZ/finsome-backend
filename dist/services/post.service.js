@@ -47,6 +47,8 @@ class PostService {
             security: 1,
             likes: 1,
             total_likes: 1,
+            comments: 1,
+            total_comments: 1,
         };
         this.commentResObj = {
             _id: 1,
@@ -171,6 +173,26 @@ class PostService {
             },
             {
                 $lookup: {
+                    from: constants_1.COMMENTS,
+                    localField: '_id',
+                    foreignField: 'post_id',
+                    as: 'comments',
+                    pipeline: [
+                        {
+                            $project: {
+                                user_id: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $addFields: {
+                    total_comments: { $size: '$comments' },
+                },
+            },
+            {
+                $lookup: {
                     from: constants_1.LIKES,
                     localField: '_id',
                     foreignField: 'post_id',
@@ -198,7 +220,7 @@ class PostService {
                 },
             },
             {
-                $unset: ['likes', 'post_stock'],
+                $unset: ['likes', 'comments', 'post_stock'],
             },
             /* TODO: This needs to be updated according to views and comment */
             { $sort: { total_likes: -1, created_at: -1 } },
@@ -429,6 +451,11 @@ class PostService {
             {
                 $unset: ['user_id', 'post_id'],
             },
+            {
+                $sort: {
+                    created_at: -1,
+                },
+            },
         ]);
         if (!reqData.has_all_data) {
             commentQB.append({
@@ -469,14 +496,34 @@ class PostService {
     }
     async commentAdd(userId, reqData) {
         var _a;
-        const newComment = await comments_1.default.create({
+        await comments_1.default.create({
             user_id: userId,
             post_id: reqData.post_id,
             message: reqData.message,
             parent_id: (_a = reqData.parent_id) !== null && _a !== void 0 ? _a : null,
         });
+        const commentCounts = await comments_1.default.countDocuments({
+            post_id: reqData.post_id,
+        });
         // @ts-ignore
-        return newComment._doc;
+        return commentCounts;
+    }
+    async commentDelete(userId, postId, commentId) {
+        const commentCheck = await comments_1.default.findOne({
+            _id: new mongoose_1.Types.ObjectId(commentId),
+            user_id: userId,
+        });
+        if (!commentCheck) {
+            throw new HttpException_1.HttpException(403, constants_1.APP_ERROR_MESSAGE.user_not_auth);
+        }
+        await comments_1.default.deleteOne({
+            _id: new mongoose_1.Types.ObjectId(commentId),
+        });
+        const commentCounts = await comments_1.default.countDocuments({
+            post_id: postId,
+        });
+        // @ts-ignore
+        return commentCounts;
     }
     async postLikeUpdate(userId, reqData) {
         var _a, _b;

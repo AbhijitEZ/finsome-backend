@@ -35,6 +35,8 @@ declare class PostService {
         security: number;
         likes: number;
         total_likes: number;
+        comments: number;
+        total_comments: number;
     };
     commentResObj: {
         _id: number;
@@ -64,6 +66,7 @@ declare class PostService {
     postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any>;
     commentListing(userId: string, reqData: IdPaginationDto): Promise<any>;
     commentAdd(userId: string, reqData: CommentsAddDto): Promise<any>;
+    commentDelete(userId: string, postId: string, commentId: string): Promise<any>;
     postLikeUpdate(userId: string, reqData: LikePostDto): Promise<any>;
 }
 export default PostService;

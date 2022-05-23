@@ -28,6 +28,7 @@ exports.APP_ERROR_MESSAGE = {
     add_s3_error: 'Error while adding the image from S3.',
     user_field_exists: 'User with the following field already exists, try something other.',
     user_id_not_exits: "User id doesn't exists in system.",
+    user_not_auth: "User doesn't have authorization for this specific action.",
     user_not_complete_register: 'User has not completed the registration process, process further to complete.',
     user_already_register: 'User is already registered in system, please login to access.',
     email_exists: 'Email already exists use something different.',

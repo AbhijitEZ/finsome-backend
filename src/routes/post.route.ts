@@ -36,6 +36,7 @@ class PostRoute implements Routes {
     this.router.get(`${this.path}home`, authMiddleware, validationMiddleware(PostHomeDto, 'query'), this.postController.postHome);
     this.router.post(`${this.path}comment`, authMiddleware, validationMiddleware(CommentsAddDto, 'body'), this.postController.commentAdd);
     this.router.get(`${this.path}comment`, authMiddleware, validationMiddleware(IdPaginationDto, 'query'), this.postController.commentListing);
+    this.router.delete(`${this.path}comment/:postId/:id`, authMiddleware, this.postController.commentDelete);
     this.router.post(`${this.path}like`, authMiddleware, validationMiddleware(LikePostDto, 'body'), this.postController.postLikeUpdate);
   }
 }

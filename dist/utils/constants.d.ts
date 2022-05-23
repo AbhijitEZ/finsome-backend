@@ -25,6 +25,7 @@ export declare const APP_ERROR_MESSAGE: {
     add_s3_error: string;
     user_field_exists: string;
     user_id_not_exits: string;
+    user_not_auth: string;
     user_not_complete_register: string;
     user_already_register: string;
     email_exists: string;
