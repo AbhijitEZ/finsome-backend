@@ -49,6 +49,7 @@ class PostService {
             total_likes: 1,
             comments: 1,
             total_comments: 1,
+            deleted_at: 1,
         };
         this.commentResObj = {
             _id: 1,
@@ -121,7 +122,7 @@ class PostService {
                 $match: {
                     /* For getting all the data, would be used for admin panel */
                     user_id: (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) ? { $ne: null } : _id,
-                    deleted_at: undefined,
+                    deleted_at: { $eq: null },
                 },
             },
             {
@@ -223,7 +224,7 @@ class PostService {
                 $unset: ['likes', 'comments', 'post_stock'],
             },
             /* TODO: This needs to be updated according to views and comment */
-            { $sort: { total_likes: -1, created_at: -1 } },
+            { $sort: { created_at: -1 } },
         ]);
         if (!(queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data)) {
             postsQb.append({
@@ -385,6 +386,22 @@ class PostService {
         // @ts-ignore
         return (0, global_1.postResponseMapper)(postNew._doc);
     }
+    async postDelete(userId, postId) {
+        const postData = await posts_1.default
+            .findOne({
+            user_id: userId,
+            _id: new mongoose_1.Types.ObjectId(postId),
+        })
+            .lean();
+        if (!postData) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.post_not_exists);
+        }
+        await posts_1.default.findByIdAndUpdate(postData._id, {
+            deleted_at: new Date(),
+        });
+        // @ts-ignore
+        return postData;
+    }
     async commentListing(userId, reqData) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         const commentQB = comments_1.default.aggregate([
@@ -395,7 +412,7 @@ class PostService {
                 $match: {
                     post_id: new mongoose_1.Types.ObjectId(reqData.id),
                     parent_id: { $eq: null },
-                    deleted_at: undefined,
+                    deleted_at: { $eq: null },
                 },
             },
             {
@@ -496,7 +513,7 @@ class PostService {
     }
     async commentAdd(userId, reqData) {
         var _a;
-        await comments_1.default.create({
+        const newComment = await comments_1.default.create({
             user_id: userId,
             post_id: reqData.post_id,
             message: reqData.message,
@@ -505,8 +522,133 @@ class PostService {
         const commentCounts = await comments_1.default.countDocuments({
             post_id: reqData.post_id,
         });
+        if (reqData.parent_id) {
+            const commentQB = comments_1.default.aggregate([
+                {
+                    $project: this.commentResObj,
+                },
+                {
+                    $match: {
+                        _id: new mongoose_1.Types.ObjectId(reqData.parent_id),
+                        post_id: new mongoose_1.Types.ObjectId(reqData.post_id),
+                        parent_id: { $eq: null },
+                        deleted_at: undefined,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: constants_1.USERS,
+                        localField: 'user_id',
+                        foreignField: '_id',
+                        as: 'user',
+                        pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
+                    },
+                },
+                { $unwind: '$user' },
+                {
+                    $lookup: {
+                        from: constants_1.POSTS,
+                        localField: 'post_id',
+                        foreignField: '_id',
+                        as: 'post',
+                        pipeline: [{ $project: { _id: 1 } }],
+                    },
+                },
+                { $unwind: '$post' },
+                {
+                    $lookup: {
+                        from: constants_1.COMMENTS,
+                        localField: '_id',
+                        foreignField: 'parent_id',
+                        as: 'reply',
+                        pipeline: [
+                            {
+                                $project: {
+                                    _id: 1,
+                                    post_id: 1,
+                                    user_id: 1,
+                                    message: 1,
+                                    created_at: 1,
+                                    created_at_tz: { $dateToString: { date: '$created_at', timezone: constants_1.DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+                                },
+                            },
+                            {
+                                $lookup: {
+                                    from: constants_1.USERS,
+                                    localField: 'user_id',
+                                    foreignField: '_id',
+                                    as: 'reply_user',
+                                    pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
+                                },
+                            },
+                            { $unwind: '$reply_user' },
+                        ],
+                    },
+                },
+                {
+                    $unset: ['user_id', 'post_id'],
+                },
+                {
+                    $sort: {
+                        created_at: -1,
+                    },
+                },
+            ]);
+            const commentsData = await commentQB.exec();
+            return {
+                total_count: commentCounts,
+                // @ts-ignore
+                result: (0, global_1.commentResponseMapper)(commentsData === null || commentsData === void 0 ? void 0 : commentsData[0]),
+            };
+        }
+        const commentQB = comments_1.default.aggregate([
+            {
+                $project: this.commentResObj,
+            },
+            {
+                $match: {
+                    _id: new mongoose_1.Types.ObjectId(newComment._id),
+                    post_id: new mongoose_1.Types.ObjectId(reqData.post_id),
+                    parent_id: { $eq: null },
+                    deleted_at: undefined,
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USERS,
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user',
+                    pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
+                },
+            },
+            { $unwind: '$user' },
+            {
+                $lookup: {
+                    from: constants_1.POSTS,
+                    localField: 'post_id',
+                    foreignField: '_id',
+                    as: 'post',
+                    pipeline: [{ $project: { _id: 1 } }],
+                },
+            },
+            { $unwind: '$post' },
+            {
+                $unset: ['user_id', 'post_id'],
+            },
+            {
+                $sort: {
+                    created_at: -1,
+                },
+            },
+        ]);
+        const commentsData = await commentQB.exec();
         // @ts-ignore
-        return commentCounts;
+        return {
+            total_count: commentCounts,
+            // @ts-ignore
+            result: (0, global_1.commentResponseMapper)(commentsData === null || commentsData === void 0 ? void 0 : commentsData[0]),
+        };
     }
     async commentDelete(userId, postId, commentId) {
         const commentCheck = await comments_1.default.findOne({

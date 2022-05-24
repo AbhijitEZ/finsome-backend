@@ -60,6 +60,7 @@ class PostService {
     total_likes: 1,
     comments: 1,
     total_comments: 1,
+    deleted_at: 1,
   };
   public commentResObj = {
     _id: 1,
@@ -147,7 +148,7 @@ class PostService {
         $match: {
           /* For getting all the data, would be used for admin panel */
           user_id: queryData?.has_all_data ? { $ne: null } : _id,
-          deleted_at: undefined,
+          deleted_at: { $eq: null },
         },
       },
       {
@@ -249,7 +250,7 @@ class PostService {
         $unset: ['likes', 'comments', 'post_stock'],
       },
       /* TODO: This needs to be updated according to views and comment */
-      { $sort: { total_likes: -1, created_at: -1 } },
+      { $sort: { created_at: -1 } },
     ]);
 
     if (!queryData?.has_all_data) {
@@ -438,6 +439,26 @@ class PostService {
     return postResponseMapper(postNew._doc);
   }
 
+  public async postDelete(userId: string, postId: string): Promise<any> {
+    const postData = await postsModel
+      .findOne({
+        user_id: userId,
+        _id: new Types.ObjectId(postId),
+      })
+      .lean();
+
+    if (!postData) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.post_not_exists);
+    }
+
+    await postsModel.findByIdAndUpdate(postData._id, {
+      deleted_at: new Date(),
+    });
+
+    // @ts-ignore
+    return postData;
+  }
+
   public async commentListing(userId: string, reqData: IdPaginationDto): Promise<any> {
     const commentQB = commentsModel.aggregate([
       {
@@ -447,7 +468,7 @@ class PostService {
         $match: {
           post_id: new Types.ObjectId(reqData.id),
           parent_id: { $eq: null },
-          deleted_at: undefined,
+          deleted_at: { $eq: null },
         },
       },
       {
@@ -553,7 +574,7 @@ class PostService {
   }
 
   public async commentAdd(userId: string, reqData: CommentsAddDto): Promise<any> {
-    await commentsModel.create({
+    const newComment = await commentsModel.create({
       user_id: userId,
       post_id: reqData.post_id,
       message: reqData.message,
@@ -564,8 +585,138 @@ class PostService {
       post_id: reqData.post_id,
     });
 
+    if (reqData.parent_id) {
+      const commentQB = commentsModel.aggregate([
+        {
+          $project: this.commentResObj,
+        },
+        {
+          $match: {
+            _id: new Types.ObjectId(reqData.parent_id),
+            post_id: new Types.ObjectId(reqData.post_id),
+            parent_id: { $eq: null },
+            deleted_at: undefined,
+          },
+        },
+        {
+          $lookup: {
+            from: USERS,
+            localField: 'user_id',
+            foreignField: '_id',
+            as: 'user',
+            pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
+          },
+        },
+        { $unwind: '$user' },
+        {
+          $lookup: {
+            from: POSTS,
+            localField: 'post_id',
+            foreignField: '_id',
+            as: 'post',
+            pipeline: [{ $project: { _id: 1 } }],
+          },
+        },
+        { $unwind: '$post' },
+        {
+          $lookup: {
+            from: COMMENTS,
+            localField: '_id',
+            foreignField: 'parent_id',
+            as: 'reply',
+            pipeline: [
+              {
+                $project: {
+                  _id: 1,
+                  post_id: 1,
+                  user_id: 1,
+                  message: 1,
+                  created_at: 1,
+                  created_at_tz: { $dateToString: { date: '$created_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+                },
+              },
+              {
+                $lookup: {
+                  from: USERS,
+                  localField: 'user_id',
+                  foreignField: '_id',
+                  as: 'reply_user',
+                  pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
+                },
+              },
+              { $unwind: '$reply_user' },
+            ],
+          },
+        },
+        {
+          $unset: ['user_id', 'post_id'],
+        },
+        {
+          $sort: {
+            created_at: -1,
+          },
+        },
+      ]);
+
+      const commentsData = await commentQB.exec();
+
+      return {
+        total_count: commentCounts,
+        // @ts-ignore
+        result: commentResponseMapper(commentsData?.[0]),
+      };
+    }
+
+    const commentQB = commentsModel.aggregate([
+      {
+        $project: this.commentResObj,
+      },
+      {
+        $match: {
+          _id: new Types.ObjectId(newComment._id),
+          post_id: new Types.ObjectId(reqData.post_id),
+          parent_id: { $eq: null },
+          deleted_at: undefined,
+        },
+      },
+      {
+        $lookup: {
+          from: USERS,
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user',
+          pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
+        },
+      },
+      { $unwind: '$user' },
+      {
+        $lookup: {
+          from: POSTS,
+          localField: 'post_id',
+          foreignField: '_id',
+          as: 'post',
+          pipeline: [{ $project: { _id: 1 } }],
+        },
+      },
+      { $unwind: '$post' },
+      {
+        $unset: ['user_id', 'post_id'],
+      },
+      {
+        $sort: {
+          created_at: -1,
+        },
+      },
+    ]);
+
+    const commentsData = await commentQB.exec();
+
     // @ts-ignore
-    return commentCounts;
+    return {
+      total_count: commentCounts,
+      // @ts-ignore
+      result: commentResponseMapper(commentsData?.[0]),
+    };
   }
 
   public async commentDelete(userId: string, postId: string, commentId: string): Promise<any> {

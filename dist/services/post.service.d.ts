@@ -37,6 +37,7 @@ declare class PostService {
         total_likes: number;
         comments: number;
         total_comments: number;
+        deleted_at: number;
     };
     commentResObj: {
         _id: number;
@@ -64,6 +65,7 @@ declare class PostService {
     postExplore(_id: string): Promise<any>;
     postHome(_id: string, queryData: PostHomeDto): Promise<any>;
     postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any>;
+    postDelete(userId: string, postId: string): Promise<any>;
     commentListing(userId: string, reqData: IdPaginationDto): Promise<any>;
     commentAdd(userId: string, reqData: CommentsAddDto): Promise<any>;
     commentDelete(userId: string, postId: string, commentId: string): Promise<any>;

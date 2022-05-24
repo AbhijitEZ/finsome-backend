@@ -33,6 +33,7 @@ export declare const APP_ERROR_MESSAGE: {
     phone_exists: string;
     forbidden_error: string;
     user_blocked: string;
+    post_not_exists: string;
     otp_invalid: string;
     phone_invalid: string;
     user_not_exists: string;
