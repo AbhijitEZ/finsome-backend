@@ -583,6 +583,9 @@ class PostService {
 
     const commentCounts = await commentsModel.countDocuments({
       post_id: reqData.post_id,
+      parent_id: {
+        $eq: null,
+      },
     });
 
     if (reqData.parent_id) {
@@ -663,7 +666,7 @@ class PostService {
       return {
         total_count: commentCounts,
         // @ts-ignore
-        result: commentResponseMapper(commentsData?.[0]),
+        result: [commentResponseMapper(commentsData?.[0])],
       };
     }
 
@@ -715,7 +718,7 @@ class PostService {
     return {
       total_count: commentCounts,
       // @ts-ignore
-      result: commentResponseMapper(commentsData?.[0]),
+      result: [commentResponseMapper(commentsData?.[0])],
     };
   }
 
@@ -735,6 +738,9 @@ class PostService {
 
     const commentCounts = await commentsModel.countDocuments({
       post_id: postId,
+      parent_id: {
+        $eq: null,
+      },
     });
 
     // @ts-ignore

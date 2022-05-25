@@ -521,6 +521,9 @@ class PostService {
         });
         const commentCounts = await comments_1.default.countDocuments({
             post_id: reqData.post_id,
+            parent_id: {
+                $eq: null,
+            },
         });
         if (reqData.parent_id) {
             const commentQB = comments_1.default.aggregate([
@@ -598,7 +601,7 @@ class PostService {
             return {
                 total_count: commentCounts,
                 // @ts-ignore
-                result: (0, global_1.commentResponseMapper)(commentsData === null || commentsData === void 0 ? void 0 : commentsData[0]),
+                result: [(0, global_1.commentResponseMapper)(commentsData === null || commentsData === void 0 ? void 0 : commentsData[0])],
             };
         }
         const commentQB = comments_1.default.aggregate([
@@ -647,7 +650,7 @@ class PostService {
         return {
             total_count: commentCounts,
             // @ts-ignore
-            result: (0, global_1.commentResponseMapper)(commentsData === null || commentsData === void 0 ? void 0 : commentsData[0]),
+            result: [(0, global_1.commentResponseMapper)(commentsData === null || commentsData === void 0 ? void 0 : commentsData[0])],
         };
     }
     async commentDelete(userId, postId, commentId) {
@@ -663,6 +666,9 @@ class PostService {
         });
         const commentCounts = await comments_1.default.countDocuments({
             post_id: postId,
+            parent_id: {
+                $eq: null,
+            },
         });
         // @ts-ignore
         return commentCounts;
