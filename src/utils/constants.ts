@@ -24,6 +24,7 @@ export const APP_ERROR_MESSAGE = {
   post_not_like_exists: 'Post doesn"t have the like.',
   delete_s3_error: 'Error while deleting the image from S3.',
   add_s3_error: 'Error while adding the image from S3.',
+  post_complain_usr_complain_exists: 'Post or User id should exists at least one.',
   user_field_exists: 'User with the following field already exists, try something other.',
   user_id_not_exits: "User id doesn't exists in system.",
   user_not_auth: "User doesn't have authorization for this specific action.",
@@ -108,6 +109,7 @@ export const QUICK_CONTACTS = 'quick-contacts';
 export const COUNTRIES = 'countries';
 export const POST_STOCKS = 'post-stocks';
 export const LIKES = 'likes';
+export const COMPLAINTS = 'complaints';
 export const STOCK_TYPES = 'stock-types';
 export const COMMENTS = 'comments';
 export const PRIVACY_POLICIES = 'privacy-policies';

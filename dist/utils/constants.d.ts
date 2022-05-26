@@ -23,6 +23,7 @@ export declare const APP_ERROR_MESSAGE: {
     post_not_like_exists: string;
     delete_s3_error: string;
     add_s3_error: string;
+    post_complain_usr_complain_exists: string;
     user_field_exists: string;
     user_id_not_exits: string;
     user_not_auth: string;
@@ -96,6 +97,7 @@ export declare const QUICK_CONTACTS = "quick-contacts";
 export declare const COUNTRIES = "countries";
 export declare const POST_STOCKS = "post-stocks";
 export declare const LIKES = "likes";
+export declare const COMPLAINTS = "complaints";
 export declare const STOCK_TYPES = "stock-types";
 export declare const COMMENTS = "comments";
 export declare const PRIVACY_POLICIES = "privacy-policies";

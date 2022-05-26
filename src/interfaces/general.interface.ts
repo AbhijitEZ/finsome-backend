@@ -74,6 +74,16 @@ export interface LikesInf {
   deleted_at?: string;
 }
 
+export interface ComplaintsInf {
+  _id: string;
+  post_complain_id: string | null;
+  user_complain_id?: string | null;
+  user_id: string;
+  reason?: string;
+  description?: string;
+  deleted_at?: string;
+}
+
 export interface CommentsInf {
   _id: string;
   post_id: string;

@@ -27,6 +27,7 @@ class PostRoute {
         this.router.get(`${this.path}comment`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.IdPaginationDto, 'query'), this.postController.commentListing);
         this.router.delete(`${this.path}comment/:postId/:id`, auth_middleware_1.default, this.postController.commentDelete);
         this.router.post(`${this.path}like`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.LikePostDto, 'body'), this.postController.postLikeUpdate);
+        this.router.post(`${this.path}complaint`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.ComplaintAddDto, 'body'), this.postController.complaintAdd);
     }
 }
 exports.default = PostRoute;

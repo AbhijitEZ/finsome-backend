@@ -1,4 +1,13 @@
-import { CommentsAddDto, IdPaginationDto, LikePostDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
+import {
+  CommentsAddDto,
+  ComplaintAddDto,
+  IdPaginationDto,
+  LikePostDto,
+  PostCreateDto,
+  PostHomeDto,
+  StockTypeDto,
+  UserConfigurationDto,
+} from '@/dtos/posts.dto';
 import countryModel from '@/models/countries';
 import postsModel from '@/models/posts';
 import awsHandler from '@utils/aws';
@@ -29,6 +38,7 @@ import commentsModel from '@/models/comments';
 import { Types } from 'mongoose';
 import likesModel from '@/models/likes';
 import { HttpException } from '@/exceptions/HttpException';
+import complaintModel from '@/models/complaints';
 
 class PostService {
   public countryObj = countryModel;
@@ -785,6 +795,23 @@ class PostService {
 
     likeQb = await likeQb.exec();
     return likeQb?.[0]?.total_count ?? 0;
+  }
+
+  public async complaintAdd(userId: string, reqData: ComplaintAddDto): Promise<any> {
+    if (!reqData.post_complain_id && !reqData.user_complain_id) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.post_complain_usr_complain_exists);
+    }
+
+    const newComlaint = await complaintModel.create({
+      post_complain_id: reqData.post_complain_id ?? null,
+      user_complain_id: reqData.user_complain_id ?? null,
+      user_id: userId,
+      reason: reqData.reason,
+      description: reqData.description ?? null,
+    });
+
+    // @ts-ignore
+    return newComlaint._doc;
   }
 }
 

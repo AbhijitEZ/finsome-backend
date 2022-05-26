@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LikePostDto = exports.CommentsAddDto = exports.PostHomeDto = exports.PostCreateDto = exports.UserConfigurationDto = exports.StockUpdateTypeDto = exports.StockTypeDto = exports.IdPaginationDto = void 0;
+exports.ComplaintAddDto = exports.LikePostDto = exports.CommentsAddDto = exports.PostHomeDto = exports.PostCreateDto = exports.UserConfigurationDto = exports.StockUpdateTypeDto = exports.StockTypeDto = exports.IdPaginationDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
@@ -231,4 +231,27 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], LikePostDto.prototype, "post_id", void 0);
 exports.LikePostDto = LikePostDto;
+class ComplaintAddDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], ComplaintAddDto.prototype, "reason", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], ComplaintAddDto.prototype, "description", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], ComplaintAddDto.prototype, "post_complain_id", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], ComplaintAddDto.prototype, "user_complain_id", void 0);
+exports.ComplaintAddDto = ComplaintAddDto;
 //# sourceMappingURL=posts.dto.js.map

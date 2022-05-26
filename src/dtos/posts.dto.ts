@@ -182,3 +182,21 @@ export class LikePostDto {
   @IsString()
   post_id: string;
 }
+
+export class ComplaintAddDto {
+  @IsNotEmpty()
+  @IsString()
+  reason: string;
+
+  @IsOptional()
+  @IsString()
+  description: string;
+
+  @IsOptional()
+  @IsString()
+  post_complain_id?: string;
+
+  @IsOptional()
+  @IsString()
+  user_complain_id?: string;
+}

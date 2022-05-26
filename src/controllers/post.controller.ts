@@ -114,6 +114,16 @@ class PostController {
     }
   };
 
+  public complaintAdd = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.postService.complaintAdd(req.user?._id, req.body);
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public commentDelete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore

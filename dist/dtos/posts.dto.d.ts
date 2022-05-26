@@ -53,3 +53,9 @@ export declare class LikePostDto {
     like: boolean;
     post_id: string;
 }
+export declare class ComplaintAddDto {
+    reason: string;
+    description: string;
+    post_complain_id?: string;
+    user_complain_id?: string;
+}

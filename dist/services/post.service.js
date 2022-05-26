@@ -18,6 +18,7 @@ const comments_1 = tslib_1.__importDefault(require("../models/comments"));
 const mongoose_1 = require("mongoose");
 const likes_1 = tslib_1.__importDefault(require("../models/likes"));
 const HttpException_1 = require("../exceptions/HttpException");
+const complaints_1 = tslib_1.__importDefault(require("../models/complaints"));
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -708,6 +709,21 @@ class PostService {
         ]);
         likeQb = await likeQb.exec();
         return (_b = (_a = likeQb === null || likeQb === void 0 ? void 0 : likeQb[0]) === null || _a === void 0 ? void 0 : _a.total_count) !== null && _b !== void 0 ? _b : 0;
+    }
+    async complaintAdd(userId, reqData) {
+        var _a, _b, _c;
+        if (!reqData.post_complain_id && !reqData.user_complain_id) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.post_complain_usr_complain_exists);
+        }
+        const newComlaint = await complaints_1.default.create({
+            post_complain_id: (_a = reqData.post_complain_id) !== null && _a !== void 0 ? _a : null,
+            user_complain_id: (_b = reqData.user_complain_id) !== null && _b !== void 0 ? _b : null,
+            user_id: userId,
+            reason: reqData.reason,
+            description: (_c = reqData.description) !== null && _c !== void 0 ? _c : null,
+        });
+        // @ts-ignore
+        return newComlaint._doc;
     }
 }
 exports.default = PostService;
