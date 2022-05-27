@@ -41,6 +41,7 @@ class PostRoute implements Routes {
       validationMiddleware(PostCreateDto, 'body'),
       this.postController.postCreate,
     );
+    this.router.get(`${this.path}detail/:postId`, authMiddleware, this.postController.postDetail);
     this.router.delete(`${this.path}delete/:postId`, authMiddleware, this.postController.postDelete);
     this.router.get(`${this.path}explore`, authMiddleware, this.postController.postExplore);
     this.router.get(`${this.path}home`, authMiddleware, validationMiddleware(PostHomeDto, 'query'), this.postController.postHome);

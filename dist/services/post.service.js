@@ -387,6 +387,121 @@ class PostService {
         // @ts-ignore
         return (0, global_1.postResponseMapper)(postNew._doc);
     }
+    async postDetail(userId, postId) {
+        var _a;
+        const postsQb = this.postsObj.aggregate([
+            {
+                $project: this.postResObj,
+            },
+            { $match: { $expr: { $eq: ['$_id', { $toObjectId: new mongoose_1.Types.ObjectId(postId) }] } } },
+            {
+                $lookup: {
+                    from: constants_1.USERS,
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user',
+                    pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
+                },
+            },
+            { $unwind: '$user' },
+            {
+                $lookup: {
+                    from: constants_1.POST_STOCKS,
+                    localField: '_id',
+                    foreignField: 'post_id',
+                    as: 'post_stock',
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.STOCK_TYPES,
+                    localField: 'post_stock.stock_id',
+                    foreignField: '_id',
+                    as: 'security',
+                    pipeline: [{ $project: { _id: 1, s_type: 1, name: 1, country_code: 1 } }],
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.LIKES,
+                    localField: '_id',
+                    foreignField: 'post_id',
+                    as: 'likes',
+                    pipeline: [
+                        {
+                            $project: {
+                                user_id: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $addFields: {
+                    total_likes: { $size: '$likes' },
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.COMMENTS,
+                    localField: '_id',
+                    foreignField: 'post_id',
+                    as: 'comments',
+                    pipeline: [
+                        {
+                            $project: {
+                                user_id: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $addFields: {
+                    total_comments: { $size: '$comments' },
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.LIKES,
+                    localField: '_id',
+                    foreignField: 'post_id',
+                    as: 'likes_status',
+                    pipeline: [
+                        {
+                            $match: {
+                                user_id: new mongoose_1.Types.ObjectId(userId),
+                            },
+                        },
+                        {
+                            $addFields: {
+                                status: {
+                                    $eq: ['$user_id', userId],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: -1,
+                                status: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unset: ['likes', 'comments', 'post_stock'],
+            },
+            /* TODO: This needs to be updated according to views and comment */
+            { $sort: { created_at: -1 } },
+        ]);
+        const post = await postsQb.exec();
+        if (!post.length) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.post_not_exists);
+        }
+        // @ts-ignore
+        return (0, global_1.postResponseMapper)((_a = post === null || post === void 0 ? void 0 : post[0]) !== null && _a !== void 0 ? _a : {});
+    }
     async postDelete(userId, postId) {
         const postData = await posts_1.default
             .findOne({

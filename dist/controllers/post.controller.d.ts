@@ -10,6 +10,7 @@ declare class PostController {
     postExplore: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postHome: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postDelete: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    postDetail: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     commentListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     commentAdd: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postLikeUpdate: (req: Request, res: Response, next: NextFunction) => Promise<void>;

@@ -449,6 +449,124 @@ class PostService {
     return postResponseMapper(postNew._doc);
   }
 
+  public async postDetail(userId: string, postId: string): Promise<any> {
+    const postsQb = this.postsObj.aggregate([
+      {
+        $project: this.postResObj,
+      },
+      { $match: { $expr: { $eq: ['$_id', { $toObjectId: new Types.ObjectId(postId) }] } } },
+      {
+        $lookup: {
+          from: USERS,
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user',
+          pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
+        },
+      },
+      { $unwind: '$user' },
+      {
+        $lookup: {
+          from: POST_STOCKS,
+          localField: '_id',
+          foreignField: 'post_id',
+          as: 'post_stock',
+        },
+      },
+      {
+        $lookup: {
+          from: STOCK_TYPES,
+          localField: 'post_stock.stock_id',
+          foreignField: '_id',
+          as: 'security',
+          pipeline: [{ $project: { _id: 1, s_type: 1, name: 1, country_code: 1 } }],
+        },
+      },
+      {
+        $lookup: {
+          from: LIKES,
+          localField: '_id',
+          foreignField: 'post_id',
+          as: 'likes',
+          pipeline: [
+            {
+              $project: {
+                user_id: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          total_likes: { $size: '$likes' },
+        },
+      },
+      {
+        $lookup: {
+          from: COMMENTS,
+          localField: '_id',
+          foreignField: 'post_id',
+          as: 'comments',
+          pipeline: [
+            {
+              $project: {
+                user_id: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          total_comments: { $size: '$comments' },
+        },
+      },
+      {
+        $lookup: {
+          from: LIKES,
+          localField: '_id',
+          foreignField: 'post_id',
+          as: 'likes_status',
+          pipeline: [
+            {
+              $match: {
+                user_id: new Types.ObjectId(userId),
+              },
+            },
+            {
+              $addFields: {
+                status: {
+                  $eq: ['$user_id', userId],
+                },
+              },
+            },
+            {
+              $project: {
+                _id: -1,
+                status: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unset: ['likes', 'comments', 'post_stock'],
+      },
+      /* TODO: This needs to be updated according to views and comment */
+      { $sort: { created_at: -1 } },
+    ]);
+
+    const post = await postsQb.exec();
+
+    if (!post.length) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.post_not_exists);
+    }
+
+    // @ts-ignore
+    return postResponseMapper(post?.[0] ?? {});
+  }
+
   public async postDelete(userId: string, postId: string): Promise<any> {
     const postData = await postsModel
       .findOne({

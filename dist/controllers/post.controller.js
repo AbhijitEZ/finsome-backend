@@ -90,6 +90,17 @@ class PostController {
                 next(error);
             }
         };
+        this.postDetail = async (req, res, next) => {
+            var _a, _b;
+            try {
+                // @ts-ignore
+                const data = await this.postService.postDetail((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.postId);
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.commentListing = async (req, res, next) => {
             var _a;
             try {

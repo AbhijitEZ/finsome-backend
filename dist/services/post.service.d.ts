@@ -65,6 +65,7 @@ declare class PostService {
     postExplore(_id: string): Promise<any>;
     postHome(_id: string, queryData: PostHomeDto): Promise<any>;
     postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any>;
+    postDetail(userId: string, postId: string): Promise<any>;
     postDelete(userId: string, postId: string): Promise<any>;
     commentListing(userId: string, reqData: IdPaginationDto): Promise<any>;
     commentAdd(userId: string, reqData: CommentsAddDto): Promise<any>;
