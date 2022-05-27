@@ -275,14 +275,11 @@ class PostService {
             });
         }
         if (queryData.stock_ids) {
+            const stockIds = queryData.stock_ids.split(',');
             postsQb.append({
                 $match: {
-                    security: {
-                        $elemMatch: {
-                            stock_id: {
-                                $in: queryData.stock_ids,
-                            },
-                        },
+                    'security._id': {
+                        $in: stockIds.map(id => new mongoose_1.Types.ObjectId(id)),
                     },
                 },
             });

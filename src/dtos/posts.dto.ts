@@ -132,9 +132,10 @@ export class PostHomeDto extends PaginationDto {
   @IsString()
   date?: string;
 
+  // This would hold multipe value separated by comma
   @IsOptional()
-  @IsString({ each: true })
-  stock_ids?: string[];
+  @IsString()
+  stock_ids?: string;
 
   @IsOptional()
   @IsString()
