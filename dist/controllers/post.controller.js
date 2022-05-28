@@ -48,10 +48,10 @@ class PostController {
             }
         };
         this.postCreate = async (req, res, next) => {
-            var _a;
+            var _a, _b;
             try {
                 // @ts-ignore
-                const data = await this.postService.postCreate((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.body, req.files);
+                const data = await this.postService.postCreate((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.body, req.files, (_b = req.params) === null || _b === void 0 ? void 0 : _b.id);
                 (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, data));
             }
             catch (error) {
@@ -96,6 +96,17 @@ class PostController {
                 // @ts-ignore
                 const data = await this.postService.postDetail((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.postId);
                 (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.postDeleteAssets = async (req, res, next) => {
+            var _a, _b, _c, _d;
+            try {
+                // @ts-ignore
+                const data = await this.postService.postDeleteAssets((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.postId, (_c = req.params) === null || _c === void 0 ? void 0 : _c.id, (_d = req.params) === null || _d === void 0 ? void 0 : _d.type);
+                (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, data));
             }
             catch (error) {
                 next(error);

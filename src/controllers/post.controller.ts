@@ -47,7 +47,7 @@ class PostController {
   public postCreate = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.postService.postCreate(req.user?._id, req.body, req.files);
+      const data = await this.postService.postCreate(req.user?._id, req.body, req.files, req.params?.id);
       responseJSONMapper(res, 200, { ...data });
     } catch (error) {
       next(error);
@@ -89,6 +89,16 @@ class PostController {
       // @ts-ignore
       const data = await this.postService.postDetail(req.user?._id, req.params?.postId);
       responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public postDeleteAssets = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.postService.postDeleteAssets(req.user?._id, req.params?.postId, req.params?.id, req.params?.type);
+      responseJSONMapper(res, 200, { ...data });
     } catch (error) {
       next(error);
     }

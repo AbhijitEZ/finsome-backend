@@ -64,13 +64,15 @@ declare class PostService {
     userConfigUpdate(_id: string, reqData: UserConfigurationDto): Promise<any>;
     postExplore(_id: string): Promise<any>;
     postHome(_id: string, queryData: PostHomeDto): Promise<any>;
-    postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>): Promise<any>;
+    postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>, postId?: String): Promise<any>;
     postDetail(userId: string, postId: string): Promise<any>;
     postDelete(userId: string, postId: string): Promise<any>;
+    postDeleteAssets(userId: string, postId: string, indexId: string, type: string): Promise<any>;
     commentListing(userId: string, reqData: IdPaginationDto): Promise<any>;
     commentAdd(userId: string, reqData: CommentsAddDto): Promise<any>;
     commentDelete(userId: string, postId: string, commentId: string): Promise<any>;
     postLikeUpdate(userId: string, reqData: LikePostDto): Promise<any>;
     complaintAdd(userId: string, reqData: ComplaintAddDto): Promise<any>;
+    protected singlePostAggreData(postId: string, userId: string): Promise<any>;
 }
 export default PostService;

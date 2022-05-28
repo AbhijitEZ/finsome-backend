@@ -29,6 +29,15 @@ class AWSHandler {
             logger_1.logger.info(constants_1.APP_ERROR_MESSAGE.delete_s3_error);
         });
     }
+    deletePostAsset(name) {
+        const s3 = new aws_sdk_1.default.S3();
+        s3.deleteObject({ Bucket: process.env.S3_BUCKET, Key: constants_1.postAssetsFolder + name })
+            .promise()
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            .catch(error => {
+            logger_1.logger.info(constants_1.APP_ERROR_MESSAGE.delete_s3_error);
+        });
+    }
     async addAssets(file, imageFolder = constants_1.profileImageFolder, fileContent = null) {
         const imageName = (0, nanoid_1.nanoid)(12) + '_' + file.originalname;
         const s3 = new aws_sdk_1.default.S3();

@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import { nanoid } from 'nanoid';
-import { APP_ERROR_MESSAGE, APP_SUCCESS_MESSAGE, profileImageFolder } from './constants';
+import { APP_ERROR_MESSAGE, APP_SUCCESS_MESSAGE, profileImageFolder, postAssetsFolder } from './constants';
 import { logger } from './logger';
 
 class AWSHandler {
@@ -23,6 +23,16 @@ class AWSHandler {
   public deleteProfileImage(profilePhoto: string) {
     const s3 = new AWS.S3();
     s3.deleteObject({ Bucket: process.env.S3_BUCKET, Key: profileImageFolder + profilePhoto })
+      .promise()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .catch(error => {
+        logger.info(APP_ERROR_MESSAGE.delete_s3_error);
+      });
+  }
+
+  public deletePostAsset(name: string) {
+    const s3 = new AWS.S3();
+    s3.deleteObject({ Bucket: process.env.S3_BUCKET, Key: postAssetsFolder + name })
       .promise()
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .catch(error => {

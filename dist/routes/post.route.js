@@ -20,6 +20,8 @@ class PostRoute {
         this.router.get(`${this.path}user-configurations`, auth_middleware_1.default, this.postController.userConfigurationListing);
         this.router.post(`${this.path}user-configurations`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.UserConfigurationDto, 'body'), this.postController.userConfigurationUpdate);
         this.router.post(`${this.path}create`, auth_middleware_1.default, global_1.fileUploadPostCB, (0, validation_middleware_1.default)(posts_dto_1.PostCreateDto, 'body'), this.postController.postCreate);
+        this.router.post(`${this.path}create/:id`, auth_middleware_1.default, global_1.fileUploadPostCB, (0, validation_middleware_1.default)(posts_dto_1.PostCreateDto, 'body'), this.postController.postCreate);
+        this.router.delete(`${this.path}delete-asset/:postId/:id/:type`, auth_middleware_1.default, this.postController.postDeleteAssets);
         this.router.get(`${this.path}detail/:postId`, auth_middleware_1.default, this.postController.postDetail);
         this.router.delete(`${this.path}delete/:postId`, auth_middleware_1.default, this.postController.postDelete);
         this.router.get(`${this.path}explore`, auth_middleware_1.default, this.postController.postExplore);
