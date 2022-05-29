@@ -433,22 +433,36 @@ class PostService {
         // @ts-ignore
         return postData;
     }
-    async postDeleteAssets(userId, postId, indexId, type) {
+    async postDeleteAssets(userId, postId, reqData) {
         const post = await posts_1.default.findOne({
             _id: { $eq: postId },
         });
         if (!post) {
             throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.post_not_exists);
         }
-        let assets = post[type];
-        assets = assets.filter((asset, inx) => {
-            if (inx === indexId) {
+        const nameArr = reqData.names.split(',');
+        const post_images = post.post_images.filter(asset => {
+            if (nameArr.includes(asset)) {
                 aws_1.default.deletePostAsset(asset);
                 return false;
             }
             return true;
         });
-        await posts_1.default.findByIdAndUpdate(postId, { [type]: assets });
+        const post_thumbs = post.post_thumbs.filter(asset => {
+            if (nameArr.includes(asset)) {
+                aws_1.default.deletePostAsset(asset);
+                return false;
+            }
+            return true;
+        });
+        const post_vids = post.post_vids.filter(asset => {
+            if (nameArr.includes(asset)) {
+                aws_1.default.deletePostAsset(asset);
+                return false;
+            }
+            return true;
+        });
+        await posts_1.default.findByIdAndUpdate(postId, { post_images, post_vids, post_thumbs });
         const data = await this.singlePostAggreData(postId, userId);
         return data;
     }

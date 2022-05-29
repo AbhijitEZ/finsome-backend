@@ -201,3 +201,9 @@ export class ComplaintAddDto {
   @IsString()
   user_complain_id?: string;
 }
+
+export class PostAssetDeleteDto {
+  @IsNotEmpty()
+  @IsString()
+  names: string;
+}

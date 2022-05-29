@@ -3,6 +3,7 @@ import {
   ComplaintAddDto,
   IdPaginationDto,
   LikePostDto,
+  PostAssetDeleteDto,
   PostCreateDto,
   PostHomeDto,
   StockTypeDto,
@@ -503,7 +504,7 @@ class PostService {
     return postData;
   }
 
-  public async postDeleteAssets(userId: string, postId: string, indexId: string, type: string): Promise<any> {
+  public async postDeleteAssets(userId: string, postId: string, reqData: PostAssetDeleteDto): Promise<any> {
     const post = await postsModel.findOne({
       _id: { $eq: postId },
     });
@@ -512,17 +513,33 @@ class PostService {
       throw new HttpException(400, APP_ERROR_MESSAGE.post_not_exists);
     }
 
-    let assets = post[type];
+    const nameArr = reqData.names.split(',');
 
-    assets = assets.filter((asset, inx) => {
-      if (inx === indexId) {
+    const post_images = post.post_images.filter(asset => {
+      if (nameArr.includes(asset)) {
         awsHandler.deletePostAsset(asset);
         return false;
       }
       return true;
     });
 
-    await postsModel.findByIdAndUpdate(postId, { [type]: assets });
+    const post_thumbs = post.post_thumbs.filter(asset => {
+      if (nameArr.includes(asset)) {
+        awsHandler.deletePostAsset(asset);
+        return false;
+      }
+      return true;
+    });
+
+    const post_vids = post.post_vids.filter(asset => {
+      if (nameArr.includes(asset)) {
+        awsHandler.deletePostAsset(asset);
+        return false;
+      }
+      return true;
+    });
+
+    await postsModel.findByIdAndUpdate(postId, { post_images, post_vids, post_thumbs });
 
     const data = await this.singlePostAggreData(postId, userId);
 

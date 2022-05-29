@@ -8,6 +8,7 @@ import {
   ComplaintAddDto,
   IdPaginationDto,
   LikePostDto,
+  PostAssetDeleteDto,
   PostCreateDto,
   PostHomeDto,
   StockTypeDto,
@@ -48,7 +49,12 @@ class PostRoute implements Routes {
       validationMiddleware(PostCreateDto, 'body'),
       this.postController.postCreate,
     );
-    this.router.delete(`${this.path}delete-asset/:postId/:id/:type`, authMiddleware, this.postController.postDeleteAssets);
+    this.router.delete(
+      `${this.path}delete-asset/:postId`,
+      validationMiddleware(PostAssetDeleteDto, 'query'),
+      authMiddleware,
+      this.postController.postDeleteAssets,
+    );
     this.router.get(`${this.path}detail/:postId`, authMiddleware, this.postController.postDetail);
     this.router.delete(`${this.path}delete/:postId`, authMiddleware, this.postController.postDelete);
     this.router.get(`${this.path}explore`, authMiddleware, this.postController.postExplore);

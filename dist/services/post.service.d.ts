@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { CommentsAddDto, ComplaintAddDto, IdPaginationDto, LikePostDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
+import { CommentsAddDto, ComplaintAddDto, IdPaginationDto, LikePostDto, PostAssetDeleteDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
 declare class PostService {
     countryObj: import("mongoose").Model<import("../interfaces/general.interface").CountryInf & import("mongoose").Document<any, any, any>, {}, {}>;
     stockTypesObj: import("mongoose").Model<import("../interfaces/general.interface").StockTypeInf & import("mongoose").Document<any, any, any>, {}, {}>;
@@ -67,7 +67,7 @@ declare class PostService {
     postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>, postId?: String): Promise<any>;
     postDetail(userId: string, postId: string): Promise<any>;
     postDelete(userId: string, postId: string): Promise<any>;
-    postDeleteAssets(userId: string, postId: string, indexId: string, type: string): Promise<any>;
+    postDeleteAssets(userId: string, postId: string, reqData: PostAssetDeleteDto): Promise<any>;
     commentListing(userId: string, reqData: IdPaginationDto): Promise<any>;
     commentAdd(userId: string, reqData: CommentsAddDto): Promise<any>;
     commentDelete(userId: string, postId: string, commentId: string): Promise<any>;

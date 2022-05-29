@@ -102,10 +102,10 @@ class PostController {
             }
         };
         this.postDeleteAssets = async (req, res, next) => {
-            var _a, _b, _c, _d;
+            var _a, _b;
             try {
                 // @ts-ignore
-                const data = await this.postService.postDeleteAssets((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.postId, (_c = req.params) === null || _c === void 0 ? void 0 : _c.id, (_d = req.params) === null || _d === void 0 ? void 0 : _d.type);
+                const data = await this.postService.postDeleteAssets((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.postId, req.query);
                 (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, data));
             }
             catch (error) {

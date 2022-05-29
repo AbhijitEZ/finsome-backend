@@ -97,7 +97,7 @@ class PostController {
   public postDeleteAssets = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.postService.postDeleteAssets(req.user?._id, req.params?.postId, req.params?.id, req.params?.type);
+      const data = await this.postService.postDeleteAssets(req.user?._id, req.params?.postId, req.query);
       responseJSONMapper(res, 200, { ...data });
     } catch (error) {
       next(error);

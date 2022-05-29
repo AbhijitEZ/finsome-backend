@@ -59,3 +59,6 @@ export declare class ComplaintAddDto {
     post_complain_id?: string;
     user_complain_id?: string;
 }
+export declare class PostAssetDeleteDto {
+    names: string;
+}
