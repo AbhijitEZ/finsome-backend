@@ -294,7 +294,7 @@ class PostService {
     if (queryData.is_recommended) {
       postsQb.append({
         $match: {
-          is_recommended: true,
+          is_recommended: queryData.is_recommended === 'true',
         },
       });
     }
