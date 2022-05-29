@@ -150,7 +150,23 @@ class PostService {
                     localField: 'post_stock.stock_id',
                     foreignField: '_id',
                     as: 'security',
-                    pipeline: [{ $project: { _id: 1, s_type: 1, name: 1, country_code: 1 } }],
+                    pipeline: [
+                        { $project: { _id: 1, s_type: 1, name: 1, country_code: 1, country_data: 1 } },
+                        {
+                            $lookup: {
+                                from: constants_1.COUNTRIES,
+                                localField: 'country_code',
+                                foreignField: 'code',
+                                as: 'country_data',
+                            },
+                        },
+                        {
+                            $unwind: {
+                                path: '$country_data',
+                                preserveNullAndEmptyArrays: true,
+                            },
+                        },
+                    ],
                 },
             },
             {
@@ -495,7 +511,12 @@ class PostService {
                                 pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
                             },
                         },
-                        { $unwind: '$reply_user' },
+                        {
+                            $unwind: {
+                                path: '$reply_user',
+                                preserveNullAndEmptyArrays: true,
+                            },
+                        },
                     ],
                 },
             },
@@ -618,7 +639,12 @@ class PostService {
                                     pipeline: [{ $project: { _id: 1, fullname: 1, email: 1, profile_photo: 1 } }],
                                 },
                             },
-                            { $unwind: '$reply_user' },
+                            {
+                                $unwind: {
+                                    path: '$reply_user',
+                                    preserveNullAndEmptyArrays: true,
+                                },
+                            },
                         ],
                     },
                 },
@@ -789,7 +815,23 @@ class PostService {
                     localField: 'post_stock.stock_id',
                     foreignField: '_id',
                     as: 'security',
-                    pipeline: [{ $project: { _id: 1, s_type: 1, name: 1, country_code: 1 } }],
+                    pipeline: [
+                        { $project: { _id: 1, s_type: 1, name: 1, country_code: 1, country_data: 1 } },
+                        {
+                            $lookup: {
+                                from: constants_1.COUNTRIES,
+                                localField: 'country_code',
+                                foreignField: 'code',
+                                as: 'country_data',
+                            },
+                        },
+                        {
+                            $unwind: {
+                                path: '$country_data',
+                                preserveNullAndEmptyArrays: true,
+                            },
+                        },
+                    ],
                 },
             },
             {
