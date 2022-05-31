@@ -404,6 +404,7 @@ class PostService {
     let post_images = [],
       post_thumbs = [],
       post_vids = [];
+    let postPrevData = null;
 
     /* At present everything is synchronous */
     if (!isEmpty(files)) {
@@ -438,9 +439,13 @@ class PostService {
       }
     }
 
-    payloadNew.post_images = post_images;
-    payloadNew.post_thumbs = post_thumbs;
-    payloadNew.post_vids = post_vids;
+    if (postId) {
+      postPrevData = await postsModel.findById(postId);
+    }
+
+    payloadNew.post_images = postPrevData ? [].concat(postPrevData?.post_images ?? [], post_images) : post_images;
+    payloadNew.post_thumbs = postPrevData ? [].concat(postPrevData?.post_thumbs ?? [], post_thumbs) : post_thumbs;
+    payloadNew.post_vids = postPrevData ? [].concat(postPrevData?.post_vids ?? [], post_vids) : post_vids;
 
     let postData: any = {};
     if (postId) {

@@ -350,10 +350,11 @@ class PostService {
         return { result: postsMapping, total_count };
     }
     async postCreate(_id, reqData, files, postId) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         // WAYROUND PATCH
         const payloadNew = Object.assign(Object.assign({}, reqData), { is_recommended: reqData.is_recommended === 'true' ? true : false });
         let post_images = [], post_thumbs = [], post_vids = [];
+        let postPrevData = null;
         /* At present everything is synchronous */
         if (!(0, lodash_isempty_1.default)(files)) {
             if ((_a = files === null || files === void 0 ? void 0 : files.post_images) === null || _a === void 0 ? void 0 : _a.length) {
@@ -378,9 +379,12 @@ class PostService {
                 }));
             }
         }
-        payloadNew.post_images = post_images;
-        payloadNew.post_thumbs = post_thumbs;
-        payloadNew.post_vids = post_vids;
+        if (postId) {
+            postPrevData = await posts_1.default.findById(postId);
+        }
+        payloadNew.post_images = postPrevData ? [].concat((_g = postPrevData === null || postPrevData === void 0 ? void 0 : postPrevData.post_images) !== null && _g !== void 0 ? _g : [], post_images) : post_images;
+        payloadNew.post_thumbs = postPrevData ? [].concat((_h = postPrevData === null || postPrevData === void 0 ? void 0 : postPrevData.post_thumbs) !== null && _h !== void 0 ? _h : [], post_thumbs) : post_thumbs;
+        payloadNew.post_vids = postPrevData ? [].concat((_j = postPrevData === null || postPrevData === void 0 ? void 0 : postPrevData.post_vids) !== null && _j !== void 0 ? _j : [], post_vids) : post_vids;
         let postData = {};
         if (postId) {
             postData = await posts_1.default.findByIdAndUpdate(postId, Object.assign({ user_id: _id }, payloadNew), { new: true });
@@ -388,7 +392,7 @@ class PostService {
         else {
             postData = await posts_1.default.create(Object.assign({ user_id: _id }, payloadNew));
         }
-        if ((_g = reqData.post_security_ids) === null || _g === void 0 ? void 0 : _g.length) {
+        if ((_k = reqData.post_security_ids) === null || _k === void 0 ? void 0 : _k.length) {
             if (postId) {
                 // @ts-ignore
                 const postStockDeletedCount = await post_stocks_1.default.deleteMany({
@@ -400,13 +404,13 @@ class PostService {
             await post_stocks_1.default.insertMany(postSecurityIds);
         }
         if (!(0, lodash_isempty_1.default)(files)) {
-            (_h = files === null || files === void 0 ? void 0 : files.post_images) === null || _h === void 0 ? void 0 : _h.map(file => {
+            (_l = files === null || files === void 0 ? void 0 : files.post_images) === null || _l === void 0 ? void 0 : _l.map(file => {
                 (0, util_1.fileUnSyncFromLocalStroage)(file.path);
             });
-            (_j = files === null || files === void 0 ? void 0 : files.post_vids) === null || _j === void 0 ? void 0 : _j.map(file => {
+            (_m = files === null || files === void 0 ? void 0 : files.post_vids) === null || _m === void 0 ? void 0 : _m.map(file => {
                 (0, util_1.fileUnSyncFromLocalStroage)(file.path);
             });
-            (_k = files === null || files === void 0 ? void 0 : files.post_thumbs) === null || _k === void 0 ? void 0 : _k.map(file => {
+            (_o = files === null || files === void 0 ? void 0 : files.post_thumbs) === null || _o === void 0 ? void 0 : _o.map(file => {
                 (0, util_1.fileUnSyncFromLocalStroage)(file.path);
             });
         }
