@@ -424,7 +424,6 @@ class PostService {
     async postDelete(userId, postId) {
         const postData = await posts_1.default
             .findOne({
-            user_id: userId,
             _id: new mongoose_1.Types.ObjectId(postId),
         })
             .lean();

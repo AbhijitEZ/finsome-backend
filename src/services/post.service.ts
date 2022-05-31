@@ -492,7 +492,6 @@ class PostService {
   public async postDelete(userId: string, postId: string): Promise<any> {
     const postData = await postsModel
       .findOne({
-        user_id: userId,
         _id: new Types.ObjectId(postId),
       })
       .lean();
