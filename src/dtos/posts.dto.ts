@@ -8,7 +8,6 @@ export class IdPaginationDto extends PaginationDto {
   id: string;
 
   @IsOptional()
-  @IsBoolean()
   has_all_data: boolean;
 }
 
