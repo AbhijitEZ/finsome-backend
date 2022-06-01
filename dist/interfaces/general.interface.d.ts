@@ -83,6 +83,7 @@ export interface CommentsInf {
     deleted_at?: string;
     reply?: Array<CommentsInf>;
     created_at_tz?: string;
+    user?: Record<string, any>;
 }
 export interface UserConfigurationInf {
     _id: string;

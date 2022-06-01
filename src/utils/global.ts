@@ -94,9 +94,17 @@ export const commentResponseMapper = (comment: CommentsInf) => {
   if (comment.created_at_tz) {
     comment.created_at_tz = dateFormatter(comment.created_at_tz);
   }
+  if (comment?.user?.profile_photo) {
+    comment.user.profile_photo = postAssetsGenerator(comment?.user?.profile_photo);
+  }
 
   if (comment.reply) {
-    comment.reply = comment.reply.map(data => ({ ...data, created_at_tz: data.created_at_tz ? dateFormatter(data.created_at_tz) : undefined }));
+    comment.reply = comment.reply.map(data => ({
+      ...data,
+      created_at_tz: data.created_at_tz ? dateFormatter(data.created_at_tz) : undefined,
+      // @ts-ignore
+      reply_user: data?.reply_user ? { ...data.reply_user, profile_photo: postAssetsGenerator(data.reply_user?.profile_photo) } : {},
+    }));
   }
 
   return comment;

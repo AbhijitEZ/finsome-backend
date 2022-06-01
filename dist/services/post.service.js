@@ -730,6 +730,7 @@ class PostService {
             result: [(0, global_1.commentResponseMapper)(commentsData === null || commentsData === void 0 ? void 0 : commentsData[0])],
         };
     }
+    // TODO: Need to remove the replies if the parent is removed
     async commentDelete(userId, postId, commentId) {
         const commentCheck = await comments_1.default.findOne({
             _id: new mongoose_1.Types.ObjectId(commentId),

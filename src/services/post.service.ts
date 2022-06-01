@@ -823,6 +823,7 @@ class PostService {
     };
   }
 
+  // TODO: Need to remove the replies if the parent is removed
   public async commentDelete(userId: string, postId: string, commentId: string): Promise<any> {
     const commentCheck = await commentsModel.findOne({
       _id: new Types.ObjectId(commentId),
