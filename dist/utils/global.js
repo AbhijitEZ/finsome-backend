@@ -85,14 +85,14 @@ const commentResponseMapper = (comment) => {
         comment.created_at_tz = (0, util_1.dateFormatter)(comment.created_at_tz);
     }
     if ((_a = comment === null || comment === void 0 ? void 0 : comment.user) === null || _a === void 0 ? void 0 : _a.profile_photo) {
-        comment.user.profile_photo = (0, util_1.postAssetsGenerator)((_b = comment === null || comment === void 0 ? void 0 : comment.user) === null || _b === void 0 ? void 0 : _b.profile_photo);
+        comment.user.profile_photo = (0, util_1.profileImageGenerator)((_b = comment === null || comment === void 0 ? void 0 : comment.user) === null || _b === void 0 ? void 0 : _b.profile_photo);
     }
     if (comment.reply) {
         comment.reply = comment.reply.map(data => {
             var _a;
             return (Object.assign(Object.assign({}, data), { created_at_tz: data.created_at_tz ? (0, util_1.dateFormatter)(data.created_at_tz) : undefined, 
                 // @ts-ignore
-                reply_user: (data === null || data === void 0 ? void 0 : data.reply_user) ? Object.assign(Object.assign({}, data.reply_user), { profile_photo: (0, util_1.postAssetsGenerator)((_a = data.reply_user) === null || _a === void 0 ? void 0 : _a.profile_photo) }) : {} }));
+                reply_user: (data === null || data === void 0 ? void 0 : data.reply_user) ? Object.assign(Object.assign({}, data.reply_user), { profile_photo: (0, util_1.profileImageGenerator)((_a = data.reply_user) === null || _a === void 0 ? void 0 : _a.profile_photo) }) : {} }));
         });
     }
     return comment;

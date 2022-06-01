@@ -95,7 +95,7 @@ export const commentResponseMapper = (comment: CommentsInf) => {
     comment.created_at_tz = dateFormatter(comment.created_at_tz);
   }
   if (comment?.user?.profile_photo) {
-    comment.user.profile_photo = postAssetsGenerator(comment?.user?.profile_photo);
+    comment.user.profile_photo = profileImageGenerator(comment?.user?.profile_photo);
   }
 
   if (comment.reply) {
@@ -103,7 +103,7 @@ export const commentResponseMapper = (comment: CommentsInf) => {
       ...data,
       created_at_tz: data.created_at_tz ? dateFormatter(data.created_at_tz) : undefined,
       // @ts-ignore
-      reply_user: data?.reply_user ? { ...data.reply_user, profile_photo: postAssetsGenerator(data.reply_user?.profile_photo) } : {},
+      reply_user: data?.reply_user ? { ...data.reply_user, profile_photo: profileImageGenerator(data.reply_user?.profile_photo) } : {},
     }));
   }
 
