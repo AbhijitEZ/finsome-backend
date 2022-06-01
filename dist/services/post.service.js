@@ -733,7 +733,6 @@ class PostService {
     async commentDelete(userId, postId, commentId) {
         const commentCheck = await comments_1.default.findOne({
             _id: new mongoose_1.Types.ObjectId(commentId),
-            user_id: userId,
         });
         if (!commentCheck) {
             throw new HttpException_1.HttpException(403, constants_1.APP_ERROR_MESSAGE.user_not_auth);

@@ -826,7 +826,6 @@ class PostService {
   public async commentDelete(userId: string, postId: string, commentId: string): Promise<any> {
     const commentCheck = await commentsModel.findOne({
       _id: new Types.ObjectId(commentId),
-      user_id: userId,
     });
 
     if (!commentCheck) {
