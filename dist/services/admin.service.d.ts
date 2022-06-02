@@ -9,6 +9,7 @@ declare class AdminService {
     userSuggestion: import("mongoose").Model<import("../interfaces/general.interface").UserSuggestionImproveInf & import("mongoose").Document<any, any, any>, {}, {}>;
     privacyPolicy: import("mongoose").Model<import("../interfaces/general.interface").PrivacyPolicyInf & import("mongoose").Document<any, any, any>, {}, {}>;
     termsConditionM: import("mongoose").Model<import("../interfaces/general.interface").PrivacyPolicyInf & import("mongoose").Document<any, any, any>, {}, {}>;
+    complaintM: import("mongoose").Model<import("../interfaces/general.interface").ComplaintsInf & import("mongoose").Document<any, any, any>, {}, {}>;
     adminLogin(loginDto: AdminLoginDto): Promise<{
         token: string;
     }>;
@@ -22,6 +23,7 @@ declare class AdminService {
     termsConditionUpdate(data: PrivacyPolicyDto): Promise<void>;
     appImprovementSuggestion(): Promise<any>;
     quickContactListing(): Promise<Record<string, any>>;
+    complaintsListing(type: string): Promise<Record<string, any>>;
     stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any>;
     stockTypeDelete(type: string, _id: string): Promise<any>;
     stockTypeUpload(type: string, path: string): Promise<any>;

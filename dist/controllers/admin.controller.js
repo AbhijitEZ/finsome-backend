@@ -110,6 +110,16 @@ class AdminController {
                 next(error);
             }
         };
+        this.complaintsListing = async (req, res, next) => {
+            var _a;
+            try {
+                const users = await this.adminService.complaintsListing((_a = req.params) === null || _a === void 0 ? void 0 : _a.type);
+                res.status(200).json({ data: users });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.stockTypeAdd = async (req, res, next) => {
             var _a;
             try {

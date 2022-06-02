@@ -3,7 +3,7 @@ import config from 'config';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
 import { HttpException } from '@/exceptions/HttpException';
-import { APP_ERROR_MESSAGE, STOCK_TYPE_CONST, USER_ROLE } from '@/utils/constants';
+import { APP_ERROR_MESSAGE, COMPLAINT_TYPE, STOCK_TYPE_CONST, USER_ROLE } from '@/utils/constants';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import appImprovementModel from '@models/app-improvement-type';
@@ -12,6 +12,7 @@ import { toDate } from 'date-fns';
 import quickContactModel from '@/models/quick-contact';
 import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
 import privacyPolicyModel from '@/models/privacy-policy';
+import complaintModel from '@/models/complaints';
 import termsConditionModel from '@/models/terms-condition';
 import { StockUpdateTypeDto } from '@/dtos/posts.dto';
 import stockTypeModel from '@/models/stock-types';
@@ -25,6 +26,7 @@ class AdminService {
   public userSuggestion = userSuggestionImprovementModel;
   public privacyPolicy = privacyPolicyModel;
   public termsConditionM = termsConditionModel;
+  public complaintM = complaintModel;
 
   public async adminLogin(loginDto: AdminLoginDto): Promise<{ token: string }> {
     const adminUser: User = await this.users.findOne({
@@ -189,6 +191,30 @@ class AdminService {
     const quickContacts = await this.quickContact.find({}).sort({ created_at: -1 }).lean();
 
     return quickContacts;
+  }
+
+  public async complaintsListing(type: string): Promise<Record<string, any>> {
+    let complaints = [];
+
+    if (type === COMPLAINT_TYPE.POST) {
+      complaints = await this.complaintM
+        .find({
+          user_complain_id: null,
+        })
+        .populate('user_id', ['fullname', 'phone_number'])
+        .sort({ created_at: -1 })
+        .lean();
+    } else {
+      complaints = await this.complaintM
+        .find({
+          post_complain_id: null,
+        })
+        .populate('user_id', ['fullname', 'phone_number'])
+        .sort({ created_at: -1 })
+        .lean();
+    }
+
+    return complaints;
   }
 
   public async stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any> {

@@ -122,6 +122,16 @@ class AdminController {
     }
   };
 
+  public complaintsListing = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.adminService.complaintsListing(req.params?.type);
+
+      res.status(200).json({ data: users });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public stockTypeAdd = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore

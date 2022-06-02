@@ -50,6 +50,9 @@ class AdminRoute implements Routes {
     this.router.post(`${this.path}stock-upload/:type`, authAdminMiddleware, fileUploadCSVCB, this.adminController.stockTypeUpload);
     /* !Stocks */
 
+    /* Complaints */
+    this.router.get(`${this.path}complaints/:type`, authAdminMiddleware, this.adminController.complaintsListing);
+
     /* Policies */
     this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);
     this.router.post(

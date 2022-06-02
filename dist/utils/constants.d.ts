@@ -87,6 +87,10 @@ export declare const ASSET_TYPE_CONST: {
     IMAGE: string;
     VIDEO: string;
 };
+export declare const COMPLAINT_TYPE: {
+    POST: string;
+    USER: string;
+};
 export declare const SKIP_DEF = "0";
 export declare const LIMIT_DEF = "10";
 export declare const FILE_LIMIT = 20000000;

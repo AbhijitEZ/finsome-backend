@@ -13,6 +13,7 @@ const date_fns_1 = require("date-fns");
 const quick_contact_1 = tslib_1.__importDefault(require("../models/quick-contact"));
 const user_suggestion_improvement_1 = tslib_1.__importDefault(require("../models/user-suggestion-improvement"));
 const privacy_policy_1 = tslib_1.__importDefault(require("../models/privacy-policy"));
+const complaints_1 = tslib_1.__importDefault(require("../models/complaints"));
 const terms_condition_1 = tslib_1.__importDefault(require("../models/terms-condition"));
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 const fs_1 = tslib_1.__importDefault(require("fs"));
@@ -25,6 +26,7 @@ class AdminService {
         this.userSuggestion = user_suggestion_improvement_1.default;
         this.privacyPolicy = privacy_policy_1.default;
         this.termsConditionM = terms_condition_1.default;
+        this.complaintM = complaints_1.default;
     }
     async adminLogin(loginDto) {
         const adminUser = await this.users.findOne({
@@ -159,6 +161,28 @@ class AdminService {
     async quickContactListing() {
         const quickContacts = await this.quickContact.find({}).sort({ created_at: -1 }).lean();
         return quickContacts;
+    }
+    async complaintsListing(type) {
+        let complaints = [];
+        if (type === constants_1.COMPLAINT_TYPE.POST) {
+            complaints = await this.complaintM
+                .find({
+                user_complain_id: null,
+            })
+                .populate('user_id', ['fullname', 'phone_number'])
+                .sort({ created_at: -1 })
+                .lean();
+        }
+        else {
+            complaints = await this.complaintM
+                .find({
+                post_complain_id: null,
+            })
+                .populate('user_id', ['fullname', 'phone_number'])
+                .sort({ created_at: -1 })
+                .lean();
+        }
+        return complaints;
     }
     async stockTypeAdd(type, reqData) {
         if (!Object.keys(constants_1.STOCK_TYPE_CONST).includes(type)) {

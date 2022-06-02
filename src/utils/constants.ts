@@ -97,6 +97,11 @@ export const ASSET_TYPE_CONST = {
   VIDEO: 'VIDEO',
 };
 
+export const COMPLAINT_TYPE = {
+  POST: 'POST',
+  USER: 'USER',
+};
+
 export const SKIP_DEF = '0';
 export const LIMIT_DEF = '10';
 
