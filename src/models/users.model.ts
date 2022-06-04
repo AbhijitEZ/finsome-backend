@@ -88,6 +88,12 @@ const userSchema: Schema = new Schema(
   },
 );
 
+userSchema.index({
+  fullname: 'text',
+  email: 'text',
+  username: 'text',
+});
+
 userSchema.post('save', function (error, doc, next) {
   // Unqiue Email error handler
   if (error.name === 'MongoError' && error.code === 11000) {

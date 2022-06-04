@@ -4,12 +4,14 @@ import {
   AppImprovementUserDto,
   ChangePasswordDto,
   CreateUserDto,
+  FollowDto,
   LoginDto,
   NotificationDto,
   ProfileUpdateDto,
   QuickContactDto,
   ResetPasswordDto,
   SignupPhoneDto,
+  UserListingDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
   VerifyPhoneDto,
@@ -80,6 +82,10 @@ class AuthRoute implements Routes {
       this.authController.updateUserAppImprovementSuggestion,
     );
     this.router.post(`${this.path}quick-contact`, validationMiddleware(QuickContactDto, 'body'), authMiddleware, this.authController.addQuickContact);
+
+    this.router.post(`${this.path}follow`, validationMiddleware(FollowDto, 'body'), authMiddleware, this.authController.followerRequest);
+    this.router.get(`${this.path}follow-accept/:followId`, authMiddleware, this.authController.followAcceptByUser);
+    this.router.get(`${this.path}users-list`, validationMiddleware(UserListingDto, 'query'), authMiddleware, this.authController.userListing);
 
     // !SECTION: General APIS => END
   }

@@ -19,6 +19,7 @@ const phone_1 = require("../utils/phone");
 const logger_1 = require("../utils/logger");
 const app_improvement_type_1 = tslib_1.__importDefault(require("../models/app-improvement-type"));
 const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
+const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
 class AuthService {
     constructor() {
         this.users = users_model_1.default;
@@ -26,6 +27,7 @@ class AuthService {
         this.appImprovement = app_improvement_type_1.default;
         this.quickContact = quick_contact_1.default;
         this.userAppSuggestion = user_suggestion_improvement_1.default;
+        this.userFollowerM = user_followers_1.default;
         this.updateUserCodeWithSMS = async (reqData, existCode, type) => {
             const code = existCode ? existCode : (0, phone_1.createPhoneCodeToVerify)();
             logger_1.logger.info(`Phone number OTP for: ${reqData.phone_country_code}-${reqData.phone_number}.`);
@@ -316,6 +318,121 @@ class AuthService {
         const newContact = await this.quickContact.create(Object.assign({}, reqData));
         // @ts-ignore
         return newContact;
+    }
+    async followerRequest(userId, reqData) {
+        const followerReqExists = await this.userFollowerM.findOne({
+            user_id: reqData.following_id,
+            follower_id: userId,
+        });
+        if (followerReqExists) {
+            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.follower_exists);
+        }
+        const newFollower = await this.userFollowerM.create({ follower_id: userId, user_id: reqData.following_id });
+        // @ts-ignore
+        return newFollower;
+    }
+    async followAcceptRequest(userId, followId) {
+        const followReqExists = await this.userFollowerM.findOne({
+            _id: followId,
+            user_id: userId,
+            accepted: false,
+        });
+        if (!followReqExists) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.follower_exists);
+        }
+        await this.userFollowerM.findByIdAndUpdate(followReqExists._id, {
+            accepted: true,
+        });
+        return followReqExists;
+    }
+    async userListing(userId, reqData) {
+        var _a, _b;
+        const usersqb = this.users.aggregate([
+            {
+                $match: {
+                    _id: {
+                        $ne: userId,
+                    },
+                    deleted_at: { $eq: null },
+                    role: { $eq: constants_1.USER_ROLE.MEMBER },
+                },
+            },
+            {
+                $addFields: {
+                    created_at_tz: { $dateToString: { date: '$created_at', timezone: constants_1.DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+                },
+            },
+            {
+                $unset: ['password'],
+            },
+            {
+                $lookup: {
+                    from: constants_1.USER_FOLLOWERS,
+                    localField: '_id',
+                    foreignField: 'user_id',
+                    as: 'following',
+                    pipeline: [
+                        {
+                            $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+                        },
+                    ],
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USER_FOLLOWERS,
+                    localField: '_id',
+                    foreignField: 'follower_id',
+                    as: 'follower',
+                    pipeline: [
+                        {
+                            $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: '$following',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: '$follower',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            { $sort: { created_at: -1 } },
+        ]);
+        if (reqData.search) {
+            usersqb.append({
+                $match: {
+                    // TODO: to have email and username added in the search checking
+                    fullname: new RegExp(reqData.search, 'i'),
+                },
+            });
+        }
+        usersqb.append({
+            $facet: {
+                totalRecords: [
+                    {
+                        $count: 'total',
+                    },
+                ],
+                result: [
+                    {
+                        $skip: parseInt((_a = reqData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
+                    },
+                    {
+                        $limit: parseInt((_b = reqData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
+                    },
+                ],
+            },
+        });
+        const usersData = await usersqb.exec();
+        const { total_count, result } = (0, util_1.listingResponseSanitize)(usersData);
+        return { total_count, users: result.map(user => (Object.assign(Object.assign({}, user), { profile_photo: (0, util_1.profileImageGenerator)(user.profile_photo) }))) };
     }
     createToken(user) {
         const dataStoredInToken = { _id: user._id, role: user.role };

@@ -21,5 +21,8 @@ declare class AuthController {
     getUserAppImprovementSuggestion: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     updateUserAppImprovementSuggestion: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     addQuickContact: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    followerRequest: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    followAcceptByUser: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    userListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default AuthController;

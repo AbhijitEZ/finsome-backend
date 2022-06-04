@@ -84,6 +84,11 @@ const userSchema = new mongoose_1.Schema({
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 });
+userSchema.index({
+    fullname: 'text',
+    email: 'text',
+    username: 'text',
+});
 userSchema.post('save', function (error, doc, next) {
     var _a;
     // Unqiue Email error handler

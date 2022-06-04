@@ -225,6 +225,37 @@ class AuthController {
       next(error);
     }
   };
+
+  public followerRequest = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.authService.followerRequest(req.user?._id, req.body);
+
+      responseJSONMapper(res, 201, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public followAcceptByUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.authService.followAcceptRequest(req.user?._id, req.params?.followId);
+
+      responseJSONMapper(res, 201, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public userListing = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.authService.userListing(req.user?._id, req.query);
+
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

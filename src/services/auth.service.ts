@@ -7,12 +7,14 @@ import {
   AppImprovementUserDto,
   ChangePasswordDto,
   CreateUserDto,
+  FollowDto,
   LoginDto,
   NotificationDto,
   ProfileUpdateDto,
   QuickContactDto,
   ResetPasswordDto,
   SignupPhoneDto,
+  UserListingDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
   VerifyPhoneDto,
@@ -25,13 +27,23 @@ import userModel from '@models/users.model';
 import otpValidationModel from '@models/otp-validation.model';
 import quickContactModel from '@models/quick-contact';
 import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
-import { isEmpty } from '@utils/util';
-import { ACCOUNT_TYPE_CONST, APP_ERROR_MESSAGE, APP_IMPROVEMENT_TYPES, USER_ROLE } from '@/utils/constants';
+import { isEmpty, listingResponseSanitize, profileImageGenerator } from '@utils/util';
+import {
+  ACCOUNT_TYPE_CONST,
+  APP_ERROR_MESSAGE,
+  APP_IMPROVEMENT_TYPES,
+  DEFAULT_TIMEZONE,
+  LIMIT_DEF,
+  SKIP_DEF,
+  USER_FOLLOWERS,
+  USER_ROLE,
+} from '@/utils/constants';
 import { userResponseFilter } from '@/utils/global';
 import { createPhoneCodeToVerify, intervalDurationOTPCheck } from '@/utils/phone';
 import { logger } from '@/utils/logger';
 import appImprovementModel from '@/models/app-improvement-type';
 import userConfigurationModel from '@/models/user-configurations';
+import userFollowerModel from '@/models/user-followers';
 
 class AuthService {
   public users = userModel;
@@ -39,6 +51,7 @@ class AuthService {
   public appImprovement = appImprovementModel;
   public quickContact = quickContactModel;
   public userAppSuggestion = userSuggestionImprovementModel;
+  public userFollowerM = userFollowerModel;
 
   public async validateUserField(userData: ValidateUserFieldDto): Promise<void> {
     const userFound = await this.users.findOne({ [userData.field]: userData.value });
@@ -359,6 +372,132 @@ class AuthService {
 
     // @ts-ignore
     return newContact;
+  }
+
+  public async followerRequest(userId: string, reqData: FollowDto): Promise<any> {
+    const followerReqExists = await this.userFollowerM.findOne({
+      user_id: reqData.following_id,
+      follower_id: userId,
+    });
+
+    if (followerReqExists) {
+      throw new HttpException(409, APP_ERROR_MESSAGE.follower_exists);
+    }
+
+    const newFollower = await this.userFollowerM.create({ follower_id: userId, user_id: reqData.following_id });
+
+    // @ts-ignore
+    return newFollower;
+  }
+
+  public async followAcceptRequest(userId: string, followId: string): Promise<any> {
+    const followReqExists = await this.userFollowerM.findOne({
+      _id: followId,
+      user_id: userId,
+      accepted: false,
+    });
+
+    if (!followReqExists) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.follower_exists);
+    }
+
+    await this.userFollowerM.findByIdAndUpdate(followReqExists._id, {
+      accepted: true,
+    });
+
+    return followReqExists;
+  }
+
+  public async userListing(userId: string, reqData: UserListingDto): Promise<any> {
+    const usersqb = this.users.aggregate([
+      {
+        $match: {
+          _id: {
+            $ne: userId,
+          },
+          deleted_at: { $eq: null },
+          role: { $eq: USER_ROLE.MEMBER },
+        },
+      },
+      {
+        $addFields: {
+          created_at_tz: { $dateToString: { date: '$created_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+        },
+      },
+      {
+        $unset: ['password'],
+      },
+      {
+        $lookup: {
+          from: USER_FOLLOWERS,
+          localField: '_id',
+          foreignField: 'user_id',
+          as: 'following',
+          pipeline: [
+            {
+              $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: USER_FOLLOWERS,
+          localField: '_id',
+          foreignField: 'follower_id',
+          as: 'follower',
+          pipeline: [
+            {
+              $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$following',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$follower',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      { $sort: { created_at: -1 } },
+    ]);
+
+    if (reqData.search) {
+      usersqb.append({
+        $match: {
+          // TODO: to have email and username added in the search checking
+          fullname: new RegExp(reqData.search, 'i'),
+        },
+      });
+    }
+
+    usersqb.append({
+      $facet: {
+        totalRecords: [
+          {
+            $count: 'total',
+          },
+        ],
+        result: [
+          {
+            $skip: parseInt(reqData.skip ?? SKIP_DEF),
+          },
+          {
+            $limit: parseInt(reqData.limit ?? LIMIT_DEF),
+          },
+        ],
+      },
+    });
+
+    const usersData = await usersqb.exec();
+    const { total_count, result } = listingResponseSanitize(usersData);
+    return { total_count, users: result.map(user => ({ ...user, profile_photo: profileImageGenerator(user.profile_photo) })) };
   }
 
   public createToken(user: User): TokenData {

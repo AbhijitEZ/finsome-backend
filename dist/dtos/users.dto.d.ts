@@ -1,3 +1,4 @@
+import { PaginationDto } from './general.dto';
 export declare class VerifyPhoneDto {
     phone_country_code: string;
     phone_number: string;
@@ -59,4 +60,10 @@ export declare class QuickContactDto {
     name: string;
     email: string;
     message: string;
+}
+export declare class FollowDto {
+    following_id: string;
+}
+export declare class UserListingDto extends PaginationDto {
+    search: string;
 }

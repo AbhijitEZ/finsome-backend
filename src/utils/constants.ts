@@ -27,6 +27,7 @@ export const APP_ERROR_MESSAGE = {
   post_complain_usr_complain_exists: 'Post or User id should exists at least one.',
   user_field_exists: 'User with the following field already exists, try something other.',
   user_id_not_exits: "User id doesn't exists in system.",
+  follower_exists: 'Follower already exists for the user',
   user_not_auth: "User doesn't have authorization for this specific action.",
   user_not_complete_register: 'User has not completed the registration process, process further to complete.',
   user_already_register: 'User is already registered in system, please login to access.',
@@ -123,6 +124,8 @@ export const OTP_VALIDATIONS = 'otp-validations';
 export const USERS = 'users';
 export const POSTS = 'posts';
 export const USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';
+export const USER_FOLLOWERS = 'user-followers';
+export const NOTFICATIONS = 'notifications';
 
 export const profileImageFolder = 'profile-img/';
 export const postAssetsFolder = 'post/';

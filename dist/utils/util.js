@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dateFormatter = exports.fileUnSyncFromLocalStroage = exports.postAssetsGenerator = exports.profileImageGenerator = exports.isEmpty = void 0;
+exports.listingResponseSanitize = exports.dateFormatter = exports.fileUnSyncFromLocalStroage = exports.postAssetsGenerator = exports.profileImageGenerator = exports.isEmpty = void 0;
 const tslib_1 = require("tslib");
 const date_fns_1 = require("date-fns");
 const fs_1 = tslib_1.__importDefault(require("fs"));
@@ -52,4 +52,14 @@ const dateFormatter = (date) => {
     return (0, date_fns_1.format)((0, date_fns_1.parseISO)(date), 'yyyy-MM-dd hh:mm aaa');
 };
 exports.dateFormatter = dateFormatter;
+const listingResponseSanitize = (data) => {
+    var _a, _b, _c, _d, _e, _f;
+    const total_count = (_d = (_c = (_b = (_a = data === null || data === void 0 ? void 0 : data[0]) === null || _a === void 0 ? void 0 : _a.totalRecords) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.total) !== null && _d !== void 0 ? _d : 0;
+    const result = (_f = (_e = data === null || data === void 0 ? void 0 : data[0]) === null || _e === void 0 ? void 0 : _e.result) !== null && _f !== void 0 ? _f : [];
+    return {
+        total_count,
+        result,
+    };
+};
+exports.listingResponseSanitize = listingResponseSanitize;
 //# sourceMappingURL=util.js.map

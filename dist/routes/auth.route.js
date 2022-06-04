@@ -34,6 +34,9 @@ class AuthRoute {
         this.router.get(`${this.path}app-improvement-types-user`, auth_middleware_1.default, this.authController.getUserAppImprovementSuggestion);
         this.router.post(`${this.path}app-improvement-types-user`, (0, validation_middleware_1.default)(users_dto_1.AppImprovementUserDto, 'body'), auth_middleware_1.default, this.authController.updateUserAppImprovementSuggestion);
         this.router.post(`${this.path}quick-contact`, (0, validation_middleware_1.default)(users_dto_1.QuickContactDto, 'body'), auth_middleware_1.default, this.authController.addQuickContact);
+        this.router.post(`${this.path}follow`, (0, validation_middleware_1.default)(users_dto_1.FollowDto, 'body'), auth_middleware_1.default, this.authController.followerRequest);
+        this.router.get(`${this.path}follow-accept/:followId`, auth_middleware_1.default, this.authController.followAcceptByUser);
+        this.router.get(`${this.path}users-list`, (0, validation_middleware_1.default)(users_dto_1.UserListingDto, 'query'), auth_middleware_1.default, this.authController.userListing);
         // !SECTION: General APIS => END
     }
 }

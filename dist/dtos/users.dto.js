@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ResetPasswordDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
+exports.UserListingDto = exports.FollowDto = exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ResetPasswordDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
+const general_dto_1 = require("./general.dto");
 class VerifyPhoneDto {
 }
 tslib_1.__decorate([
@@ -236,4 +237,20 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], QuickContactDto.prototype, "message", void 0);
 exports.QuickContactDto = QuickContactDto;
+class FollowDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], FollowDto.prototype, "following_id", void 0);
+exports.FollowDto = FollowDto;
+class UserListingDto extends general_dto_1.PaginationDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], UserListingDto.prototype, "search", void 0);
+exports.UserListingDto = UserListingDto;
 //# sourceMappingURL=users.dto.js.map

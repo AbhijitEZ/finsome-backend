@@ -26,6 +26,7 @@ export declare const APP_ERROR_MESSAGE: {
     post_complain_usr_complain_exists: string;
     user_field_exists: string;
     user_id_not_exits: string;
+    follower_exists: string;
     user_not_auth: string;
     user_not_complete_register: string;
     user_already_register: string;
@@ -110,6 +111,8 @@ export declare const OTP_VALIDATIONS = "otp-validations";
 export declare const USERS = "users";
 export declare const POSTS = "posts";
 export declare const USER_SUGGESTION_IMPROVEMENTS = "user-suggestion-improvements";
+export declare const USER_FOLLOWERS = "user-followers";
+export declare const NOTFICATIONS = "notifications";
 export declare const profileImageFolder = "profile-img/";
 export declare const postAssetsFolder = "post/";
 export declare const DEFAULT_TIMEZONE = "Asia/Kolkata";

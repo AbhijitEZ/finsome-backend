@@ -193,6 +193,37 @@ class AuthController {
                 next(error);
             }
         };
+        this.followerRequest = async (req, res, next) => {
+            var _a;
+            try {
+                const data = await this.authService.followerRequest((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.body);
+                (0, global_1.responseJSONMapper)(res, 201, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.followAcceptByUser = async (req, res, next) => {
+            var _a, _b;
+            try {
+                const data = await this.authService.followAcceptRequest((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.followId);
+                (0, global_1.responseJSONMapper)(res, 201, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.userListing = async (req, res, next) => {
+            var _a;
+            try {
+                // @ts-ignore
+                const data = await this.authService.userListing((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.query);
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = AuthController;

@@ -36,6 +36,21 @@ export interface UserSuggestionImproveInf {
     description?: string;
     timestamp: string;
 }
+export interface UserFollowerInf {
+    user_id: string;
+    follower_id: string;
+    created_at: string;
+    updated_at: string;
+    deleted_at?: Date;
+}
+export interface NotificationInf {
+    user_id: string;
+    message: string;
+    meta_data?: Record<string, any>;
+    created_at: string;
+    updated_at: string;
+    deleted_at?: Date;
+}
 export interface PostsInf {
     user_id: string;
     stock_type: string;

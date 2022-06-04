@@ -45,3 +45,13 @@ export const fileUnSyncFromLocalStroage = (path: string) => {
 export const dateFormatter = (date: string) => {
   return format(parseISO(date), 'yyyy-MM-dd hh:mm aaa');
 };
+
+export const listingResponseSanitize = (data: any) => {
+  const total_count = data?.[0]?.totalRecords?.[0]?.total ?? 0;
+  const result = data?.[0]?.result ?? [];
+
+  return {
+    total_count,
+    result,
+  };
+};
