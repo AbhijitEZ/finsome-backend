@@ -43,6 +43,7 @@ export declare class PostHomeDto extends PaginationDto {
     trade_type: string;
     is_recommended: string;
     has_all_data?: string;
+    user_id: string;
 }
 export declare class CommentsAddDto {
     post_id: string;

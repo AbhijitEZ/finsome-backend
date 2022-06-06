@@ -157,6 +157,11 @@ export class PostHomeDto extends PaginationDto {
   @IsOptional()
   @IsString()
   has_all_data?: string;
+
+  /* Specific to user-profile listing */
+  @IsOptional()
+  @IsString()
+  user_id: string;
 }
 
 export class CommentsAddDto {
