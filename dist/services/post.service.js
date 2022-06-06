@@ -19,6 +19,7 @@ const mongoose_1 = require("mongoose");
 const likes_1 = tslib_1.__importDefault(require("../models/likes"));
 const HttpException_1 = require("../exceptions/HttpException");
 const complaints_1 = tslib_1.__importDefault(require("../models/complaints"));
+const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -115,16 +116,36 @@ class PostService {
     }
     async postHome(_id, queryData) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
+        const usersFollower = await user_followers_1.default
+            .find({
+            follower_id: _id,
+            deleted_at: {
+                $eq: null,
+            },
+            accepted: true,
+        })
+            .lean();
+        const allUserPostDisplayIds = [_id, ...(usersFollower.length ? usersFollower.map(data => data.user_id) : [])];
+        const userMatch = {
+            deleted_at: { $eq: null },
+        };
+        if (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) {
+            userMatch['user_id'] = { $ne: null };
+        }
+        else if (queryData === null || queryData === void 0 ? void 0 : queryData.user_id) {
+            userMatch['user_id'] = queryData.user_id;
+        }
+        else {
+            userMatch['user_id'] = {
+                $in: allUserPostDisplayIds,
+            };
+        }
         const postsQb = this.postsObj.aggregate([
             {
                 $project: this.postResObj,
             },
             {
-                $match: {
-                    /* For getting all the data, would be used for admin panel */
-                    user_id: (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) ? { $ne: null } : (queryData === null || queryData === void 0 ? void 0 : queryData.user_id) ? queryData.user_id : _id,
-                    deleted_at: { $eq: null },
-                },
+                $match: userMatch,
             },
             {
                 $lookup: {

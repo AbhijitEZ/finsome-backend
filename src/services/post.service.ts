@@ -41,6 +41,7 @@ import { Types } from 'mongoose';
 import likesModel from '@/models/likes';
 import { HttpException } from '@/exceptions/HttpException';
 import complaintModel from '@/models/complaints';
+import userFollowerModel from '@/models/user-followers';
 
 class PostService {
   public countryObj = countryModel;
@@ -152,16 +153,38 @@ class PostService {
   }
 
   public async postHome(_id: string, queryData: PostHomeDto): Promise<any> {
+    const usersFollower = await userFollowerModel
+      .find({
+        follower_id: _id,
+        deleted_at: {
+          $eq: null,
+        },
+        accepted: true,
+      })
+      .lean();
+
+    const allUserPostDisplayIds = [_id, ...(usersFollower.length ? usersFollower.map(data => data.user_id) : [])];
+
+    const userMatch: any = {
+      deleted_at: { $eq: null },
+    };
+
+    if (queryData?.has_all_data) {
+      userMatch['user_id'] = { $ne: null };
+    } else if (queryData?.user_id) {
+      userMatch['user_id'] = queryData.user_id;
+    } else {
+      userMatch['user_id'] = {
+        $in: allUserPostDisplayIds,
+      };
+    }
+
     const postsQb = this.postsObj.aggregate([
       {
         $project: this.postResObj,
       },
       {
-        $match: {
-          /* For getting all the data, would be used for admin panel */
-          user_id: queryData?.has_all_data ? { $ne: null } : queryData?.user_id ? queryData.user_id : _id,
-          deleted_at: { $eq: null },
-        },
+        $match: userMatch,
       },
       {
         $lookup: {
