@@ -43,6 +43,7 @@ declare class AuthService {
     followerRequest(userId: string, reqData: FollowDto): Promise<any>;
     followAcceptRequest(userId: string, followId: string): Promise<any>;
     userListing(userId: string, reqData: UserListingDto): Promise<any>;
+    userDetail(userId: string, detailId: string): Promise<any>;
     createToken(user: User): TokenData;
     createCookie(tokenData: TokenData): string;
     updateUserCodeWithSMS: (reqData: VerifyPhoneDto, existCode?: string, type?: string) => Promise<void>;

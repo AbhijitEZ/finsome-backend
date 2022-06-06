@@ -373,6 +373,11 @@ class AuthService {
                     as: 'following',
                     pipeline: [
                         {
+                            $match: {
+                                follower_id: new mongoose_1.Types.ObjectId(userId),
+                            },
+                        },
+                        {
                             $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
                         },
                     ],
@@ -385,6 +390,11 @@ class AuthService {
                     foreignField: 'follower_id',
                     as: 'follower',
                     pipeline: [
+                        {
+                            $match: {
+                                user_id: new mongoose_1.Types.ObjectId(userId),
+                            },
+                        },
                         {
                             $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
                         },
@@ -433,6 +443,141 @@ class AuthService {
         const usersData = await usersqb.exec();
         const { total_count, result } = (0, util_1.listingResponseSanitize)(usersData);
         return { total_count, users: result.map(user => (Object.assign(Object.assign({}, user), { profile_photo: (0, util_1.profileImageGenerator)(user.profile_photo) }))) };
+    }
+    async userDetail(userId, detailId) {
+        var _a, _b;
+        const usersqb = this.users.aggregate([
+            {
+                $match: {
+                    _id: {
+                        $eq: new mongoose_1.Types.ObjectId(detailId),
+                    },
+                    deleted_at: { $eq: null },
+                    role: { $eq: constants_1.USER_ROLE.MEMBER },
+                },
+            },
+            {
+                $addFields: {
+                    created_at_tz: { $dateToString: { date: '$created_at', timezone: constants_1.DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+                },
+            },
+            {
+                $unset: ['password'],
+            },
+            {
+                $lookup: {
+                    from: constants_1.USER_FOLLOWERS,
+                    localField: '_id',
+                    foreignField: 'user_id',
+                    as: 'following',
+                    pipeline: [
+                        {
+                            $match: {
+                                follower_id: new mongoose_1.Types.ObjectId(userId),
+                            },
+                        },
+                        {
+                            $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+                        },
+                    ],
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USER_FOLLOWERS,
+                    localField: '_id',
+                    foreignField: 'user_id',
+                    as: 'following_count',
+                    pipeline: [
+                        {
+                            $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+                        },
+                        {
+                            $count: 'total_following',
+                        },
+                    ],
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USER_FOLLOWERS,
+                    localField: '_id',
+                    foreignField: 'follower_id',
+                    as: 'follower',
+                    pipeline: [
+                        {
+                            $match: {
+                                user_id: new mongoose_1.Types.ObjectId(userId),
+                            },
+                        },
+                        {
+                            $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+                        },
+                    ],
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USER_FOLLOWERS,
+                    localField: '_id',
+                    foreignField: 'follower_id',
+                    as: 'follower_count',
+                    pipeline: [
+                        {
+                            $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+                        },
+                        {
+                            $count: 'total_follower',
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: '$following',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: '$follower',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: '$following_count',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: '$follower_count',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            { $sort: { created_at: -1 } },
+        ]);
+        usersqb.append({
+            $facet: {
+                totalRecords: [
+                    {
+                        $count: 'total',
+                    },
+                ],
+                result: [
+                    {
+                        $skip: 0,
+                    },
+                    {
+                        $limit: 1,
+                    },
+                ],
+            },
+        });
+        const usersData = await usersqb.exec();
+        const { result } = (0, util_1.listingResponseSanitize)(usersData);
+        return { user: (_b = (_a = result.map(user => (Object.assign(Object.assign({}, user), { profile_photo: (0, util_1.profileImageGenerator)(user.profile_photo) })))) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : {} };
     }
     createToken(user) {
         const dataStoredInToken = { _id: user._id, role: user.role };

@@ -224,6 +224,17 @@ class AuthController {
                 next(error);
             }
         };
+        this.userDetail = async (req, res, next) => {
+            var _a;
+            try {
+                // @ts-ignore
+                const data = await this.authService.userDetail((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.params.id);
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = AuthController;

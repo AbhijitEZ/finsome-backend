@@ -19,7 +19,7 @@ import {
   VerifyOtpDTO,
   VerifyPhoneDto,
 } from '@dtos/users.dto';
-import { connection } from 'mongoose';
+import { connection, Types } from 'mongoose';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
@@ -435,6 +435,11 @@ class AuthService {
           as: 'following',
           pipeline: [
             {
+              $match: {
+                follower_id: new Types.ObjectId(userId),
+              },
+            },
+            {
               $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
             },
           ],
@@ -447,6 +452,11 @@ class AuthService {
           foreignField: 'follower_id',
           as: 'follower',
           pipeline: [
+            {
+              $match: {
+                user_id: new Types.ObjectId(userId),
+              },
+            },
             {
               $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
             },
@@ -498,6 +508,143 @@ class AuthService {
     const usersData = await usersqb.exec();
     const { total_count, result } = listingResponseSanitize(usersData);
     return { total_count, users: result.map(user => ({ ...user, profile_photo: profileImageGenerator(user.profile_photo) })) };
+  }
+
+  public async userDetail(userId: string, detailId: string): Promise<any> {
+    const usersqb = this.users.aggregate([
+      {
+        $match: {
+          _id: {
+            $eq: new Types.ObjectId(detailId),
+          },
+          deleted_at: { $eq: null },
+          role: { $eq: USER_ROLE.MEMBER },
+        },
+      },
+      {
+        $addFields: {
+          created_at_tz: { $dateToString: { date: '$created_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+        },
+      },
+      {
+        $unset: ['password'],
+      },
+      {
+        $lookup: {
+          from: USER_FOLLOWERS,
+          localField: '_id',
+          foreignField: 'user_id',
+          as: 'following',
+          pipeline: [
+            {
+              $match: {
+                follower_id: new Types.ObjectId(userId),
+              },
+            },
+            {
+              $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: USER_FOLLOWERS,
+          localField: '_id',
+          foreignField: 'user_id',
+          as: 'following_count',
+          pipeline: [
+            {
+              $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+            },
+            {
+              $count: 'total_following',
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: USER_FOLLOWERS,
+          localField: '_id',
+          foreignField: 'follower_id',
+          as: 'follower',
+          pipeline: [
+            {
+              $match: {
+                user_id: new Types.ObjectId(userId),
+              },
+            },
+            {
+              $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: USER_FOLLOWERS,
+          localField: '_id',
+          foreignField: 'follower_id',
+          as: 'follower_count',
+          pipeline: [
+            {
+              $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
+            },
+            {
+              $count: 'total_follower',
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$following',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$follower',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$following_count',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$follower_count',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      { $sort: { created_at: -1 } },
+    ]);
+
+    usersqb.append({
+      $facet: {
+        totalRecords: [
+          {
+            $count: 'total',
+          },
+        ],
+        result: [
+          {
+            $skip: 0,
+          },
+          {
+            $limit: 1,
+          },
+        ],
+      },
+    });
+
+    const usersData = await usersqb.exec();
+    const { result } = listingResponseSanitize(usersData);
+    return { user: result.map(user => ({ ...user, profile_photo: profileImageGenerator(user.profile_photo) }))?.[0] ?? {} };
   }
 
   public createToken(user: User): TokenData {

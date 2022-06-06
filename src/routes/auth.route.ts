@@ -86,6 +86,7 @@ class AuthRoute implements Routes {
     this.router.post(`${this.path}follow`, validationMiddleware(FollowDto, 'body'), authMiddleware, this.authController.followerRequest);
     this.router.get(`${this.path}follow-accept/:followId`, authMiddleware, this.authController.followAcceptByUser);
     this.router.get(`${this.path}users-list`, validationMiddleware(UserListingDto, 'query'), authMiddleware, this.authController.userListing);
+    this.router.get(`${this.path}user-detail/:id`, authMiddleware, this.authController.userDetail);
 
     // !SECTION: General APIS => END
   }

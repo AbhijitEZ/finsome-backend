@@ -256,6 +256,17 @@ class AuthController {
       next(error);
     }
   };
+
+  public userDetail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.authService.userDetail(req.user?._id, req.params.id);
+
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;
