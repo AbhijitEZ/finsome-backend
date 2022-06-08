@@ -142,13 +142,11 @@ export class PostHomeDto extends PaginationDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(Object.keys(ANALYSIS_TYPE_CONST))
-  analysis_type: string;
+  analysis_type?: string;
 
   @IsOptional()
   @IsString()
-  @IsIn(Object.keys(TRADE_TYPE_CONST))
-  trade_type: string;
+  trade_type?: string;
 
   @IsOptional()
   @IsString()

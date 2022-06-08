@@ -340,16 +340,23 @@ class PostService {
       });
     }
     if (queryData.analysis_type) {
+      const analysisTypes = queryData.analysis_type.split(',');
       postsQb.append({
         $match: {
-          analysis_type: queryData.analysis_type,
+          analysis_type: {
+            $id: analysisTypes,
+          },
         },
       });
     }
     if (queryData.trade_type) {
+      const tradeTypes = queryData.trade_type.split(',');
+
       postsQb.append({
         $match: {
-          trade_type: queryData.trade_type,
+          trade_type: {
+            $in: tradeTypes,
+          },
         },
       });
     }

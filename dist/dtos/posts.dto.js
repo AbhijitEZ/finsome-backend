@@ -179,13 +179,11 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(Object.keys(constants_1.ANALYSIS_TYPE_CONST)),
     tslib_1.__metadata("design:type", String)
 ], PostHomeDto.prototype, "analysis_type", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(Object.keys(constants_1.TRADE_TYPE_CONST)),
     tslib_1.__metadata("design:type", String)
 ], PostHomeDto.prototype, "trade_type", void 0);
 tslib_1.__decorate([

@@ -39,8 +39,8 @@ export declare class PostHomeDto extends PaginationDto {
     date?: string;
     stock_ids?: string;
     country_code?: string;
-    analysis_type: string;
-    trade_type: string;
+    analysis_type?: string;
+    trade_type?: string;
     is_recommended: string;
     has_all_data?: string;
     user_id: string;
