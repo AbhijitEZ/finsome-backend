@@ -32,9 +32,7 @@ import {
   USERS,
 } from '@/utils/constants';
 import { fileUnSyncFromLocalStroage } from '@/utils/util';
-import { commentResponseMapper, postResponseMapper } from '@/utils/global';
-import { addDays, parseISO, toDate } from 'date-fns';
-import { convertToLocalTime } from 'date-fns-timezone';
+import { commentResponseMapper, dateConstSwitcherHandler, postResponseMapper } from '@/utils/global';
 import postStockModel from '@/models/post-stocks';
 import commentsModel from '@/models/comments';
 import { Types } from 'mongoose';
@@ -374,12 +372,12 @@ class PostService {
 
     /* NOTE: Require testing for the different timezone */
     if (queryData.date) {
-      const date = queryData.date + 'T00:00:00.Z';
+      const { start, end } = dateConstSwitcherHandler(queryData.date);
       postsQb.append({
         $match: {
           created_at: {
-            $gte: convertToLocalTime(toDate(parseISO(date)), { timeZone: DEFAULT_TIMEZONE }),
-            $lt: addDays(convertToLocalTime(toDate(parseISO(date)), { timeZone: DEFAULT_TIMEZONE }), 1),
+            $gte: start,
+            $lt: end,
           },
         },
       });

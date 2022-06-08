@@ -9,3 +9,7 @@ export declare const fileUploadPostCB: import("express").RequestHandler<import("
 export declare const userResponseFilter: (userData: User) => Partial<User>;
 export declare const postResponseMapper: (postData: PostsInf) => Partial<PostsInf>;
 export declare const commentResponseMapper: (comment: CommentsInf) => CommentsInf;
+export declare const dateConstSwitcherHandler: (dateConst: string) => {
+    start: Date;
+    end: Date;
+};

@@ -103,6 +103,13 @@ export const COMPLAINT_TYPE = {
   USER: 'USER',
 };
 
+export const DATE_FILTER_TYPE_CONST = {
+  TODAY: 'TODAY',
+  LAST2DAY: 'LAST2DAY',
+  WEEK: 'WEEK',
+  MONTH: 'MONTH',
+};
+
 export const SKIP_DEF = '0';
 export const LIMIT_DEF = '10';
 

@@ -11,8 +11,6 @@ const lodash_isempty_1 = tslib_1.__importDefault(require("lodash.isempty"));
 const constants_1 = require("../utils/constants");
 const util_1 = require("../utils/util");
 const global_1 = require("../utils/global");
-const date_fns_1 = require("date-fns");
-const date_fns_timezone_1 = require("date-fns-timezone");
 const post_stocks_1 = tslib_1.__importDefault(require("../models/post-stocks"));
 const comments_1 = tslib_1.__importDefault(require("../models/comments"));
 const mongoose_1 = require("mongoose");
@@ -329,12 +327,12 @@ class PostService {
         }
         /* NOTE: Require testing for the different timezone */
         if (queryData.date) {
-            const date = queryData.date + 'T00:00:00.Z';
+            const { start, end } = (0, global_1.dateConstSwitcherHandler)(queryData.date);
             postsQb.append({
                 $match: {
                     created_at: {
-                        $gte: (0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)((0, date_fns_1.parseISO)(date)), { timeZone: constants_1.DEFAULT_TIMEZONE }),
-                        $lt: (0, date_fns_1.addDays)((0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)((0, date_fns_1.parseISO)(date)), { timeZone: constants_1.DEFAULT_TIMEZONE }), 1),
+                        $gte: start,
+                        $lt: end,
                     },
                 },
             });

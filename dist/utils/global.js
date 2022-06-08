@@ -1,12 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentResponseMapper = exports.postResponseMapper = exports.userResponseFilter = exports.fileUploadPostCB = exports.fileUploadCSVCB = exports.fileUploadCB = exports.responseJSONMapper = void 0;
+exports.dateConstSwitcherHandler = exports.commentResponseMapper = exports.postResponseMapper = exports.userResponseFilter = exports.fileUploadPostCB = exports.fileUploadCSVCB = exports.fileUploadCB = exports.responseJSONMapper = void 0;
 const tslib_1 = require("tslib");
 const HttpException_1 = require("../exceptions/HttpException");
 const multer_1 = tslib_1.__importDefault(require("multer"));
 const os_1 = tslib_1.__importDefault(require("os"));
 const constants_1 = require("./constants");
 const util_1 = require("./util");
+const date_fns_timezone_1 = require("date-fns-timezone");
+const date_fns_1 = require("date-fns");
 const responseJSONMapper = (res, statusCode, data, message) => {
     res.status(statusCode).json({ data, message: message || '' });
 };
@@ -98,4 +100,33 @@ const commentResponseMapper = (comment) => {
     return comment;
 };
 exports.commentResponseMapper = commentResponseMapper;
+const dateConstSwitcherHandler = (dateConst) => {
+    let start = new Date();
+    const end = (0, date_fns_1.endOfDay)((0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)(new Date()), { timeZone: constants_1.DEFAULT_TIMEZONE }));
+    switch (dateConst) {
+        case constants_1.DATE_FILTER_TYPE_CONST.TODAY:
+            start = (0, date_fns_1.startOfDay)((0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)(start), { timeZone: constants_1.DEFAULT_TIMEZONE }));
+            break;
+        case constants_1.DATE_FILTER_TYPE_CONST.LAST2DAY:
+            start = (0, date_fns_1.sub)((0, date_fns_1.startOfDay)((0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)(start), { timeZone: constants_1.DEFAULT_TIMEZONE })), {
+                days: 2,
+            });
+            break;
+        case constants_1.DATE_FILTER_TYPE_CONST.WEEK:
+            start = (0, date_fns_1.sub)((0, date_fns_1.startOfDay)((0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)(start), { timeZone: constants_1.DEFAULT_TIMEZONE })), {
+                weeks: 1,
+            });
+            break;
+        case constants_1.DATE_FILTER_TYPE_CONST.MONTH:
+            start = (0, date_fns_1.sub)((0, date_fns_1.startOfDay)((0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)(start), { timeZone: constants_1.DEFAULT_TIMEZONE })), {
+                months: 1,
+            });
+            break;
+        default:
+            start = (0, date_fns_1.startOfDay)((0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)(start), { timeZone: constants_1.DEFAULT_TIMEZONE }));
+            break;
+    }
+    return { start, end };
+};
+exports.dateConstSwitcherHandler = dateConstSwitcherHandler;
 //# sourceMappingURL=global.js.map

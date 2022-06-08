@@ -3,9 +3,11 @@ import { Response } from 'express';
 import multer from 'multer';
 import os from 'os';
 import { User } from '@interfaces/users.interface';
-import { APP_ERROR_MESSAGE, FILE_COUNT_POST, FILE_LIMIT } from './constants';
+import { APP_ERROR_MESSAGE, DATE_FILTER_TYPE_CONST, DEFAULT_TIMEZONE, FILE_COUNT_POST, FILE_LIMIT } from './constants';
 import { dateFormatter, postAssetsGenerator, profileImageGenerator } from './util';
 import { CommentsInf, PostsInf } from '@/interfaces/general.interface';
+import { convertToLocalTime } from 'date-fns-timezone';
+import { endOfDay, startOfDay, sub, toDate } from 'date-fns';
 
 export const responseJSONMapper = (res: Response, statusCode: number, data: any, message?: string) => {
   res.status(statusCode).json({ data, message: message || '' });
@@ -108,4 +110,38 @@ export const commentResponseMapper = (comment: CommentsInf) => {
   }
 
   return comment;
+};
+
+export const dateConstSwitcherHandler = (dateConst: string) => {
+  let start = new Date();
+  const end = endOfDay(convertToLocalTime(toDate(new Date()), { timeZone: DEFAULT_TIMEZONE }));
+  switch (dateConst) {
+    case DATE_FILTER_TYPE_CONST.TODAY:
+      start = startOfDay(convertToLocalTime(toDate(start), { timeZone: DEFAULT_TIMEZONE }));
+      break;
+
+    case DATE_FILTER_TYPE_CONST.LAST2DAY:
+      start = sub(startOfDay(convertToLocalTime(toDate(start), { timeZone: DEFAULT_TIMEZONE })), {
+        days: 2,
+      });
+      break;
+
+    case DATE_FILTER_TYPE_CONST.WEEK:
+      start = sub(startOfDay(convertToLocalTime(toDate(start), { timeZone: DEFAULT_TIMEZONE })), {
+        weeks: 1,
+      });
+      break;
+
+    case DATE_FILTER_TYPE_CONST.MONTH:
+      start = sub(startOfDay(convertToLocalTime(toDate(start), { timeZone: DEFAULT_TIMEZONE })), {
+        months: 1,
+      });
+      break;
+
+    default:
+      start = startOfDay(convertToLocalTime(toDate(start), { timeZone: DEFAULT_TIMEZONE }));
+      break;
+  }
+
+  return { start, end };
 };
