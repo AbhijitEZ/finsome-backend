@@ -7,7 +7,7 @@ import { APP_ERROR_MESSAGE, DATE_FILTER_TYPE_CONST, DEFAULT_TIMEZONE, FILE_COUNT
 import { dateFormatter, postAssetsGenerator, profileImageGenerator } from './util';
 import { CommentsInf, PostsInf } from '@/interfaces/general.interface';
 import { convertToLocalTime } from 'date-fns-timezone';
-import { endOfDay, startOfDay, sub, toDate } from 'date-fns';
+import { endOfDay, format, startOfDay, sub, toDate } from 'date-fns';
 
 export const responseJSONMapper = (res: Response, statusCode: number, data: any, message?: string) => {
   res.status(statusCode).json({ data, message: message || '' });
@@ -114,6 +114,7 @@ export const commentResponseMapper = (comment: CommentsInf) => {
 
 export const dateConstSwitcherHandler = (dateConst: string) => {
   let start = new Date();
+  console.log(format(startOfDay(convertToLocalTime(new Date(), { timeZone: DEFAULT_TIMEZONE })), 'yyy-MM-dd'), new Date(), 'NEWWWWWWWWWWWWWWW');
   const end = endOfDay(convertToLocalTime(toDate(new Date()), { timeZone: DEFAULT_TIMEZONE }));
   switch (dateConst) {
     case DATE_FILTER_TYPE_CONST.TODAY:

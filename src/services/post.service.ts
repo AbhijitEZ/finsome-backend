@@ -342,7 +342,7 @@ class PostService {
       postsQb.append({
         $match: {
           analysis_type: {
-            $id: analysisTypes,
+            $in: analysisTypes,
           },
         },
       });
