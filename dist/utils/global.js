@@ -102,7 +102,6 @@ const commentResponseMapper = (comment) => {
 exports.commentResponseMapper = commentResponseMapper;
 const dateConstSwitcherHandler = (dateConst) => {
     let start = new Date();
-    console.log((0, date_fns_1.format)((0, date_fns_1.startOfDay)((0, date_fns_timezone_1.convertToLocalTime)(new Date(), { timeZone: constants_1.DEFAULT_TIMEZONE })), 'yyy-MM-dd'), new Date(), 'NEWWWWWWWWWWWWWWW');
     const end = (0, date_fns_1.endOfDay)((0, date_fns_timezone_1.convertToLocalTime)((0, date_fns_1.toDate)(new Date()), { timeZone: constants_1.DEFAULT_TIMEZONE }));
     switch (dateConst) {
         case constants_1.DATE_FILTER_TYPE_CONST.TODAY:

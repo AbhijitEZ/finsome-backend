@@ -333,7 +333,7 @@ class PostService {
                 $match: {
                     created_at: {
                         $gte: start,
-                        $lt: end,
+                        $lte: end,
                     },
                 },
             });
