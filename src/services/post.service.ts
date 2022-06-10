@@ -373,6 +373,7 @@ class PostService {
     /* NOTE: Require testing for the different timezone */
     if (queryData.date) {
       const { start, end } = dateConstSwitcherHandler(queryData.date);
+      console.log(start, end, 'start, end ');
       postsQb.append({
         $match: {
           created_at: {
