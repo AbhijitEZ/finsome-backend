@@ -267,6 +267,17 @@ class AuthController {
       next(error);
     }
   };
+
+  public followDeleteRequest = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.authService.followDeleteRequest(req.user?._id, req.params.followId);
+
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

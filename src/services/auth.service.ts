@@ -408,6 +408,22 @@ class AuthService {
     return followReqExists;
   }
 
+  public async followDeleteRequest(userId: string, followId: string): Promise<any> {
+    const followReqExists = await this.userFollowerM.findOne({
+      _id: followId,
+      user_id: userId,
+      accepted: false,
+    });
+
+    if (!followReqExists) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.follower_exists);
+    }
+
+    await this.userFollowerM.findByIdAndDelete(followReqExists._id);
+
+    return {};
+  }
+
   public async userListing(userId: string, reqData: UserListingDto): Promise<any> {
     const usersqb = this.users.aggregate([
       {

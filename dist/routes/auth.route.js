@@ -36,6 +36,7 @@ class AuthRoute {
         this.router.post(`${this.path}quick-contact`, (0, validation_middleware_1.default)(users_dto_1.QuickContactDto, 'body'), auth_middleware_1.default, this.authController.addQuickContact);
         this.router.post(`${this.path}follow`, (0, validation_middleware_1.default)(users_dto_1.FollowDto, 'body'), auth_middleware_1.default, this.authController.followerRequest);
         this.router.get(`${this.path}follow-accept/:followId`, auth_middleware_1.default, this.authController.followAcceptByUser);
+        this.router.delete(`${this.path}follow/:followId`, auth_middleware_1.default, this.authController.followDeleteRequest);
         this.router.get(`${this.path}users-list`, (0, validation_middleware_1.default)(users_dto_1.UserListingDto, 'query'), auth_middleware_1.default, this.authController.userListing);
         this.router.get(`${this.path}user-detail/:id`, auth_middleware_1.default, this.authController.userDetail);
         // !SECTION: General APIS => END

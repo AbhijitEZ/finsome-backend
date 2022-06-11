@@ -42,6 +42,7 @@ declare class AuthService {
     addQuickContact(reqData: QuickContactDto): Promise<any>;
     followerRequest(userId: string, reqData: FollowDto): Promise<any>;
     followAcceptRequest(userId: string, followId: string): Promise<any>;
+    followDeleteRequest(userId: string, followId: string): Promise<any>;
     userListing(userId: string, reqData: UserListingDto): Promise<any>;
     userDetail(userId: string, detailId: string): Promise<any>;
     createToken(user: User): TokenData;
