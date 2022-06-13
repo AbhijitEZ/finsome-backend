@@ -382,7 +382,6 @@ class AuthService {
     async followDeleteRequest(userId, followId) {
         const followReqExists = await this.userFollowerM.findOne({
             _id: followId,
-            accepted: false,
         });
         if (!followReqExists) {
             throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.follower_exists);

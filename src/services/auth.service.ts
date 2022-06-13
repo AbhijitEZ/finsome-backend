@@ -449,7 +449,6 @@ class AuthService {
   public async followDeleteRequest(userId: string, followId: string): Promise<any> {
     const followReqExists = await this.userFollowerM.findOne({
       _id: followId,
-      accepted: false,
     });
 
     if (!followReqExists) {
