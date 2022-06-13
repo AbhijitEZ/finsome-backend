@@ -39,6 +39,7 @@ class AuthRoute {
         this.router.delete(`${this.path}follow/:followId`, auth_middleware_1.default, this.authController.followDeleteRequest);
         this.router.get(`${this.path}users-list`, (0, validation_middleware_1.default)(users_dto_1.UserListingDto, 'query'), auth_middleware_1.default, this.authController.userListing);
         this.router.get(`${this.path}user-detail/:id`, auth_middleware_1.default, this.authController.userDetail);
+        this.router.get(`${this.path}user/notifications`, auth_middleware_1.default, this.authController.userNotifications);
         // !SECTION: General APIS => END
     }
 }

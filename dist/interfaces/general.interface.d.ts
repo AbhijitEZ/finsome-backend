@@ -39,6 +39,7 @@ export interface UserSuggestionImproveInf {
 export interface UserFollowerInf {
     user_id: string;
     follower_id: string;
+    accepted: boolean;
     created_at: string;
     updated_at: string;
     deleted_at?: Date;

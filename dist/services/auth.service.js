@@ -20,6 +20,7 @@ const logger_1 = require("../utils/logger");
 const app_improvement_type_1 = tslib_1.__importDefault(require("../models/app-improvement-type"));
 const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
 const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
+const notifications_1 = tslib_1.__importDefault(require("../models/notifications"));
 class AuthService {
     constructor() {
         this.users = users_model_1.default;
@@ -314,12 +315,24 @@ class AuthService {
         var _a;
         await this.userAppSuggestion.create({ description: (_a = reqData === null || reqData === void 0 ? void 0 : reqData.description) !== null && _a !== void 0 ? _a : '', user_id: id, app_improve_type_id: reqData.id });
     }
+    async userNotfication(userId) {
+        const notificationsData = await notifications_1.default
+            .find({
+            user_id: userId,
+            deleted_at: {
+                $eq: null,
+            },
+        })
+            .lean();
+        // @ts-ignore
+        return notificationsData;
+    }
     async addQuickContact(reqData) {
         const newContact = await this.quickContact.create(Object.assign({}, reqData));
         // @ts-ignore
         return newContact;
     }
-    async followerRequest(userId, reqData) {
+    async followerRequest(userId, fullname, reqData) {
         const followerReqExists = await this.userFollowerM.findOne({
             user_id: reqData.following_id,
             follower_id: userId,
@@ -327,7 +340,26 @@ class AuthService {
         if (followerReqExists) {
             throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.follower_exists);
         }
-        const newFollower = await this.userFollowerM.create({ follower_id: userId, user_id: reqData.following_id });
+        const followingUserDetail = await user_configurations_1.default
+            .findOne({
+            user_id: reqData.following_id,
+        })
+            .lean();
+        const acceptedState = (followingUserDetail === null || followingUserDetail === void 0 ? void 0 : followingUserDetail.account_type) === constants_1.ACCOUNT_TYPE_CONST.PRIVATE ? constants_1.ACCOUNT_TYPE_CONST.PRIVATE : constants_1.ACCOUNT_TYPE_CONST.PUBLIC;
+        const newFollower = await this.userFollowerM.create({
+            follower_id: userId,
+            user_id: reqData.following_id,
+            accepted: (followingUserDetail === null || followingUserDetail === void 0 ? void 0 : followingUserDetail.account_type) === constants_1.ACCOUNT_TYPE_CONST.PRIVATE ? constants_1.ACCOUNT_TYPE_CONST.PRIVATE : constants_1.ACCOUNT_TYPE_CONST.PUBLIC,
+        });
+        if (acceptedState === constants_1.ACCOUNT_TYPE_CONST.PUBLIC) {
+            notifications_1.default.create({
+                user_id: reqData.following_id,
+                message: `${fullname || 'User'} has requested to follow you`,
+                meta_data: {
+                    _id: newFollower._id,
+                },
+            });
+        }
         // @ts-ignore
         return newFollower;
     }
@@ -343,19 +375,22 @@ class AuthService {
         await this.userFollowerM.findByIdAndUpdate(followReqExists._id, {
             accepted: true,
         });
-        return followReqExists;
+        return {
+            accepted: true,
+        };
     }
     async followDeleteRequest(userId, followId) {
         const followReqExists = await this.userFollowerM.findOne({
             _id: followId,
-            user_id: userId,
             accepted: false,
         });
         if (!followReqExists) {
             throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.follower_exists);
         }
         await this.userFollowerM.findByIdAndDelete(followReqExists._id);
-        return {};
+        return {
+            accepted: false,
+        };
     }
     async userListing(userId, reqData) {
         var _a, _b;

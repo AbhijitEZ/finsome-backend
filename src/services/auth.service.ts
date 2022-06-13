@@ -44,6 +44,7 @@ import { logger } from '@/utils/logger';
 import appImprovementModel from '@/models/app-improvement-type';
 import userConfigurationModel from '@/models/user-configurations';
 import userFollowerModel from '@/models/user-followers';
+import notificationModel from '@/models/notifications';
 
 class AuthService {
   public users = userModel;
@@ -367,6 +368,19 @@ class AuthService {
     await this.userAppSuggestion.create({ description: reqData?.description ?? '', user_id: id, app_improve_type_id: reqData.id });
   }
 
+  public async userNotfication(userId: string): Promise<any> {
+    const notificationsData = await notificationModel
+      .find({
+        user_id: userId,
+        deleted_at: {
+          $eq: null,
+        },
+      })
+      .lean();
+
+    // @ts-ignore
+    return notificationsData;
+  }
   public async addQuickContact(reqData: QuickContactDto): Promise<any> {
     const newContact = await this.quickContact.create({ ...reqData });
 
@@ -374,7 +388,7 @@ class AuthService {
     return newContact;
   }
 
-  public async followerRequest(userId: string, reqData: FollowDto): Promise<any> {
+  public async followerRequest(userId: string, fullname: string, reqData: FollowDto): Promise<any> {
     const followerReqExists = await this.userFollowerM.findOne({
       user_id: reqData.following_id,
       follower_id: userId,
@@ -384,7 +398,29 @@ class AuthService {
       throw new HttpException(409, APP_ERROR_MESSAGE.follower_exists);
     }
 
-    const newFollower = await this.userFollowerM.create({ follower_id: userId, user_id: reqData.following_id });
+    const followingUserDetail = await userConfigurationModel
+      .findOne({
+        user_id: reqData.following_id,
+      })
+      .lean();
+
+    const acceptedState = followingUserDetail?.account_type === ACCOUNT_TYPE_CONST.PRIVATE ? ACCOUNT_TYPE_CONST.PRIVATE : ACCOUNT_TYPE_CONST.PUBLIC;
+
+    const newFollower = await this.userFollowerM.create({
+      follower_id: userId,
+      user_id: reqData.following_id,
+      accepted: followingUserDetail?.account_type === ACCOUNT_TYPE_CONST.PRIVATE ? ACCOUNT_TYPE_CONST.PRIVATE : ACCOUNT_TYPE_CONST.PUBLIC,
+    });
+
+    if (acceptedState === ACCOUNT_TYPE_CONST.PUBLIC) {
+      notificationModel.create({
+        user_id: reqData.following_id,
+        message: `${fullname || 'User'} has requested to follow you`,
+        meta_data: {
+          _id: newFollower._id,
+        },
+      });
+    }
 
     // @ts-ignore
     return newFollower;
@@ -405,13 +441,14 @@ class AuthService {
       accepted: true,
     });
 
-    return followReqExists;
+    return {
+      accepted: true,
+    };
   }
 
   public async followDeleteRequest(userId: string, followId: string): Promise<any> {
     const followReqExists = await this.userFollowerM.findOne({
       _id: followId,
-      user_id: userId,
       accepted: false,
     });
 
@@ -421,7 +458,9 @@ class AuthService {
 
     await this.userFollowerM.findByIdAndDelete(followReqExists._id);
 
-    return {};
+    return {
+      accepted: false,
+    };
   }
 
   public async userListing(userId: string, reqData: UserListingDto): Promise<any> {

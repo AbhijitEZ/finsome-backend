@@ -228,7 +228,7 @@ class AuthController {
 
   public followerRequest = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.authService.followerRequest(req.user?._id, req.body);
+      const data = await this.authService.followerRequest(req.user?._id, req.user?.fullname, req.body);
 
       responseJSONMapper(res, 201, data);
     } catch (error) {
@@ -250,6 +250,17 @@ class AuthController {
     try {
       // @ts-ignore
       const data = await this.authService.userListing(req.user?._id, req.query);
+
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public userNotifications = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.authService.userNotfication(req.user?._id);
 
       responseJSONMapper(res, 200, data);
     } catch (error) {
