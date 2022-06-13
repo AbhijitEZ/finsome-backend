@@ -409,7 +409,7 @@ class AuthService {
     const newFollower = await this.userFollowerM.create({
       follower_id: userId,
       user_id: reqData.following_id,
-      accepted: followingUserDetail?.account_type === ACCOUNT_TYPE_CONST.PRIVATE ? ACCOUNT_TYPE_CONST.PRIVATE : ACCOUNT_TYPE_CONST.PUBLIC,
+      accepted: followingUserDetail?.account_type === ACCOUNT_TYPE_CONST.PRIVATE ? false : true,
     });
 
     if (acceptedState === ACCOUNT_TYPE_CONST.PUBLIC) {
