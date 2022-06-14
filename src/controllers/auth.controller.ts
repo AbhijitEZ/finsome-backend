@@ -228,7 +228,7 @@ class AuthController {
 
   public followerRequest = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.authService.followerRequest(req.user?._id, req.user?.fullname, req.body);
+      const data = await this.authService.followerRequest(req.user?._id, req.user?.fullname, req?.user?.profile_photo, req.body);
 
       responseJSONMapper(res, 201, data);
     } catch (error) {

@@ -110,6 +110,11 @@ export const DATE_FILTER_TYPE_CONST = {
   MONTH: 'MONTH',
 };
 
+export const NOTIFICATION_TYPE_CONST = {
+  FOLLOW: 'FOLLOW',
+  CHANNEL: 'CHANNEL',
+};
+
 export const SKIP_DEF = '0';
 export const LIMIT_DEF = '10';
 

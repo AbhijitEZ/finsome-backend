@@ -98,6 +98,10 @@ export declare const DATE_FILTER_TYPE_CONST: {
     WEEK: string;
     MONTH: string;
 };
+export declare const NOTIFICATION_TYPE_CONST: {
+    FOLLOW: string;
+    CHANNEL: string;
+};
 export declare const SKIP_DEF = "0";
 export declare const LIMIT_DEF = "10";
 export declare const FILE_LIMIT = 20000000;

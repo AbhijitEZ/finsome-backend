@@ -332,7 +332,7 @@ class AuthService {
         // @ts-ignore
         return newContact;
     }
-    async followerRequest(userId, fullname, reqData) {
+    async followerRequest(userId, fullname, profilePhoto, reqData) {
         const followerReqExists = await this.userFollowerM.findOne({
             user_id: reqData.following_id,
             follower_id: userId,
@@ -356,7 +356,9 @@ class AuthService {
                 user_id: reqData.following_id,
                 message: `${fullname || 'User'} has requested to follow you`,
                 meta_data: {
-                    _id: newFollower._id,
+                    follow: newFollower._id,
+                    user_id: userId,
+                    profile_photo: (0, util_1.profileImageGenerator)(profilePhoto),
                 },
             });
         }

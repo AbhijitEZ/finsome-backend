@@ -12,6 +12,11 @@ const notificationsSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    type: {
+        type: String,
+        enum: Object.keys(constants_1.NOTIFICATION_TYPE_CONST),
+        default: constants_1.NOTIFICATION_TYPE_CONST.FOLLOW,
+    },
     meta_data: {
         type: Object,
     },

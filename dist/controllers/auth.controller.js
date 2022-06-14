@@ -194,9 +194,9 @@ class AuthController {
             }
         };
         this.followerRequest = async (req, res, next) => {
-            var _a, _b;
+            var _a, _b, _c;
             try {
-                const data = await this.authService.followerRequest((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.user) === null || _b === void 0 ? void 0 : _b.fullname, req.body);
+                const data = await this.authService.followerRequest((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.user) === null || _b === void 0 ? void 0 : _b.fullname, (_c = req === null || req === void 0 ? void 0 : req.user) === null || _c === void 0 ? void 0 : _c.profile_photo, req.body);
                 (0, global_1.responseJSONMapper)(res, 201, data);
             }
             catch (error) {

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_TIMEZONE = exports.postAssetsFolder = exports.profileImageFolder = exports.NOTFICATIONS = exports.USER_FOLLOWERS = exports.USER_SUGGESTION_IMPROVEMENTS = exports.POSTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.COMMENTS = exports.STOCK_TYPES = exports.COMPLAINTS = exports.LIKES = exports.POST_STOCKS = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.USER_CONFIGURATIONS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_COUNT_POST = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.DATE_FILTER_TYPE_CONST = exports.COMPLAINT_TYPE = exports.ASSET_TYPE_CONST = exports.ACCOUNT_TYPE_CONST = exports.STOCK_RECOMMENDED_CONST = exports.TRADE_TYPE_CONST = exports.ANALYSIS_TYPE_CONST = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
+exports.DEFAULT_TIMEZONE = exports.postAssetsFolder = exports.profileImageFolder = exports.NOTFICATIONS = exports.USER_FOLLOWERS = exports.USER_SUGGESTION_IMPROVEMENTS = exports.POSTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.COMMENTS = exports.STOCK_TYPES = exports.COMPLAINTS = exports.LIKES = exports.POST_STOCKS = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.USER_CONFIGURATIONS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_COUNT_POST = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.NOTIFICATION_TYPE_CONST = exports.DATE_FILTER_TYPE_CONST = exports.COMPLAINT_TYPE = exports.ASSET_TYPE_CONST = exports.ACCOUNT_TYPE_CONST = exports.STOCK_RECOMMENDED_CONST = exports.TRADE_TYPE_CONST = exports.ANALYSIS_TYPE_CONST = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
 exports.APP_SUCCESS_MESSAGE = {
     signup_phone_verify_success: 'Signup phone verified successfully.',
     signup_success: 'Signup successfully.',
@@ -100,6 +100,10 @@ exports.DATE_FILTER_TYPE_CONST = {
     LAST2DAY: 'LAST2DAY',
     WEEK: 'WEEK',
     MONTH: 'MONTH',
+};
+exports.NOTIFICATION_TYPE_CONST = {
+    FOLLOW: 'FOLLOW',
+    CHANNEL: 'CHANNEL',
 };
 exports.SKIP_DEF = '0';
 exports.LIMIT_DEF = '10';

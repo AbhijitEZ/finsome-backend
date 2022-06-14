@@ -41,7 +41,7 @@ declare class AuthService {
     updateUserAppImprovementSuggestion(reqData: AppImprovementUserDto, id: string): Promise<any>;
     userNotfication(userId: string): Promise<any>;
     addQuickContact(reqData: QuickContactDto): Promise<any>;
-    followerRequest(userId: string, fullname: string, reqData: FollowDto): Promise<any>;
+    followerRequest(userId: string, fullname: string, profilePhoto: string, reqData: FollowDto): Promise<any>;
     followAcceptRequest(userId: string, followId: string): Promise<any>;
     followDeleteRequest(userId: string, followId: string): Promise<any>;
     userListing(userId: string, reqData: UserListingDto): Promise<any>;

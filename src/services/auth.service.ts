@@ -388,7 +388,7 @@ class AuthService {
     return newContact;
   }
 
-  public async followerRequest(userId: string, fullname: string, reqData: FollowDto): Promise<any> {
+  public async followerRequest(userId: string, fullname: string, profilePhoto: string, reqData: FollowDto): Promise<any> {
     const followerReqExists = await this.userFollowerM.findOne({
       user_id: reqData.following_id,
       follower_id: userId,
@@ -417,7 +417,9 @@ class AuthService {
         user_id: reqData.following_id,
         message: `${fullname || 'User'} has requested to follow you`,
         meta_data: {
-          _id: newFollower._id,
+          follow: newFollower._id,
+          user_id: userId,
+          profile_photo: profileImageGenerator(profilePhoto),
         },
       });
     }
