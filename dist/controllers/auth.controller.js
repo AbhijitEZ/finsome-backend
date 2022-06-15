@@ -228,7 +228,7 @@ class AuthController {
             var _a;
             try {
                 // @ts-ignore
-                const data = await this.authService.userNotfication((_a = req.user) === null || _a === void 0 ? void 0 : _a._id);
+                const data = await this.authService.userNotfication((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.query);
                 (0, global_1.responseJSONMapper)(res, 200, data);
             }
             catch (error) {

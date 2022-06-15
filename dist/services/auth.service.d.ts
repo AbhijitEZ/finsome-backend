@@ -3,6 +3,7 @@
 import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, FollowDto, LoginDto, NotificationDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
 import { TokenData } from '../interfaces/auth.interface';
 import { User } from '../interfaces/users.interface';
+import { PaginationDto } from '../dtos/general.dto';
 declare class AuthService {
     users: import("mongoose").Model<User & import("mongoose").Document<any, any, any>, {}, {}>;
     otpValidation: import("mongoose").Model<import("../interfaces/general.interface").OtpValidationInf & import("mongoose").Document<any, any, any>, {}, {}>;
@@ -39,7 +40,7 @@ declare class AuthService {
     appImprovementTypes(): Promise<any>;
     getUserAppImprovementSuggestion(id: string): Promise<any>;
     updateUserAppImprovementSuggestion(reqData: AppImprovementUserDto, id: string): Promise<any>;
-    userNotfication(userId: string): Promise<any>;
+    userNotfication(userId: string, queryData: PaginationDto): Promise<any>;
     addQuickContact(reqData: QuickContactDto): Promise<any>;
     followerRequest(userId: string, fullname: string, profilePhoto: string, reqData: FollowDto): Promise<any>;
     followAcceptRequest(userId: string, fullname: string, profilephoto: string, followId: string): Promise<any>;

@@ -260,7 +260,7 @@ class AuthController {
   public userNotifications = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.authService.userNotfication(req.user?._id);
+      const data = await this.authService.userNotfication(req.user?._id, req.query);
 
       responseJSONMapper(res, 200, data);
     } catch (error) {

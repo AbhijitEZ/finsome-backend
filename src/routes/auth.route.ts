@@ -20,6 +20,7 @@ import { Routes } from '@interfaces/routes.interface';
 import authMiddleware, { authOptionalMiddleware } from '@middlewares/auth.middleware';
 import validationMiddleware from '@middlewares/validation.middleware';
 import { fileUploadCB } from '@/utils/global';
+import { PaginationDto } from '@/dtos/general.dto';
 
 class AuthRoute implements Routes {
   public path = '/';
@@ -90,7 +91,12 @@ class AuthRoute implements Routes {
     this.router.get(`${this.path}users-list`, validationMiddleware(UserListingDto, 'query'), authMiddleware, this.authController.userListing);
     this.router.get(`${this.path}user-detail/:id`, authMiddleware, this.authController.userDetail);
 
-    this.router.get(`${this.path}user/notifications`, authMiddleware, this.authController.userNotifications);
+    this.router.get(
+      `${this.path}user/notifications`,
+      authMiddleware,
+      validationMiddleware(PaginationDto, 'query'),
+      this.authController.userNotifications,
+    );
 
     // !SECTION: General APIS => END
   }

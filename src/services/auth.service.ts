@@ -48,6 +48,7 @@ import appImprovementModel from '@/models/app-improvement-type';
 import userConfigurationModel from '@/models/user-configurations';
 import userFollowerModel from '@/models/user-followers';
 import notificationModel from '@/models/notifications';
+import { PaginationDto } from '@/dtos/general.dto';
 
 class AuthService {
   public users = userModel;
@@ -371,19 +372,44 @@ class AuthService {
     await this.userAppSuggestion.create({ description: reqData?.description ?? '', user_id: id, app_improve_type_id: reqData.id });
   }
 
-  public async userNotfication(userId: string): Promise<any> {
-    const notificationsData = await notificationModel
-      .find({
-        user_id: userId,
-        deleted_at: {
-          $eq: null,
+  public async userNotfication(userId: string, queryData: PaginationDto): Promise<any> {
+    const notificationsData = await notificationModel.aggregate([
+      {
+        $match: {
+          user_id: userId,
+          deleted_at: {
+            $eq: null,
+          },
         },
-      })
-      .lean();
+      },
+      {
+        $sort: {
+          created_at: -1,
+        },
+      },
+      {
+        $facet: {
+          totalRecords: [
+            {
+              $count: 'total',
+            },
+          ],
+          result: [
+            {
+              $skip: parseInt(queryData.skip ?? SKIP_DEF),
+            },
+            {
+              $limit: parseInt(queryData.limit ?? LIMIT_DEF),
+            },
+          ],
+        },
+      },
+    ]);
 
     // @ts-ignore
     return notificationsData;
   }
+
   public async addQuickContact(reqData: QuickContactDto): Promise<any> {
     const newContact = await this.quickContact.create({ ...reqData });
 

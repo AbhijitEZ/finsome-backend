@@ -315,15 +315,40 @@ class AuthService {
         var _a;
         await this.userAppSuggestion.create({ description: (_a = reqData === null || reqData === void 0 ? void 0 : reqData.description) !== null && _a !== void 0 ? _a : '', user_id: id, app_improve_type_id: reqData.id });
     }
-    async userNotfication(userId) {
-        const notificationsData = await notifications_1.default
-            .find({
-            user_id: userId,
-            deleted_at: {
-                $eq: null,
+    async userNotfication(userId, queryData) {
+        var _a, _b;
+        const notificationsData = await notifications_1.default.aggregate([
+            {
+                $match: {
+                    user_id: userId,
+                    deleted_at: {
+                        $eq: null,
+                    },
+                },
             },
-        })
-            .lean();
+            {
+                $sort: {
+                    created_at: -1,
+                },
+            },
+            {
+                $facet: {
+                    totalRecords: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    result: [
+                        {
+                            $skip: parseInt((_a = queryData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
+                        },
+                        {
+                            $limit: parseInt((_b = queryData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
+                        },
+                    ],
+                },
+            },
+        ]);
         // @ts-ignore
         return notificationsData;
     }
