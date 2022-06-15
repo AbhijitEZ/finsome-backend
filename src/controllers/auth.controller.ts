@@ -238,7 +238,7 @@ class AuthController {
 
   public followAcceptByUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.authService.followAcceptRequest(req.user?._id, req.params?.followId);
+      const data = await this.authService.followAcceptRequest(req.user?._id, req.user?.fullname, req.user?.profile_photo, req.params?.followId);
 
       responseJSONMapper(res, 201, data);
     } catch (error) {

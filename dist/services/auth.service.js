@@ -365,7 +365,7 @@ class AuthService {
         // @ts-ignore
         return newFollower;
     }
-    async followAcceptRequest(userId, followId) {
+    async followAcceptRequest(userId, fullname, profilephoto, followId) {
         const followReqExists = await this.userFollowerM.findOne({
             _id: followId,
             user_id: userId,
@@ -376,6 +376,16 @@ class AuthService {
         }
         await this.userFollowerM.findByIdAndUpdate(followReqExists._id, {
             accepted: true,
+        });
+        notifications_1.default.create({
+            user_id: followReqExists === null || followReqExists === void 0 ? void 0 : followReqExists.follower_id,
+            message: `${fullname || 'User'} has accepted your follow request`,
+            type: constants_1.NOTIFICATION_TYPE_CONST.FOLLOW_ACCEPT,
+            meta_data: {
+                follow: followId,
+                user_id: userId,
+                profile_photo: (0, util_1.profileImageGenerator)(profilephoto),
+            },
         });
         return {
             accepted: true,
@@ -514,6 +524,34 @@ class AuthService {
             },
             {
                 $lookup: {
+                    from: constants_1.USER_CONFIGURATIONS,
+                    localField: '_id',
+                    foreignField: 'user_id',
+                    as: 'user_configuration',
+                    pipeline: [
+                        {
+                            $project: {
+                                account_type: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.POSTS,
+                    localField: '_id',
+                    foreignField: 'user_id',
+                    as: 'posts',
+                    pipeline: [
+                        {
+                            $count: 'post_total_count',
+                        },
+                    ],
+                },
+            },
+            {
+                $lookup: {
                     from: constants_1.USER_FOLLOWERS,
                     localField: '_id',
                     foreignField: 'user_id',
@@ -578,6 +616,12 @@ class AuthService {
                             $count: 'total_follower',
                         },
                     ],
+                },
+            },
+            {
+                $unwind: {
+                    path: '$user_configuration',
+                    preserveNullAndEmptyArrays: true,
                 },
             },
             {

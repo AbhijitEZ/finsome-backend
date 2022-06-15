@@ -204,9 +204,9 @@ class AuthController {
             }
         };
         this.followAcceptByUser = async (req, res, next) => {
-            var _a, _b;
+            var _a, _b, _c, _d;
             try {
-                const data = await this.authService.followAcceptRequest((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.followId);
+                const data = await this.authService.followAcceptRequest((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.user) === null || _b === void 0 ? void 0 : _b.fullname, (_c = req.user) === null || _c === void 0 ? void 0 : _c.profile_photo, (_d = req.params) === null || _d === void 0 ? void 0 : _d.followId);
                 (0, global_1.responseJSONMapper)(res, 201, data);
             }
             catch (error) {

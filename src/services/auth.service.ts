@@ -34,7 +34,10 @@ import {
   APP_IMPROVEMENT_TYPES,
   DEFAULT_TIMEZONE,
   LIMIT_DEF,
+  NOTIFICATION_TYPE_CONST,
+  POSTS,
   SKIP_DEF,
+  USER_CONFIGURATIONS,
   USER_FOLLOWERS,
   USER_ROLE,
 } from '@/utils/constants';
@@ -428,7 +431,7 @@ class AuthService {
     return newFollower;
   }
 
-  public async followAcceptRequest(userId: string, followId: string): Promise<any> {
+  public async followAcceptRequest(userId: string, fullname: string, profilephoto: string, followId: string): Promise<any> {
     const followReqExists = await this.userFollowerM.findOne({
       _id: followId,
       user_id: userId,
@@ -441,6 +444,17 @@ class AuthService {
 
     await this.userFollowerM.findByIdAndUpdate(followReqExists._id, {
       accepted: true,
+    });
+
+    notificationModel.create({
+      user_id: followReqExists?.follower_id,
+      message: `${fullname || 'User'} has accepted your follow request`,
+      type: NOTIFICATION_TYPE_CONST.FOLLOW_ACCEPT,
+      meta_data: {
+        follow: followId,
+        user_id: userId,
+        profile_photo: profileImageGenerator(profilephoto),
+      },
     });
 
     return {
@@ -587,6 +601,34 @@ class AuthService {
       },
       {
         $lookup: {
+          from: USER_CONFIGURATIONS,
+          localField: '_id',
+          foreignField: 'user_id',
+          as: 'user_configuration',
+          pipeline: [
+            {
+              $project: {
+                account_type: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: POSTS,
+          localField: '_id',
+          foreignField: 'user_id',
+          as: 'posts',
+          pipeline: [
+            {
+              $count: 'post_total_count',
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
           from: USER_FOLLOWERS,
           localField: '_id',
           foreignField: 'user_id',
@@ -651,6 +693,12 @@ class AuthService {
               $count: 'total_follower',
             },
           ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$user_configuration',
+          preserveNullAndEmptyArrays: true,
         },
       },
       {

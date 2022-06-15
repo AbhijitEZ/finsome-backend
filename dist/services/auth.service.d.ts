@@ -42,7 +42,7 @@ declare class AuthService {
     userNotfication(userId: string): Promise<any>;
     addQuickContact(reqData: QuickContactDto): Promise<any>;
     followerRequest(userId: string, fullname: string, profilePhoto: string, reqData: FollowDto): Promise<any>;
-    followAcceptRequest(userId: string, followId: string): Promise<any>;
+    followAcceptRequest(userId: string, fullname: string, profilephoto: string, followId: string): Promise<any>;
     followDeleteRequest(userId: string, followId: string): Promise<any>;
     userListing(userId: string, reqData: UserListingDto): Promise<any>;
     userDetail(userId: string, detailId: string): Promise<any>;
