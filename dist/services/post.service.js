@@ -131,7 +131,7 @@ class PostService {
             userMatch['user_id'] = { $ne: null };
         }
         else if (queryData === null || queryData === void 0 ? void 0 : queryData.user_id) {
-            userMatch['user_id'] = queryData.user_id;
+            userMatch['user_id'] = new mongoose_1.Types.ObjectId(queryData.user_id);
         }
         else {
             userMatch['user_id'] = {
