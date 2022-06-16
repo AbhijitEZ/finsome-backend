@@ -17,6 +17,7 @@ class IndexRoute implements Routes {
     // SCRIPT
     this.router.get(`${this.path}script/add-admin`, this.indexController.addAdminScript);
     this.router.get(`${this.path}script/default-notification`, this.indexController.addNotificationDefaultToAllUser);
+    this.router.get(`${this.path}script/user-config-default`, this.indexController.updateDefaultConfigurationUsers);
   }
 }
 

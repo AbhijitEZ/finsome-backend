@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { hash } from 'bcrypt';
 import userModel from '@models/users.model';
-import { APP_ERROR_MESSAGE, USER_ROLE } from '@/utils/constants';
+import { ACCOUNT_TYPE_CONST, APP_ERROR_MESSAGE, USER_CONFIGURATIONS, USER_ROLE } from '@/utils/constants';
 import { HttpException } from '@/exceptions/HttpException';
 import { toDate } from 'date-fns';
+import userConfigurationModel from '@/models/user-configurations';
 
 class IndexController {
   public index = (req: Request, res: Response, next: NextFunction) => {
@@ -52,6 +53,35 @@ class IndexController {
       bulk.execute();
 
       res.status(200).json({ message: 'Updated all the user with initial allow notification = true' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /* Update the existing user to have default configuration  [ONE Timer] */
+  public updateDefaultConfigurationUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = userModel.aggregate([
+        {
+          $lookup: {
+            from: USER_CONFIGURATIONS,
+            localField: '_id',
+            foreignField: 'user_id',
+            as: 'user_conf',
+          },
+        },
+      ]);
+
+      const data = await users.exec();
+
+      data.map(user => {
+        if (!user.user_conf.length) {
+          userConfigurationModel.create({ user_id: user._id, account_type: ACCOUNT_TYPE_CONST.PUBLIC });
+          console.log(user._id, ' Added default config value');
+        }
+      });
+
+      res.status(200).json({ data, message: 'Updated user to have default configuration' });
     } catch (error) {
       next(error);
     }
