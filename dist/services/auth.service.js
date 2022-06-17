@@ -572,6 +572,13 @@ class AuthService {
                     as: 'posts',
                     pipeline: [
                         {
+                            $match: {
+                                deleted_at: {
+                                    $eq: null,
+                                },
+                            },
+                        },
+                        {
                             $count: 'post_total_count',
                         },
                     ],
