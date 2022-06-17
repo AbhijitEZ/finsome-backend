@@ -257,6 +257,16 @@ class AuthController {
                 next(error);
             }
         };
+        this.userRating = async (req, res, next) => {
+            var _a, _b;
+            try {
+                const data = await this.authService.userRating((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.userId, req.body);
+                (0, global_1.responseJSONMapper)(res, 201, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.default = AuthController;

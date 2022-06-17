@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, FollowDto, LoginDto, NotificationDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
+import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, FollowDto, LoginDto, NotificationDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, UserRateDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
 import { TokenData } from '../interfaces/auth.interface';
 import { User } from '../interfaces/users.interface';
 import { PaginationDto } from '../dtos/general.dto';
@@ -47,6 +47,7 @@ declare class AuthService {
     followDeleteRequest(userId: string, followId: string): Promise<any>;
     userListing(userId: string, reqData: UserListingDto): Promise<any>;
     userDetail(userId: string, detailId: string): Promise<any>;
+    userRating(userId: string, userRateId: string, reqData: UserRateDto): Promise<any>;
     createToken(user: User): TokenData;
     createCookie(tokenData: TokenData): string;
     updateUserCodeWithSMS: (reqData: VerifyPhoneDto, existCode?: string, type?: string) => Promise<void>;

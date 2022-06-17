@@ -6,6 +6,7 @@ import {
   NotificationDto,
   ResetPasswordDto,
   SignupPhoneDto,
+  UserRateDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
   VerifyPhoneDto,
@@ -285,6 +286,16 @@ class AuthController {
       const data = await this.authService.followDeleteRequest(req.user?._id, req.params.followId);
 
       responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public userRating = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.authService.userRating(req.user?._id, req.params?.userId, req.body as UserRateDto);
+
+      responseJSONMapper(res, 201, data);
     } catch (error) {
       next(error);
     }

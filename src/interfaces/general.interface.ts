@@ -92,6 +92,15 @@ export interface LikesInf {
   deleted_at?: string;
 }
 
+export interface UserRateInf {
+  _id: string;
+  user_id: string;
+  rated_by_user: string;
+  rate: number;
+  comment?: string;
+  deleted_at?: string;
+}
+
 export interface ComplaintsInf {
   _id: string;
   post_complain_id: string | null;

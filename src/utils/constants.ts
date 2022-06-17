@@ -32,6 +32,7 @@ export const APP_ERROR_MESSAGE = {
   user_not_complete_register: 'User has not completed the registration process, process further to complete.',
   user_already_register: 'User is already registered in system, please login to access.',
   email_exists: 'Email already exists use something different.',
+  user_rated_already: 'You has already done rating for this user.',
   username_exists: 'Username already exists use something different.',
   phone_exists: 'Phone number is already exists please use another mobile number.',
   forbidden_error: 'Forbidden to access this resource for particular user.',
@@ -128,6 +129,7 @@ export const QUICK_CONTACTS = 'quick-contacts';
 export const COUNTRIES = 'countries';
 export const POST_STOCKS = 'post-stocks';
 export const LIKES = 'likes';
+export const USER_RATES = 'user-rates';
 export const COMPLAINTS = 'complaints';
 export const STOCK_TYPES = 'stock-types';
 export const COMMENTS = 'comments';

@@ -21,6 +21,7 @@ const app_improvement_type_1 = tslib_1.__importDefault(require("../models/app-im
 const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
 const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
 const notifications_1 = tslib_1.__importDefault(require("../models/notifications"));
+const user_rates_1 = tslib_1.__importDefault(require("../models/user-rates"));
 class AuthService {
     constructor() {
         this.users = users_model_1.default;
@@ -438,6 +439,7 @@ class AuthService {
                     },
                     deleted_at: { $eq: null },
                     role: { $eq: constants_1.USER_ROLE.MEMBER },
+                    is_registration_complete: true,
                 },
             },
             {
@@ -695,6 +697,31 @@ class AuthService {
         const usersData = await usersqb.exec();
         const { result } = (0, util_1.listingResponseSanitize)(usersData);
         return { user: (_b = (_a = result.map(user => (Object.assign(Object.assign({}, user), { profile_photo: (0, util_1.profileImageGenerator)(user.profile_photo) })))) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : {} };
+    }
+    async userRating(userId, userRateId, reqData) {
+        const userRateExists = await this.users.findOne({
+            _id: userRateId,
+        });
+        if (!userRateExists) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.user_id_not_exits);
+        }
+        const userRatingExists = await user_rates_1.default.findOne({
+            deleted_at: {
+                $eq: null,
+            },
+            rated_by_user: userId,
+        });
+        if (userRatingExists) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.user_rated_already);
+        }
+        const newUserRateData = await user_rates_1.default.create({
+            user_id: userRateId,
+            rated_by_user: userId,
+            rate: reqData.rate,
+            comment: reqData.comment,
+        });
+        // @ts-ignore
+        return newUserRateData._doc;
     }
     createToken(user) {
         const dataStoredInToken = { _id: user._id, role: user.role };

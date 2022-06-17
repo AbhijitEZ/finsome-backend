@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_TIMEZONE = exports.postAssetsFolder = exports.profileImageFolder = exports.NOTFICATIONS = exports.USER_FOLLOWERS = exports.USER_SUGGESTION_IMPROVEMENTS = exports.POSTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.COMMENTS = exports.STOCK_TYPES = exports.COMPLAINTS = exports.LIKES = exports.POST_STOCKS = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.USER_CONFIGURATIONS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_COUNT_POST = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.NOTIFICATION_TYPE_CONST = exports.DATE_FILTER_TYPE_CONST = exports.COMPLAINT_TYPE = exports.ASSET_TYPE_CONST = exports.ACCOUNT_TYPE_CONST = exports.STOCK_RECOMMENDED_CONST = exports.TRADE_TYPE_CONST = exports.ANALYSIS_TYPE_CONST = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
+exports.DEFAULT_TIMEZONE = exports.postAssetsFolder = exports.profileImageFolder = exports.NOTFICATIONS = exports.USER_FOLLOWERS = exports.USER_SUGGESTION_IMPROVEMENTS = exports.POSTS = exports.USERS = exports.OTP_VALIDATIONS = exports.TERMS_CONDITIONS = exports.PRIVACY_POLICIES = exports.COMMENTS = exports.STOCK_TYPES = exports.COMPLAINTS = exports.USER_RATES = exports.LIKES = exports.POST_STOCKS = exports.COUNTRIES = exports.QUICK_CONTACTS = exports.USER_CONFIGURATIONS = exports.APP_IMPROVEMENT_TYPES = exports.FILE_COUNT_POST = exports.FILE_LIMIT = exports.LIMIT_DEF = exports.SKIP_DEF = exports.NOTIFICATION_TYPE_CONST = exports.DATE_FILTER_TYPE_CONST = exports.COMPLAINT_TYPE = exports.ASSET_TYPE_CONST = exports.ACCOUNT_TYPE_CONST = exports.STOCK_RECOMMENDED_CONST = exports.TRADE_TYPE_CONST = exports.ANALYSIS_TYPE_CONST = exports.STOCK_TYPE_CONST = exports.GENDER_CONST = exports.USER_ROLE = exports.APP_ERROR_MESSAGE = exports.APP_SUCCESS_MESSAGE = void 0;
 exports.APP_SUCCESS_MESSAGE = {
     signup_phone_verify_success: 'Signup phone verified successfully.',
     signup_success: 'Signup successfully.',
@@ -34,6 +34,7 @@ exports.APP_ERROR_MESSAGE = {
     user_not_complete_register: 'User has not completed the registration process, process further to complete.',
     user_already_register: 'User is already registered in system, please login to access.',
     email_exists: 'Email already exists use something different.',
+    user_rated_already: 'You has already done rating for this user.',
     username_exists: 'Username already exists use something different.',
     phone_exists: 'Phone number is already exists please use another mobile number.',
     forbidden_error: 'Forbidden to access this resource for particular user.',
@@ -116,6 +117,7 @@ exports.QUICK_CONTACTS = 'quick-contacts';
 exports.COUNTRIES = 'countries';
 exports.POST_STOCKS = 'post-stocks';
 exports.LIKES = 'likes';
+exports.USER_RATES = 'user-rates';
 exports.COMPLAINTS = 'complaints';
 exports.STOCK_TYPES = 'stock-types';
 exports.COMMENTS = 'comments';

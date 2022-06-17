@@ -15,6 +15,7 @@ import {
   ResetPasswordDto,
   SignupPhoneDto,
   UserListingDto,
+  UserRateDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
   VerifyPhoneDto,
@@ -49,6 +50,7 @@ import userConfigurationModel from '@/models/user-configurations';
 import userFollowerModel from '@/models/user-followers';
 import notificationModel from '@/models/notifications';
 import { PaginationDto } from '@/dtos/general.dto';
+import userRatesModel from '@/models/user-rates';
 
 class AuthService {
   public users = userModel;
@@ -513,6 +515,7 @@ class AuthService {
           },
           deleted_at: { $eq: null },
           role: { $eq: USER_ROLE.MEMBER },
+          is_registration_complete: true,
         },
       },
       {
@@ -775,6 +778,37 @@ class AuthService {
     const usersData = await usersqb.exec();
     const { result } = listingResponseSanitize(usersData);
     return { user: result.map(user => ({ ...user, profile_photo: profileImageGenerator(user.profile_photo) }))?.[0] ?? {} };
+  }
+
+  public async userRating(userId: string, userRateId: string, reqData: UserRateDto): Promise<any> {
+    const userRateExists = await this.users.findOne({
+      _id: userRateId,
+    });
+
+    if (!userRateExists) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.user_id_not_exits);
+    }
+
+    const userRatingExists = await userRatesModel.findOne({
+      deleted_at: {
+        $eq: null,
+      },
+      rated_by_user: userId,
+    });
+
+    if (userRatingExists) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.user_rated_already);
+    }
+
+    const newUserRateData = await userRatesModel.create({
+      user_id: userRateId,
+      rated_by_user: userId,
+      rate: reqData.rate,
+      comment: reqData.comment,
+    });
+
+    // @ts-ignore
+    return newUserRateData._doc;
   }
 
   public createToken(user: User): TokenData {

@@ -64,6 +64,10 @@ export declare class QuickContactDto {
 export declare class FollowDto {
     following_id: string;
 }
+export declare class UserRateDto {
+    rate: number;
+    comment?: string;
+}
 export declare class UserListingDto extends PaginationDto {
     search: string;
 }

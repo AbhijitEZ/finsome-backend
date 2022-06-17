@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserListingDto = exports.FollowDto = exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ResetPasswordDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
+exports.UserListingDto = exports.UserRateDto = exports.FollowDto = exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ResetPasswordDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
@@ -245,6 +245,19 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], FollowDto.prototype, "following_id", void 0);
 exports.FollowDto = FollowDto;
+class UserRateDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsNumber)(),
+    tslib_1.__metadata("design:type", Number)
+], UserRateDto.prototype, "rate", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], UserRateDto.prototype, "comment", void 0);
+exports.UserRateDto = UserRateDto;
 class UserListingDto extends general_dto_1.PaginationDto {
 }
 tslib_1.__decorate([

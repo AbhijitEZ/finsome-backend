@@ -31,6 +31,7 @@ export declare const APP_ERROR_MESSAGE: {
     user_not_complete_register: string;
     user_already_register: string;
     email_exists: string;
+    user_rated_already: string;
     username_exists: string;
     phone_exists: string;
     forbidden_error: string;
@@ -113,6 +114,7 @@ export declare const QUICK_CONTACTS = "quick-contacts";
 export declare const COUNTRIES = "countries";
 export declare const POST_STOCKS = "post-stocks";
 export declare const LIKES = "likes";
+export declare const USER_RATES = "user-rates";
 export declare const COMPLAINTS = "complaints";
 export declare const STOCK_TYPES = "stock-types";
 export declare const COMMENTS = "comments";

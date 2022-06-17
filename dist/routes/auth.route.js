@@ -41,6 +41,7 @@ class AuthRoute {
         this.router.get(`${this.path}users-list`, (0, validation_middleware_1.default)(users_dto_1.UserListingDto, 'query'), auth_middleware_1.default, this.authController.userListing);
         this.router.get(`${this.path}user-detail/:id`, auth_middleware_1.default, this.authController.userDetail);
         this.router.get(`${this.path}user/notifications`, auth_middleware_1.default, (0, validation_middleware_1.default)(general_dto_1.PaginationDto, 'query'), this.authController.userNotifications);
+        this.router.post(`${this.path}user/rate/:userId`, (0, validation_middleware_1.default)(users_dto_1.UserRateDto, 'body'), auth_middleware_1.default, this.authController.userRating);
         // !SECTION: General APIS => END
     }
 }

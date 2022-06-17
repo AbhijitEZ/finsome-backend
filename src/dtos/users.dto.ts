@@ -1,5 +1,5 @@
 import { GENDER_CONST } from '@/utils/constants';
-import { IsBoolean, IsDateString, IsEmail, IsIn, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsDateString, IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 import { PaginationDto } from './general.dto';
 
 export class VerifyPhoneDto {
@@ -187,6 +187,16 @@ export class FollowDto {
   @IsNotEmpty()
   @IsString()
   following_id: string;
+}
+
+export class UserRateDto {
+  @IsNotEmpty()
+  @IsNumber()
+  rate: number;
+
+  @IsOptional()
+  @IsString()
+  comment?: string;
 }
 
 export class UserListingDto extends PaginationDto {
