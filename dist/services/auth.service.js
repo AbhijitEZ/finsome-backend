@@ -730,6 +730,69 @@ class AuthService {
         // @ts-ignore
         return newUserRateData._doc;
     }
+    async userListingRate(userId, reqData) {
+        var _a, _b;
+        let userRatings = user_rates_1.default.aggregate([
+            {
+                $match: {
+                    deleted_at: {
+                        $eq: null,
+                    },
+                    user_id: new mongoose_1.Types.ObjectId(userId),
+                },
+            },
+            {
+                $addFields: {
+                    updated_at_tz: { $dateToString: { date: '$updated_at', timezone: constants_1.DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USERS,
+                    localField: 'rated_by_user',
+                    foreignField: '_id',
+                    as: 'user_detail',
+                    pipeline: [
+                        {
+                            $project: {
+                                fullname: 1,
+                                profile_photo: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: '$user_detail',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $facet: {
+                    totalRecords: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    result: [
+                        {
+                            $skip: parseInt((_a = reqData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
+                        },
+                        {
+                            $limit: parseInt((_b = reqData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
+                        },
+                    ],
+                },
+            },
+            {
+                $sort: { updated_at: -1 },
+            },
+        ]);
+        userRatings = await userRatings.exec();
+        const data = (0, util_1.listingResponseSanitize)(userRatings);
+        return data;
+    }
     createToken(user) {
         const dataStoredInToken = { _id: user._id, role: user.role };
         const secretKey = config_1.default.get('secretKey');

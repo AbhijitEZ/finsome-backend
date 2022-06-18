@@ -38,6 +38,7 @@ import {
   NOTIFICATION_TYPE_CONST,
   POSTS,
   SKIP_DEF,
+  USERS,
   USER_CONFIGURATIONS,
   USER_FOLLOWERS,
   USER_ROLE,
@@ -816,6 +817,72 @@ class AuthService {
 
     // @ts-ignore
     return newUserRateData._doc;
+  }
+
+  public async userListingRate(userId: string, reqData: PaginationDto): Promise<any> {
+    let userRatings = userRatesModel.aggregate([
+      {
+        $match: {
+          deleted_at: {
+            $eq: null,
+          },
+          user_id: new Types.ObjectId(userId),
+        },
+      },
+      {
+        $addFields: {
+          updated_at_tz: { $dateToString: { date: '$updated_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+        },
+      },
+      {
+        $lookup: {
+          from: USERS,
+          localField: 'rated_by_user',
+          foreignField: '_id',
+          as: 'user_detail',
+          pipeline: [
+            {
+              $project: {
+                fullname: 1,
+                profile_photo: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$user_detail',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $facet: {
+          totalRecords: [
+            {
+              $count: 'total',
+            },
+          ],
+          result: [
+            {
+              $skip: parseInt(reqData.skip ?? SKIP_DEF),
+            },
+            {
+              $limit: parseInt(reqData.limit ?? LIMIT_DEF),
+            },
+          ],
+        },
+      },
+      {
+        $sort: { updated_at: -1 },
+      },
+    ]);
+
+    userRatings = await userRatings.exec();
+
+    const data = listingResponseSanitize(userRatings);
+
+    return data;
   }
 
   public createToken(user: User): TokenData {

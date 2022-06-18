@@ -100,6 +100,7 @@ class AuthRoute implements Routes {
     );
 
     this.router.post(`${this.path}user/rate/:userId`, validationMiddleware(UserRateDto, 'body'), authMiddleware, this.authController.userRating);
+    this.router.get(`${this.path}user/rate`, validationMiddleware(PaginationDto, 'query'), authMiddleware, this.authController.userListingRate);
 
     // !SECTION: General APIS => END
   }

@@ -55,7 +55,14 @@ exports.dateFormatter = dateFormatter;
 const listingResponseSanitize = (data) => {
     var _a, _b, _c, _d, _e, _f;
     const total_count = (_d = (_c = (_b = (_a = data === null || data === void 0 ? void 0 : data[0]) === null || _a === void 0 ? void 0 : _a.totalRecords) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.total) !== null && _d !== void 0 ? _d : 0;
-    const result = (_f = (_e = data === null || data === void 0 ? void 0 : data[0]) === null || _e === void 0 ? void 0 : _e.result) !== null && _f !== void 0 ? _f : [];
+    let result = (_f = (_e = data === null || data === void 0 ? void 0 : data[0]) === null || _e === void 0 ? void 0 : _e.result) !== null && _f !== void 0 ? _f : [];
+    result = result.map(data => {
+        var _a;
+        if ((_a = data === null || data === void 0 ? void 0 : data.user_detail) === null || _a === void 0 ? void 0 : _a.profile_photo) {
+            data.user_detail.profile_photo = (0, exports.profileImageGenerator)(data.user_detail.profile_photo);
+        }
+        return Object.assign({}, data);
+    });
     return {
         total_count,
         result,

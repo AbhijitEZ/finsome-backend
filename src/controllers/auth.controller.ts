@@ -300,6 +300,16 @@ class AuthController {
       next(error);
     }
   };
+
+  public userListingRate = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.authService.userListingRate(req.user?._id, req.query);
+
+      responseJSONMapper(res, 201, data);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

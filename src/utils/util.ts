@@ -48,7 +48,17 @@ export const dateFormatter = (date: string) => {
 
 export const listingResponseSanitize = (data: any) => {
   const total_count = data?.[0]?.totalRecords?.[0]?.total ?? 0;
-  const result = data?.[0]?.result ?? [];
+  let result = data?.[0]?.result ?? [];
+
+  result = result.map(data => {
+    if (data?.user_detail?.profile_photo) {
+      data.user_detail.profile_photo = profileImageGenerator(data.user_detail.profile_photo);
+    }
+
+    return {
+      ...data,
+    };
+  });
 
   return {
     total_count,
