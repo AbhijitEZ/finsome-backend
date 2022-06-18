@@ -801,11 +801,22 @@ class AuthService {
       deleted_at: {
         $eq: null,
       },
+      user_id: userId,
       rated_by_user: userId,
     });
 
     if (userRatingExists) {
-      throw new HttpException(400, APP_ERROR_MESSAGE.user_rated_already);
+      const currentUserRatingData = await userRatesModel.findByIdAndUpdate(
+        userRatingExists._id,
+        {
+          rate: reqData.rate,
+          comment: reqData.comment,
+        },
+        { new: true },
+      );
+
+      // @ts-ignore
+      return currentUserRatingData._doc;
     }
 
     const newUserRateData = await userRatesModel.create({
