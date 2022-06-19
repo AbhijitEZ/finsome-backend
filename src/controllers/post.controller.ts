@@ -74,6 +74,16 @@ class PostController {
     }
   };
 
+  public stockSearch = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.postService.stockSearch(req.user?._id, req.query);
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public postDelete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore

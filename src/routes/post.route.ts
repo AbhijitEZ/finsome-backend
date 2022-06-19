@@ -11,6 +11,7 @@ import {
   PostAssetDeleteDto,
   PostCreateDto,
   PostHomeDto,
+  StockSearchDto,
   StockTypeDto,
   UserConfigurationDto,
 } from '@/dtos/posts.dto';
@@ -59,6 +60,8 @@ class PostRoute implements Routes {
     this.router.delete(`${this.path}delete/:postId`, authMiddleware, this.postController.postDelete);
     this.router.get(`${this.path}explore`, authMiddleware, this.postController.postExplore);
     this.router.get(`${this.path}home`, authMiddleware, validationMiddleware(PostHomeDto, 'query'), this.postController.postHome);
+    this.router.get(`${this.path}stocks/search`, authMiddleware, validationMiddleware(StockSearchDto, 'query'), this.postController.stockSearch);
+
     this.router.post(`${this.path}comment`, authMiddleware, validationMiddleware(CommentsAddDto, 'body'), this.postController.commentAdd);
     this.router.get(`${this.path}comment`, authMiddleware, validationMiddleware(IdPaginationDto, 'query'), this.postController.commentListing);
     this.router.delete(`${this.path}comment/:postId/:id`, authMiddleware, this.postController.commentDelete);

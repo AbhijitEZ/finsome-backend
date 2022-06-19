@@ -209,3 +209,9 @@ export class PostAssetDeleteDto {
   @IsString()
   names: string;
 }
+
+export class StockSearchDto extends PaginationDto {
+  @IsOptional()
+  @IsString()
+  search?: string;
+}

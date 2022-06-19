@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { CommentsAddDto, ComplaintAddDto, IdPaginationDto, LikePostDto, PostAssetDeleteDto, PostCreateDto, PostHomeDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
+import { CommentsAddDto, ComplaintAddDto, IdPaginationDto, LikePostDto, PostAssetDeleteDto, PostCreateDto, PostHomeDto, StockSearchDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
 declare class PostService {
     countryObj: import("mongoose").Model<import("../interfaces/general.interface").CountryInf & import("mongoose").Document<any, any, any>, {}, {}>;
     stockTypesObj: import("mongoose").Model<import("../interfaces/general.interface").StockTypeInf & import("mongoose").Document<any, any, any>, {}, {}>;
@@ -68,6 +68,7 @@ declare class PostService {
     postDetail(userId: string, postId: string): Promise<any>;
     postDelete(userId: string, postId: string): Promise<any>;
     postDeleteAssets(userId: string, postId: string, reqData: PostAssetDeleteDto): Promise<any>;
+    stockSearch(userId: string, reqData: StockSearchDto): Promise<any>;
     commentListing(userId: string, reqData: IdPaginationDto): Promise<any>;
     commentAdd(userId: string, reqData: CommentsAddDto): Promise<any>;
     commentDelete(userId: string, postId: string, commentId: string): Promise<any>;

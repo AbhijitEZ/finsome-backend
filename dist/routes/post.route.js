@@ -26,6 +26,7 @@ class PostRoute {
         this.router.delete(`${this.path}delete/:postId`, auth_middleware_1.default, this.postController.postDelete);
         this.router.get(`${this.path}explore`, auth_middleware_1.default, this.postController.postExplore);
         this.router.get(`${this.path}home`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.PostHomeDto, 'query'), this.postController.postHome);
+        this.router.get(`${this.path}stocks/search`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.StockSearchDto, 'query'), this.postController.stockSearch);
         this.router.post(`${this.path}comment`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.CommentsAddDto, 'body'), this.postController.commentAdd);
         this.router.get(`${this.path}comment`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.IdPaginationDto, 'query'), this.postController.commentListing);
         this.router.delete(`${this.path}comment/:postId/:id`, auth_middleware_1.default, this.postController.commentDelete);

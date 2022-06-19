@@ -63,3 +63,6 @@ export declare class ComplaintAddDto {
 export declare class PostAssetDeleteDto {
     names: string;
 }
+export declare class StockSearchDto extends PaginationDto {
+    search?: string;
+}

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PostAssetDeleteDto = exports.ComplaintAddDto = exports.LikePostDto = exports.CommentsAddDto = exports.PostHomeDto = exports.PostCreateDto = exports.UserConfigurationDto = exports.StockUpdateTypeDto = exports.StockTypeDto = exports.IdPaginationDto = void 0;
+exports.StockSearchDto = exports.PostAssetDeleteDto = exports.ComplaintAddDto = exports.LikePostDto = exports.CommentsAddDto = exports.PostHomeDto = exports.PostCreateDto = exports.UserConfigurationDto = exports.StockUpdateTypeDto = exports.StockTypeDto = exports.IdPaginationDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
@@ -264,4 +264,12 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], PostAssetDeleteDto.prototype, "names", void 0);
 exports.PostAssetDeleteDto = PostAssetDeleteDto;
+class StockSearchDto extends general_dto_1.PaginationDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], StockSearchDto.prototype, "search", void 0);
+exports.StockSearchDto = StockSearchDto;
 //# sourceMappingURL=posts.dto.js.map

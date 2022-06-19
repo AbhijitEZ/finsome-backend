@@ -495,6 +495,46 @@ class PostService {
         const data = await this.singlePostAggreData(postId, userId);
         return data;
     }
+    async stockSearch(userId, reqData) {
+        var _a, _b;
+        let stockData = this.stockTypesObj.aggregate([
+            {
+                $match: {
+                    $or: [
+                        {
+                            name: { $regex: reqData.search, $options: 'i' },
+                        },
+                        {
+                            code: { $regex: reqData.search, $options: 'i' },
+                        },
+                    ],
+                },
+            },
+            {
+                $sort: { created_at: -1 },
+            },
+            {
+                $facet: {
+                    totalRecords: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    result: [
+                        {
+                            $skip: parseInt((_a = reqData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
+                        },
+                        {
+                            $limit: parseInt((_b = reqData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
+                        },
+                    ],
+                },
+            },
+        ]);
+        stockData = await stockData.exec();
+        const data = (0, util_1.listingResponseSanitize)(stockData);
+        return data;
+    }
     async commentListing(userId, reqData) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         const commentQB = comments_1.default.aggregate([

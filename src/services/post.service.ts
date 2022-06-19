@@ -6,6 +6,7 @@ import {
   PostAssetDeleteDto,
   PostCreateDto,
   PostHomeDto,
+  StockSearchDto,
   StockTypeDto,
   UserConfigurationDto,
 } from '@/dtos/posts.dto';
@@ -31,7 +32,7 @@ import {
   STOCK_TYPE_CONST,
   USERS,
 } from '@/utils/constants';
-import { fileUnSyncFromLocalStroage } from '@/utils/util';
+import { fileUnSyncFromLocalStroage, listingResponseSanitize } from '@/utils/util';
 import { commentResponseMapper, dateConstSwitcherHandler, postResponseMapper } from '@/utils/global';
 import postStockModel from '@/models/post-stocks';
 import commentsModel from '@/models/comments';
@@ -576,6 +577,47 @@ class PostService {
 
     const data = await this.singlePostAggreData(postId, userId);
 
+    return data;
+  }
+
+  public async stockSearch(userId: string, reqData: StockSearchDto): Promise<any> {
+    let stockData = this.stockTypesObj.aggregate([
+      {
+        $match: {
+          $or: [
+            {
+              name: { $regex: reqData.search, $options: 'i' },
+            },
+            {
+              code: { $regex: reqData.search, $options: 'i' },
+            },
+          ],
+        },
+      },
+      {
+        $sort: { created_at: -1 },
+      },
+      {
+        $facet: {
+          totalRecords: [
+            {
+              $count: 'total',
+            },
+          ],
+          result: [
+            {
+              $skip: parseInt(reqData.skip ?? SKIP_DEF),
+            },
+            {
+              $limit: parseInt(reqData.limit ?? LIMIT_DEF),
+            },
+          ],
+        },
+      },
+    ]);
+
+    stockData = await stockData.exec();
+    const data = listingResponseSanitize(stockData);
     return data;
   }
 

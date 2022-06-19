@@ -9,6 +9,7 @@ declare class PostController {
     postCreate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postExplore: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postHome: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    stockSearch: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postDelete: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postDetail: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postDeleteAssets: (req: Request, res: Response, next: NextFunction) => Promise<void>;
