@@ -896,6 +896,24 @@ class AuthService {
     return data;
   }
 
+  // TODO: require to add 1-5 level of average
+  public async userRatingStatistics(_: string, userId: string): Promise<any> {
+    const userRateAvg = await userRatesModel.aggregate([
+      {
+        $match: {
+          user_id: userId,
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          avg_rate: { $avg: '$rate' },
+        },
+      },
+    ]);
+    return userRateAvg;
+  }
+
   public createToken(user: User): TokenData {
     const dataStoredInToken: DataStoredInToken = { _id: user._id, role: user.role };
     const secretKey: string = config.get('secretKey');
