@@ -386,6 +386,11 @@ class AuthService {
         },
       },
       {
+        $addFields: {
+          created_at_tz: { $dateToString: { date: '$created_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+        },
+      },
+      {
         $sort: {
           created_at: -1,
         },
@@ -409,8 +414,10 @@ class AuthService {
       },
     ]);
 
+    const data = listingResponseSanitize(notificationsData);
+
     // @ts-ignore
-    return notificationsData;
+    return data;
   }
 
   public async addQuickContact(reqData: QuickContactDto): Promise<any> {
@@ -830,7 +837,7 @@ class AuthService {
     return newUserRateData._doc;
   }
 
-  public async userListingRate(userId: string, reqData: PaginationDto): Promise<any> {
+  public async userListingRate(_: string, reqData: PaginationDto, userId): Promise<any> {
     let userRatings = userRatesModel.aggregate([
       {
         $match: {
@@ -868,6 +875,9 @@ class AuthService {
         },
       },
       {
+        $sort: { updated_at: -1 },
+      },
+      {
         $facet: {
           totalRecords: [
             {
@@ -883,9 +893,6 @@ class AuthService {
             },
           ],
         },
-      },
-      {
-        $sort: { updated_at: -1 },
       },
     ]);
 

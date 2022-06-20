@@ -48,7 +48,7 @@ declare class AuthService {
     userListing(userId: string, reqData: UserListingDto): Promise<any>;
     userDetail(userId: string, detailId: string): Promise<any>;
     userRating(userId: string, userRateId: string, reqData: UserRateDto): Promise<any>;
-    userListingRate(userId: string, reqData: PaginationDto): Promise<any>;
+    userListingRate(_: string, reqData: PaginationDto, userId: any): Promise<any>;
     userRateDetails(userId: string, userRateId: string): Promise<any>;
     userRatingStatistics(_: string, userId: string): Promise<any>;
     createToken(user: User): TokenData;

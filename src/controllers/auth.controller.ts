@@ -303,7 +303,7 @@ class AuthController {
 
   public userListingRate = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.authService.userListingRate(req.user?._id, req.query);
+      const data = await this.authService.userListingRate(req.user?._id, req.query, req.params?.userId);
 
       responseJSONMapper(res, 201, data);
     } catch (error) {
