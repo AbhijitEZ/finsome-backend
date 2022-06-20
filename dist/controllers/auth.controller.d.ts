@@ -29,5 +29,7 @@ declare class AuthController {
     followDeleteRequest: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userRating: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userListingRate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    userRateDetails: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    userRatingStatistics: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default AuthController;

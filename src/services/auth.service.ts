@@ -801,7 +801,7 @@ class AuthService {
       deleted_at: {
         $eq: null,
       },
-      user_id: userId,
+      user_id: userRateId,
       rated_by_user: userId,
     });
 
@@ -894,6 +894,27 @@ class AuthService {
     const data = listingResponseSanitize(userRatings);
 
     return data;
+  }
+
+  public async userRateDetails(userId: string, userRateId: string): Promise<any> {
+    const userRateExists = await this.users.findOne({
+      _id: userRateId,
+    });
+
+    if (!userRateExists) {
+      throw new HttpException(400, APP_ERROR_MESSAGE.user_id_not_exits);
+    }
+
+    const userRatingExists = await userRatesModel.findOne({
+      deleted_at: {
+        $eq: null,
+      },
+      user_id: userRateId,
+      rated_by_user: userId,
+    });
+
+    // @ts-ignore
+    return userRatingExists._doc;
   }
 
   // TODO: require to add 1-5 level of average

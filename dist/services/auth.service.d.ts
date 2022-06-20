@@ -49,6 +49,8 @@ declare class AuthService {
     userDetail(userId: string, detailId: string): Promise<any>;
     userRating(userId: string, userRateId: string, reqData: UserRateDto): Promise<any>;
     userListingRate(userId: string, reqData: PaginationDto): Promise<any>;
+    userRateDetails(userId: string, userRateId: string): Promise<any>;
+    userRatingStatistics(_: string, userId: string): Promise<any>;
     createToken(user: User): TokenData;
     createCookie(tokenData: TokenData): string;
     updateUserCodeWithSMS: (reqData: VerifyPhoneDto, existCode?: string, type?: string) => Promise<void>;

@@ -55,6 +55,13 @@ export const listingResponseSanitize = (data: any) => {
       data.user_detail.profile_photo = profileImageGenerator(data.user_detail.profile_photo);
     }
 
+    if (data?.created_at_tz) {
+      data.created_at_tz = dateFormatter(data.created_at_tz);
+    }
+    if (data?.updated_at_tz) {
+      data.updated_at_tz = dateFormatter(data.updated_at_tz);
+    }
+
     return {
       ...data,
     };

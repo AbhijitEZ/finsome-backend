@@ -61,6 +61,12 @@ const listingResponseSanitize = (data) => {
         if ((_a = data === null || data === void 0 ? void 0 : data.user_detail) === null || _a === void 0 ? void 0 : _a.profile_photo) {
             data.user_detail.profile_photo = (0, exports.profileImageGenerator)(data.user_detail.profile_photo);
         }
+        if (data === null || data === void 0 ? void 0 : data.created_at_tz) {
+            data.created_at_tz = (0, exports.dateFormatter)(data.created_at_tz);
+        }
+        if (data === null || data === void 0 ? void 0 : data.updated_at_tz) {
+            data.updated_at_tz = (0, exports.dateFormatter)(data.updated_at_tz);
+        }
         return Object.assign({}, data);
     });
     return {

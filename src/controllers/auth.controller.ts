@@ -311,6 +311,16 @@ class AuthController {
     }
   };
 
+  public userRateDetails = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.authService.userRateDetails(req.user?._id, req.params?.userRateId);
+
+      responseJSONMapper(res, 201, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public userRatingStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.authService.userRatingStatistics(req.user?._id, req.params?.userId);

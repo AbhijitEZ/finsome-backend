@@ -716,7 +716,7 @@ class AuthService {
             deleted_at: {
                 $eq: null,
             },
-            user_id: userId,
+            user_id: userRateId,
             rated_by_user: userId,
         });
         if (userRatingExists) {
@@ -798,6 +798,40 @@ class AuthService {
         userRatings = await userRatings.exec();
         const data = (0, util_1.listingResponseSanitize)(userRatings);
         return data;
+    }
+    async userRateDetails(userId, userRateId) {
+        const userRateExists = await this.users.findOne({
+            _id: userRateId,
+        });
+        if (!userRateExists) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.user_id_not_exits);
+        }
+        const userRatingExists = await user_rates_1.default.findOne({
+            deleted_at: {
+                $eq: null,
+            },
+            user_id: userRateId,
+            rated_by_user: userId,
+        });
+        // @ts-ignore
+        return userRatingExists._doc;
+    }
+    // TODO: require to add 1-5 level of average
+    async userRatingStatistics(_, userId) {
+        const userRateAvg = await user_rates_1.default.aggregate([
+            {
+                $match: {
+                    user_id: userId,
+                },
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    avg_rate: { $avg: '$rate' },
+                },
+            },
+        ]);
+        return userRateAvg;
     }
     createToken(user) {
         const dataStoredInToken = { _id: user._id, role: user.role };
