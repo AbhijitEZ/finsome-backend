@@ -137,7 +137,7 @@ class PostController {
   public postLikeUpdate = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.postService.postLikeUpdate(req.user?._id, req.body);
+      const data = await this.postService.postLikeUpdate(req.user?._id, req.user?.fullname, req.user?.profile_photo, req.body);
       responseJSONMapper(res, 200, data);
     } catch (error) {
       next(error);

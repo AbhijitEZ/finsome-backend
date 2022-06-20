@@ -72,8 +72,9 @@ declare class PostService {
     commentListing(userId: string, reqData: IdPaginationDto): Promise<any>;
     commentAdd(userId: string, reqData: CommentsAddDto): Promise<any>;
     commentDelete(userId: string, postId: string, commentId: string): Promise<any>;
-    postLikeUpdate(userId: string, reqData: LikePostDto): Promise<any>;
+    postLikeUpdate(userId: string, fullname: string, profile_photo: string, reqData: LikePostDto): Promise<any>;
     complaintAdd(userId: string, reqData: ComplaintAddDto): Promise<any>;
     protected singlePostAggreData(postId: string, userId: string): Promise<any>;
+    private notificationUpdate;
 }
 export default PostService;

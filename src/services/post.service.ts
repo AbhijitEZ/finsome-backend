@@ -24,6 +24,7 @@ import {
   DEFAULT_TIMEZONE,
   LIKES,
   LIMIT_DEF,
+  NOTIFICATION_TYPE_CONST,
   postAssetsFolder,
   POSTS,
   POST_STOCKS,
@@ -32,7 +33,7 @@ import {
   STOCK_TYPE_CONST,
   USERS,
 } from '@/utils/constants';
-import { fileUnSyncFromLocalStroage, listingResponseSanitize } from '@/utils/util';
+import { fileUnSyncFromLocalStroage, listingResponseSanitize, profileImageGenerator } from '@/utils/util';
 import { commentResponseMapper, dateConstSwitcherHandler, postResponseMapper } from '@/utils/global';
 import postStockModel from '@/models/post-stocks';
 import commentsModel from '@/models/comments';
@@ -41,6 +42,7 @@ import likesModel from '@/models/likes';
 import { HttpException } from '@/exceptions/HttpException';
 import complaintModel from '@/models/complaints';
 import userFollowerModel from '@/models/user-followers';
+import notificationModel from '@/models/notifications';
 
 class PostService {
   public countryObj = countryModel;
@@ -919,7 +921,7 @@ class PostService {
     return commentCounts;
   }
 
-  public async postLikeUpdate(userId: string, reqData: LikePostDto): Promise<any> {
+  public async postLikeUpdate(userId: string, fullname: string, profile_photo: string, reqData: LikePostDto): Promise<any> {
     const likeExistsForUser = await likesModel.findOne({
       user_id: userId,
       post_id: reqData.post_id,
@@ -935,6 +937,7 @@ class PostService {
 
     if (reqData.like) {
       await likesModel.create({ user_id: userId, post_id: reqData.post_id });
+      this.notificationUpdate({ reqData, userId, fullname, profile_photo });
     } else {
       await likesModel.deleteOne({ user_id: userId, post_id: reqData.post_id });
     }
@@ -1108,6 +1111,25 @@ class PostService {
 
     // @ts-ignore
     return postResponseMapper(post?.[0] ?? {});
+  }
+
+  private async notificationUpdate({ reqData, fullname, userId, profile_photo }: any) {
+    const userPostData = await postsModel.findOne({
+      _id: new Types.ObjectId(reqData.post_id),
+    });
+
+    if (userPostData) {
+      notificationModel.create({
+        user_id: userPostData.user_id,
+        type: NOTIFICATION_TYPE_CONST.USER_LIKED,
+        message: `${fullname || 'User'} has like your post`,
+        meta_data: {
+          post_id: reqData.post_id,
+          user_id: userId,
+          profile_photo: profileImageGenerator(profile_photo),
+        },
+      });
+    }
   }
 }
 

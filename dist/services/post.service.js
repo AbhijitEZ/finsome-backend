@@ -18,6 +18,7 @@ const likes_1 = tslib_1.__importDefault(require("../models/likes"));
 const HttpException_1 = require("../exceptions/HttpException");
 const complaints_1 = tslib_1.__importDefault(require("../models/complaints"));
 const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
+const notifications_1 = tslib_1.__importDefault(require("../models/notifications"));
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -816,7 +817,7 @@ class PostService {
         // @ts-ignore
         return commentCounts;
     }
-    async postLikeUpdate(userId, reqData) {
+    async postLikeUpdate(userId, fullname, profile_photo, reqData) {
         var _a, _b;
         const likeExistsForUser = await likes_1.default.findOne({
             user_id: userId,
@@ -830,6 +831,7 @@ class PostService {
         }
         if (reqData.like) {
             await likes_1.default.create({ user_id: userId, post_id: reqData.post_id });
+            this.notificationUpdate({ reqData, userId, fullname, profile_photo });
         }
         else {
             await likes_1.default.deleteOne({ user_id: userId, post_id: reqData.post_id });
@@ -997,6 +999,23 @@ class PostService {
         }
         // @ts-ignore
         return (0, global_1.postResponseMapper)((_a = post === null || post === void 0 ? void 0 : post[0]) !== null && _a !== void 0 ? _a : {});
+    }
+    async notificationUpdate({ reqData, fullname, userId, profile_photo }) {
+        const userPostData = await posts_1.default.findOne({
+            _id: new mongoose_1.Types.ObjectId(reqData.post_id),
+        });
+        if (userPostData) {
+            notifications_1.default.create({
+                user_id: userPostData.user_id,
+                type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED,
+                message: `${fullname || 'User'} has like your post`,
+                meta_data: {
+                    post_id: reqData.post_id,
+                    user_id: userId,
+                    profile_photo: (0, util_1.profileImageGenerator)(profile_photo),
+                },
+            });
+        }
     }
 }
 exports.default = PostService;

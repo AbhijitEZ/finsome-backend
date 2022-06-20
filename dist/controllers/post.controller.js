@@ -146,10 +146,10 @@ class PostController {
             }
         };
         this.postLikeUpdate = async (req, res, next) => {
-            var _a;
+            var _a, _b, _c;
             try {
                 // @ts-ignore
-                const data = await this.postService.postLikeUpdate((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.body);
+                const data = await this.postService.postLikeUpdate((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.user) === null || _b === void 0 ? void 0 : _b.fullname, (_c = req.user) === null || _c === void 0 ? void 0 : _c.profile_photo, req.body);
                 (0, global_1.responseJSONMapper)(res, 200, data);
             }
             catch (error) {
