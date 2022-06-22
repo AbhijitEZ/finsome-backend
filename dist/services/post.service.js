@@ -839,9 +839,6 @@ class PostService {
         let likeQb = likes_1.default.aggregate([
             {
                 $match: {
-                    user_id: {
-                        $eq: new mongoose_1.Types.ObjectId(userId),
-                    },
                     post_id: {
                         $eq: new mongoose_1.Types.ObjectId(reqData.post_id),
                     },
