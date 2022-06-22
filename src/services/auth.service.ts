@@ -924,22 +924,58 @@ class AuthService {
     return userRatingExists._doc;
   }
 
-  // TODO: require to add 1-5 level of average
-  public async userRatingStatistics(_: string, userId: string): Promise<any> {
+  // NOTE: Finding other solution if time permits
+  public async userRatingStatistics(userId: string): Promise<any> {
     const userRateAvg = await userRatesModel.aggregate([
       {
         $match: {
-          user_id: userId,
-        },
-      },
-      {
-        $group: {
-          _id: '$_id',
-          avg_rate: { $avg: '$rate' },
+          user_id: new Types.ObjectId(userId),
+          deleted_at: { $eq: null },
         },
       },
     ]);
-    return userRateAvg;
+
+    let overall_avg = 0;
+    let no_rating_1 = 0;
+    let no_rating_2 = 0;
+    let no_rating_3 = 0;
+    let no_rating_4 = 0;
+    let no_rating_5 = 0;
+
+    userRateAvg.forEach(userPerRate => {
+      if (userPerRate.rate) {
+        overall_avg += userPerRate.rate;
+      }
+      if (userPerRate?.rate < 2) {
+        no_rating_1 += 1;
+      }
+      if (userPerRate?.rate >= 2 && userPerRate?.rate < 3) {
+        no_rating_2 += 1;
+      }
+      if (userPerRate?.rate >= 3 && userPerRate?.rate < 4) {
+        no_rating_3 += 1;
+      }
+      if (userPerRate?.rate >= 4 && userPerRate?.rate < 5) {
+        no_rating_4 += 1;
+      }
+      if (userPerRate?.rate >= 5) {
+        no_rating_5 += 1;
+      }
+    });
+
+    const total_no_user_rating = userRateAvg.length;
+
+    overall_avg = total_no_user_rating ? parseFloat((overall_avg / total_no_user_rating).toFixed(2)) : 0;
+
+    return {
+      overall_avg,
+      no_rating_1,
+      no_rating_2,
+      no_rating_3,
+      no_rating_4,
+      no_rating_5,
+      total_no_user_rating,
+    };
   }
 
   public createToken(user: User): TokenData {

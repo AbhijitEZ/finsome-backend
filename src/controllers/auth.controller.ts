@@ -323,7 +323,7 @@ class AuthController {
 
   public userRatingStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.authService.userRatingStatistics(req.user?._id, req.params?.userId);
+      const data = await this.authService.userRatingStatistics(req.params?.userId);
 
       responseJSONMapper(res, 200, data);
     } catch (error) {

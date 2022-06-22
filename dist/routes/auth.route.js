@@ -44,7 +44,7 @@ class AuthRoute {
         this.router.post(`${this.path}user/rate/:userId`, (0, validation_middleware_1.default)(users_dto_1.UserRateDto, 'body'), auth_middleware_1.default, this.authController.userRating);
         this.router.get(`${this.path}user/rate/:userId`, (0, validation_middleware_1.default)(general_dto_1.PaginationDto, 'query'), auth_middleware_1.default, this.authController.userListingRate);
         this.router.get(`${this.path}user/rate-detail/:userRateId`, auth_middleware_1.default, this.authController.userRateDetails);
-        this.router.get(`${this.path}user/rate-statistics`, auth_middleware_1.default, this.authController.userListingRate);
+        this.router.get(`${this.path}user/rate-statistics/:userId`, auth_middleware_1.default, this.authController.userRatingStatistics);
         // !SECTION: General APIS => END
     }
 }

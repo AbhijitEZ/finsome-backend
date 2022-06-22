@@ -288,9 +288,9 @@ class AuthController {
             }
         };
         this.userRatingStatistics = async (req, res, next) => {
-            var _a, _b;
+            var _a;
             try {
-                const data = await this.authService.userRatingStatistics((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.userId);
+                const data = await this.authService.userRatingStatistics((_a = req.params) === null || _a === void 0 ? void 0 : _a.userId);
                 (0, global_1.responseJSONMapper)(res, 200, data);
             }
             catch (error) {

@@ -107,7 +107,7 @@ class AuthRoute implements Routes {
       this.authController.userListingRate,
     );
     this.router.get(`${this.path}user/rate-detail/:userRateId`, authMiddleware, this.authController.userRateDetails);
-    this.router.get(`${this.path}user/rate-statistics`, authMiddleware, this.authController.userListingRate);
+    this.router.get(`${this.path}user/rate-statistics/:userId`, authMiddleware, this.authController.userRatingStatistics);
 
     // !SECTION: General APIS => END
   }
