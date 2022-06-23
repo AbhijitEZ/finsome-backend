@@ -321,6 +321,16 @@ class AuthController {
     }
   };
 
+  public userRateRemove = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.authService.userRateRemove(req.user?._id, req.params?.userRateId);
+
+      responseJSONMapper(res, 201, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public userRatingStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.authService.userRatingStatistics(req.params?.userId);

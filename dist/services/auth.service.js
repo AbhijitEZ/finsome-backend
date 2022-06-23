@@ -822,7 +822,25 @@ class AuthService {
         // @ts-ignore
         return userRatingExists._doc;
     }
-    // NOTE: Finding other solution if time permits
+    async userRateRemove(userId, userRateId) {
+        const userRateExists = await this.users.findOne({
+            _id: userRateId,
+        });
+        if (!userRateExists) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.user_id_not_exits);
+        }
+        const userRatingExists = await user_rates_1.default.findOne({
+            deleted_at: {
+                $eq: null,
+            },
+            user_id: userRateId,
+            rated_by_user: userId,
+        });
+        await user_rates_1.default.findByIdAndDelete(userRatingExists._id);
+        // @ts-ignore
+        return {};
+    }
+    // NOTE: find better optimal solution
     async userRatingStatistics(userId) {
         const userRateAvg = await user_rates_1.default.aggregate([
             {
