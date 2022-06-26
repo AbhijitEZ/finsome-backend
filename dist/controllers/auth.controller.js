@@ -257,6 +257,28 @@ class AuthController {
                 next(error);
             }
         };
+        this.followerListing = async (req, res, next) => {
+            var _a;
+            try {
+                // @ts-ignore
+                const data = await this.authService.followerListing((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.params.followId, req.query);
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.followingListing = async (req, res, next) => {
+            var _a;
+            try {
+                // @ts-ignore
+                const data = await this.authService.followingListing((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.params.followId, req.query);
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.userRating = async (req, res, next) => {
             var _a, _b;
             try {

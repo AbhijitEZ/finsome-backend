@@ -291,6 +291,28 @@ class AuthController {
     }
   };
 
+  public followerListing = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.authService.followerListing(req.user?._id, req.params.followId, req.query);
+
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public followingListing = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.authService.followingListing(req.user?._id, req.params.followId, req.query);
+
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public userRating = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.authService.userRating(req.user?._id, req.params?.userId, req.body as UserRateDto);

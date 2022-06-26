@@ -57,9 +57,15 @@ const listingResponseSanitize = (data) => {
     const total_count = (_d = (_c = (_b = (_a = data === null || data === void 0 ? void 0 : data[0]) === null || _a === void 0 ? void 0 : _a.totalRecords) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.total) !== null && _d !== void 0 ? _d : 0;
     let result = (_f = (_e = data === null || data === void 0 ? void 0 : data[0]) === null || _e === void 0 ? void 0 : _e.result) !== null && _f !== void 0 ? _f : [];
     result = result.map(data => {
-        var _a;
+        var _a, _b, _c;
         if ((_a = data === null || data === void 0 ? void 0 : data.user_detail) === null || _a === void 0 ? void 0 : _a.profile_photo) {
             data.user_detail.profile_photo = (0, exports.profileImageGenerator)(data.user_detail.profile_photo);
+        }
+        if ((_b = data === null || data === void 0 ? void 0 : data.follower_detail) === null || _b === void 0 ? void 0 : _b.profile_photo) {
+            data.follower_detail.profile_photo = (0, exports.profileImageGenerator)(data.follower_detail.profile_photo);
+        }
+        if ((_c = data === null || data === void 0 ? void 0 : data.following_detail) === null || _c === void 0 ? void 0 : _c.profile_photo) {
+            data.following_detail.profile_photo = (0, exports.profileImageGenerator)(data.following_detail.profile_photo);
         }
         if (data === null || data === void 0 ? void 0 : data.created_at_tz) {
             data.created_at_tz = (0, exports.dateFormatter)(data.created_at_tz);

@@ -45,6 +45,8 @@ declare class AuthService {
     followerRequest(userId: string, fullname: string, profilePhoto: string, reqData: FollowDto): Promise<any>;
     followAcceptRequest(userId: string, fullname: string, profilephoto: string, followId: string): Promise<any>;
     followDeleteRequest(userId: string, followId: string): Promise<any>;
+    followerListing(userId: string, followId: string, reqData: PaginationDto): Promise<any>;
+    followingListing(userId: string, followId: string, reqData: PaginationDto): Promise<any>;
     userListing(userId: string, reqData: UserListingDto): Promise<any>;
     userDetail(userId: string, detailId: string): Promise<any>;
     userRating(userId: string, userRateId: string, reqData: UserRateDto): Promise<any>;

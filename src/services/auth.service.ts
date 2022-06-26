@@ -515,6 +515,118 @@ class AuthService {
     };
   }
 
+  public async followerListing(userId: string, followId: string, reqData: PaginationDto): Promise<any> {
+    const followerQb = await this.userFollowerM.aggregate([
+      {
+        $match: {
+          user_id: new Types.ObjectId(followId),
+          deleted_at: { $eq: null },
+        },
+      },
+      {
+        $lookup: {
+          from: USERS,
+          localField: 'follower_id',
+          foreignField: '_id',
+          as: 'follower_detail',
+          pipeline: [
+            {
+              $project: {
+                fullname: 1,
+                profile_photo: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$follower_detail',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $sort: { created_at: -1 },
+      },
+      {
+        $facet: {
+          totalRecords: [
+            {
+              $count: 'total',
+            },
+          ],
+          result: [
+            {
+              $skip: parseInt(reqData.skip ?? SKIP_DEF),
+            },
+            {
+              $limit: parseInt(reqData.limit ?? LIMIT_DEF),
+            },
+          ],
+        },
+      },
+    ]);
+
+    const data = listingResponseSanitize(followerQb);
+    return data;
+  }
+
+  public async followingListing(userId: string, followId: string, reqData: PaginationDto): Promise<any> {
+    const followingQb = await this.userFollowerM.aggregate([
+      {
+        $match: {
+          follower_id: new Types.ObjectId(followId),
+          deleted_at: { $eq: null },
+        },
+      },
+      {
+        $lookup: {
+          from: USERS,
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'following_detail',
+          pipeline: [
+            {
+              $project: {
+                fullname: 1,
+                profile_photo: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$following_detail',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $sort: { created_at: -1 },
+      },
+      {
+        $facet: {
+          totalRecords: [
+            {
+              $count: 'total',
+            },
+          ],
+          result: [
+            {
+              $skip: parseInt(reqData.skip ?? SKIP_DEF),
+            },
+            {
+              $limit: parseInt(reqData.limit ?? LIMIT_DEF),
+            },
+          ],
+        },
+      },
+    ]);
+
+    const data = listingResponseSanitize(followingQb);
+    return data;
+  }
+
   public async userListing(userId: string, reqData: UserListingDto): Promise<any> {
     const usersqb = this.users.aggregate([
       {

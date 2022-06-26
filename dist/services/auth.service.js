@@ -435,6 +435,116 @@ class AuthService {
             accepted: false,
         };
     }
+    async followerListing(userId, followId, reqData) {
+        var _a, _b;
+        const followerQb = await this.userFollowerM.aggregate([
+            {
+                $match: {
+                    user_id: new mongoose_1.Types.ObjectId(followId),
+                    deleted_at: { $eq: null },
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USERS,
+                    localField: 'follower_id',
+                    foreignField: '_id',
+                    as: 'follower_detail',
+                    pipeline: [
+                        {
+                            $project: {
+                                fullname: 1,
+                                profile_photo: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: '$follower_detail',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $sort: { created_at: -1 },
+            },
+            {
+                $facet: {
+                    totalRecords: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    result: [
+                        {
+                            $skip: parseInt((_a = reqData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
+                        },
+                        {
+                            $limit: parseInt((_b = reqData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
+                        },
+                    ],
+                },
+            },
+        ]);
+        const data = (0, util_1.listingResponseSanitize)(followerQb);
+        return data;
+    }
+    async followingListing(userId, followId, reqData) {
+        var _a, _b;
+        const followingQb = await this.userFollowerM.aggregate([
+            {
+                $match: {
+                    follower_id: new mongoose_1.Types.ObjectId(followId),
+                    deleted_at: { $eq: null },
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USERS,
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'following_detail',
+                    pipeline: [
+                        {
+                            $project: {
+                                fullname: 1,
+                                profile_photo: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: '$following_detail',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $sort: { created_at: -1 },
+            },
+            {
+                $facet: {
+                    totalRecords: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    result: [
+                        {
+                            $skip: parseInt((_a = reqData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
+                        },
+                        {
+                            $limit: parseInt((_b = reqData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
+                        },
+                    ],
+                },
+            },
+        ]);
+        const data = (0, util_1.listingResponseSanitize)(followingQb);
+        return data;
+    }
     async userListing(userId, reqData) {
         var _a, _b;
         const usersqb = this.users.aggregate([

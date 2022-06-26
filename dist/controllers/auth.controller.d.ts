@@ -27,6 +27,8 @@ declare class AuthController {
     userNotifications: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userDetail: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     followDeleteRequest: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    followerListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    followingListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userRating: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userListingRate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userRateDetails: (req: Request, res: Response, next: NextFunction) => Promise<void>;
