@@ -172,6 +172,7 @@ class PostService {
 
     if (queryData?.has_all_data) {
       userMatch['user_id'] = { $ne: null };
+      delete userMatch.deleted_at;
     } else if (queryData?.user_id) {
       userMatch['user_id'] = new Types.ObjectId(queryData.user_id);
     } else {

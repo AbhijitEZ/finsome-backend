@@ -18,6 +18,7 @@ const terms_condition_1 = tslib_1.__importDefault(require("../models/terms-condi
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 const fs_1 = tslib_1.__importDefault(require("fs"));
 const sync_1 = require("csv-parse/sync");
+const posts_1 = tslib_1.__importDefault(require("../models/posts"));
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
@@ -68,6 +69,7 @@ class AdminService {
         const appImproves = await this.appImprovement.find({});
         const quickContacts = await this.quickContact.find({});
         const suggestions = await this.userSuggestion.find({});
+        const posts = await posts_1.default.find({});
         let active_user = 0, inactive_user = 0, total_user = 0, completed_registered_user = 0;
         users.map(usr => {
             total_user = total_user + 1;
@@ -89,6 +91,7 @@ class AdminService {
             app_improves: appImproves.length,
             quick_contacts: quickContacts.length,
             suggestions: suggestions.length,
+            posts: posts.length,
         };
     }
     async toggleUserStatus(user) {

@@ -18,6 +18,7 @@ import { StockUpdateTypeDto } from '@/dtos/posts.dto';
 import stockTypeModel from '@/models/stock-types';
 import fs from 'fs';
 import { parse as csvParser } from 'csv-parse/sync';
+import postsModel from '@/models/posts';
 
 class AdminService {
   public users = userModel;
@@ -76,6 +77,7 @@ class AdminService {
     const appImproves = await this.appImprovement.find({});
     const quickContacts = await this.quickContact.find({});
     const suggestions = await this.userSuggestion.find({});
+    const posts = await postsModel.find({});
 
     let active_user = 0,
       inactive_user = 0,
@@ -103,6 +105,7 @@ class AdminService {
       app_improves: appImproves.length,
       quick_contacts: quickContacts.length,
       suggestions: suggestions.length,
+      posts: posts.length,
     };
   }
 

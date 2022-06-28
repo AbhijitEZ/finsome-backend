@@ -130,6 +130,7 @@ class PostService {
         };
         if (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) {
             userMatch['user_id'] = { $ne: null };
+            delete userMatch.deleted_at;
         }
         else if (queryData === null || queryData === void 0 ? void 0 : queryData.user_id) {
             userMatch['user_id'] = new mongoose_1.Types.ObjectId(queryData.user_id);
