@@ -441,6 +441,7 @@ class AuthService {
             {
                 $match: {
                     user_id: new mongoose_1.Types.ObjectId(followId),
+                    accepted: { $eq: true },
                     deleted_at: { $eq: null },
                 },
             },
@@ -497,6 +498,7 @@ class AuthService {
             {
                 $match: {
                     follower_id: new mongoose_1.Types.ObjectId(followId),
+                    accepted: { $eq: true },
                     deleted_at: { $eq: null },
                 },
             },
@@ -750,6 +752,11 @@ class AuthService {
                     as: 'following_count',
                     pipeline: [
                         {
+                            $match: {
+                                accepted: { $eq: true },
+                            },
+                        },
+                        {
                             $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
                         },
                         {
@@ -768,6 +775,7 @@ class AuthService {
                         {
                             $match: {
                                 user_id: new mongoose_1.Types.ObjectId(userId),
+                                accepted: { $eq: true },
                             },
                         },
                         {
