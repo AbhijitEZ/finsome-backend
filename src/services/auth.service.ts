@@ -28,7 +28,7 @@ import userModel from '@models/users.model';
 import otpValidationModel from '@models/otp-validation.model';
 import quickContactModel from '@models/quick-contact';
 import userSuggestionImprovementModel from '@/models/user-suggestion-improvement';
-import { isEmpty, listingResponseSanitize, profileImageGenerator } from '@utils/util';
+import { includeDeletedAtMatch, isEmpty, listingResponseSanitize, profileImageGenerator } from '@utils/util';
 import {
   ACCOUNT_TYPE_CONST,
   APP_ERROR_MESSAGE,
@@ -759,13 +759,12 @@ class AuthService {
   public async userDetail(userId: string, detailId: string): Promise<any> {
     const usersqb = this.users.aggregate([
       {
-        $match: {
+        $match: includeDeletedAtMatch({
           _id: {
             $eq: new Types.ObjectId(detailId),
           },
-          deleted_at: { $eq: null },
           role: { $eq: USER_ROLE.MEMBER },
-        },
+        }),
       },
       {
         $addFields: {
@@ -798,11 +797,7 @@ class AuthService {
           as: 'posts',
           pipeline: [
             {
-              $match: {
-                deleted_at: {
-                  $eq: null,
-                },
-              },
+              $match: includeDeletedAtMatch({}),
             },
             {
               $count: 'post_total_count',
@@ -818,9 +813,9 @@ class AuthService {
           as: 'following',
           pipeline: [
             {
-              $match: {
+              $match: includeDeletedAtMatch({
                 follower_id: new Types.ObjectId(userId),
-              },
+              }),
             },
             {
               $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
@@ -836,9 +831,9 @@ class AuthService {
           as: 'following_count',
           pipeline: [
             {
-              $match: {
+              $match: includeDeletedAtMatch({
                 accepted: { $eq: true },
-              },
+              }),
             },
             {
               $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
@@ -857,10 +852,9 @@ class AuthService {
           as: 'follower',
           pipeline: [
             {
-              $match: {
+              $match: includeDeletedAtMatch({
                 user_id: new Types.ObjectId(userId),
-                accepted: { $eq: true },
-              },
+              }),
             },
             {
               $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
@@ -875,6 +869,11 @@ class AuthService {
           foreignField: 'follower_id',
           as: 'follower_count',
           pipeline: [
+            {
+              $match: includeDeletedAtMatch({
+                accepted: { $eq: true },
+              }),
+            },
             {
               $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
             },

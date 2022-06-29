@@ -13,3 +13,4 @@ export declare const listingResponseSanitize: (data: any) => {
     total_count: any;
     result: any;
 };
+export declare const includeDeletedAtMatch: (data: any) => any;

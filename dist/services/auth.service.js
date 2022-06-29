@@ -675,13 +675,12 @@ class AuthService {
         var _a, _b;
         const usersqb = this.users.aggregate([
             {
-                $match: {
+                $match: (0, util_1.includeDeletedAtMatch)({
                     _id: {
                         $eq: new mongoose_1.Types.ObjectId(detailId),
                     },
-                    deleted_at: { $eq: null },
                     role: { $eq: constants_1.USER_ROLE.MEMBER },
-                },
+                }),
             },
             {
                 $addFields: {
@@ -714,11 +713,7 @@ class AuthService {
                     as: 'posts',
                     pipeline: [
                         {
-                            $match: {
-                                deleted_at: {
-                                    $eq: null,
-                                },
-                            },
+                            $match: (0, util_1.includeDeletedAtMatch)({}),
                         },
                         {
                             $count: 'post_total_count',
@@ -734,9 +729,9 @@ class AuthService {
                     as: 'following',
                     pipeline: [
                         {
-                            $match: {
+                            $match: (0, util_1.includeDeletedAtMatch)({
                                 follower_id: new mongoose_1.Types.ObjectId(userId),
-                            },
+                            }),
                         },
                         {
                             $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
@@ -752,9 +747,9 @@ class AuthService {
                     as: 'following_count',
                     pipeline: [
                         {
-                            $match: {
+                            $match: (0, util_1.includeDeletedAtMatch)({
                                 accepted: { $eq: true },
-                            },
+                            }),
                         },
                         {
                             $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
@@ -773,10 +768,9 @@ class AuthService {
                     as: 'follower',
                     pipeline: [
                         {
-                            $match: {
+                            $match: (0, util_1.includeDeletedAtMatch)({
                                 user_id: new mongoose_1.Types.ObjectId(userId),
-                                accepted: { $eq: true },
-                            },
+                            }),
                         },
                         {
                             $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
@@ -791,6 +785,11 @@ class AuthService {
                     foreignField: 'follower_id',
                     as: 'follower_count',
                     pipeline: [
+                        {
+                            $match: (0, util_1.includeDeletedAtMatch)({
+                                accepted: { $eq: true },
+                            }),
+                        },
                         {
                             $unset: ['follower_id', 'user_id', 'created_at', 'updated_at', 'deleted_at'],
                         },

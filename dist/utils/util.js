@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listingResponseSanitize = exports.dateFormatter = exports.fileUnSyncFromLocalStroage = exports.postAssetsGenerator = exports.profileImageGenerator = exports.isEmpty = void 0;
+exports.includeDeletedAtMatch = exports.listingResponseSanitize = exports.dateFormatter = exports.fileUnSyncFromLocalStroage = exports.postAssetsGenerator = exports.profileImageGenerator = exports.isEmpty = void 0;
 const tslib_1 = require("tslib");
 const date_fns_1 = require("date-fns");
 const fs_1 = tslib_1.__importDefault(require("fs"));
@@ -81,4 +81,10 @@ const listingResponseSanitize = (data) => {
     };
 };
 exports.listingResponseSanitize = listingResponseSanitize;
+const includeDeletedAtMatch = (data) => {
+    return Object.assign({ deleted_at: {
+            $eq: null,
+        } }, data);
+};
+exports.includeDeletedAtMatch = includeDeletedAtMatch;
 //# sourceMappingURL=util.js.map

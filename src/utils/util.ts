@@ -80,3 +80,12 @@ export const listingResponseSanitize = (data: any) => {
     result,
   };
 };
+
+export const includeDeletedAtMatch = (data: any) => {
+  return {
+    deleted_at: {
+      $eq: null,
+    },
+    ...data,
+  };
+};
