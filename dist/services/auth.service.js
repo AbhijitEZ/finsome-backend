@@ -455,6 +455,7 @@ class AuthService {
                             $project: {
                                 fullname: 1,
                                 profile_photo: 1,
+                                username: 1,
                             },
                         },
                     ],
@@ -510,6 +511,7 @@ class AuthService {
                             $project: {
                                 fullname: 1,
                                 profile_photo: 1,
+                                username: 1,
                             },
                         },
                     ],
