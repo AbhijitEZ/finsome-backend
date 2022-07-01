@@ -204,3 +204,9 @@ export class UserListingDto extends PaginationDto {
   @IsString()
   search: string;
 }
+
+export class UserListingRateDto extends PaginationDto {
+  @IsOptional()
+  @IsString()
+  has_all_data?: string;
+}

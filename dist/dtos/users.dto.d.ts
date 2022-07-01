@@ -71,3 +71,6 @@ export declare class UserRateDto {
 export declare class UserListingDto extends PaginationDto {
     search: string;
 }
+export declare class UserListingRateDto extends PaginationDto {
+    has_all_data?: string;
+}

@@ -931,14 +931,16 @@ class AuthService {
                             $count: 'total',
                         },
                     ],
-                    result: [
-                        {
-                            $skip: parseInt((_a = reqData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
-                        },
-                        {
-                            $limit: parseInt((_b = reqData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
-                        },
-                    ],
+                    result: reqData.has_all_data
+                        ? []
+                        : [
+                            {
+                                $skip: parseInt((_a = reqData.skip) !== null && _a !== void 0 ? _a : constants_1.SKIP_DEF),
+                            },
+                            {
+                                $limit: parseInt((_b = reqData.limit) !== null && _b !== void 0 ? _b : constants_1.LIMIT_DEF),
+                            },
+                        ],
                 },
             },
         ]);

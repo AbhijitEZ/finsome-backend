@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, FollowDto, LoginDto, NotificationDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, UserRateDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
+import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, FollowDto, LoginDto, NotificationDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, UserListingRateDto, UserRateDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
 import { TokenData } from '../interfaces/auth.interface';
 import { User } from '../interfaces/users.interface';
 import { PaginationDto } from '../dtos/general.dto';
@@ -50,7 +50,7 @@ declare class AuthService {
     userListing(userId: string, reqData: UserListingDto): Promise<any>;
     userDetail(userId: string, detailId: string): Promise<any>;
     userRating(userId: string, userRateId: string, reqData: UserRateDto): Promise<any>;
-    userListingRate(_: string, reqData: PaginationDto, userId: any): Promise<any>;
+    userListingRate(_: string, reqData: UserListingRateDto, userId: any): Promise<any>;
     userRateDetails(userId: string, userRateId: string): Promise<any>;
     userRateRemove(userId: string, userRateId: string): Promise<any>;
     userRatingStatistics(userId: string): Promise<any>;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserListingDto = exports.UserRateDto = exports.FollowDto = exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ResetPasswordDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
+exports.UserListingRateDto = exports.UserListingDto = exports.UserRateDto = exports.FollowDto = exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ResetPasswordDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
@@ -266,4 +266,12 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], UserListingDto.prototype, "search", void 0);
 exports.UserListingDto = UserListingDto;
+class UserListingRateDto extends general_dto_1.PaginationDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], UserListingRateDto.prototype, "has_all_data", void 0);
+exports.UserListingRateDto = UserListingRateDto;
 //# sourceMappingURL=users.dto.js.map

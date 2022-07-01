@@ -12,6 +12,7 @@ import {
   ResetPasswordDto,
   SignupPhoneDto,
   UserListingDto,
+  UserListingRateDto,
   UserRateDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
@@ -114,7 +115,7 @@ class AuthRoute implements Routes {
     this.router.post(`${this.path}user/rate/:userId`, validationMiddleware(UserRateDto, 'body'), authMiddleware, this.authController.userRating);
     this.router.get(
       `${this.path}user/rate/:userId`,
-      validationMiddleware(PaginationDto, 'query'),
+      validationMiddleware(UserListingRateDto, 'query'),
       authMiddleware,
       this.authController.userListingRate,
     );

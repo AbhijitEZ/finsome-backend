@@ -15,6 +15,7 @@ import {
   ResetPasswordDto,
   SignupPhoneDto,
   UserListingDto,
+  UserListingRateDto,
   UserRateDto,
   ValidateUserFieldDto,
   VerifyOtpDTO,
@@ -981,7 +982,7 @@ class AuthService {
     return newUserRateData._doc;
   }
 
-  public async userListingRate(_: string, reqData: PaginationDto, userId): Promise<any> {
+  public async userListingRate(_: string, reqData: UserListingRateDto, userId): Promise<any> {
     let userRatings = userRatesModel.aggregate([
       {
         $match: {
@@ -1028,14 +1029,16 @@ class AuthService {
               $count: 'total',
             },
           ],
-          result: [
-            {
-              $skip: parseInt(reqData.skip ?? SKIP_DEF),
-            },
-            {
-              $limit: parseInt(reqData.limit ?? LIMIT_DEF),
-            },
-          ],
+          result: reqData.has_all_data
+            ? []
+            : [
+                {
+                  $skip: parseInt(reqData.skip ?? SKIP_DEF),
+                },
+                {
+                  $limit: parseInt(reqData.limit ?? LIMIT_DEF),
+                },
+              ],
         },
       },
     ]);
