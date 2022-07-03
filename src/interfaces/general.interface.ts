@@ -132,3 +132,12 @@ export interface UserConfigurationInf {
   trade_type: string;
   account_type: string;
 }
+
+export interface ArticleCategoryInf {
+  _id: string;
+  user_id: string;
+  name: string;
+  deleted_at?: Date;
+  created_at: Date;
+  updated_at: Date;
+}

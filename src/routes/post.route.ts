@@ -67,6 +67,8 @@ class PostRoute implements Routes {
     this.router.delete(`${this.path}comment/:postId/:id`, authMiddleware, this.postController.commentDelete);
     this.router.post(`${this.path}like`, authMiddleware, validationMiddleware(LikePostDto, 'body'), this.postController.postLikeUpdate);
     this.router.post(`${this.path}complaint`, authMiddleware, validationMiddleware(ComplaintAddDto, 'body'), this.postController.complaintAdd);
+
+    this.router.get(`${this.path}article-categories`, authMiddleware, this.postController.articleCatListing);
   }
 }
 

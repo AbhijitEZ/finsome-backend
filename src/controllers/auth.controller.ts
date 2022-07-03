@@ -178,10 +178,21 @@ class AuthController {
   public logOut = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
       const userData: User = req.user;
-      await this.authService.logout(userData);
+      await this.authService.logout(userData, req.body);
 
       res.setHeader('Set-Cookie', ['Authorization=; Max-age=0']);
       res.status(200).json({ data: {}, message: APP_SUCCESS_MESSAGE.logout_success });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public deviceTokenAdd = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    try {
+      const userData: User = req.user;
+      await this.authService.deviceTokenAdd(userData, req.body);
+
+      res.status(201).json({ data: {}, message: '' });
     } catch (error) {
       next(error);
     }

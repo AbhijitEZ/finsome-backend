@@ -43,6 +43,7 @@ import { HttpException } from '@/exceptions/HttpException';
 import complaintModel from '@/models/complaints';
 import userFollowerModel from '@/models/user-followers';
 import notificationModel from '@/models/notifications';
+import articleCatModel from '@/models/article-categories';
 
 class PostService {
   public countryObj = countryModel;
@@ -975,6 +976,17 @@ class PostService {
 
     // @ts-ignore
     return newComlaint._doc;
+  }
+
+  public async articleCatListing(): Promise<any> {
+    const articleCategories = await articleCatModel
+      .find({
+        deleted_at: { $eq: null },
+      })
+      .lean();
+
+    // @ts-ignore
+    return articleCategories;
   }
 
   protected async singlePostAggreData(postId: string, userId: string): Promise<any> {

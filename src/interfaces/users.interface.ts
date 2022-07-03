@@ -10,3 +10,13 @@ export interface User {
   otp?: string;
   deleted_at?: Date;
 }
+
+export interface DeviceTokenInf {
+  _id: string;
+  user_id: string;
+  device_token: string;
+  platform: string;
+  revoked: boolean;
+  created_at: Date;
+  updated_at: Date;
+}

@@ -154,6 +154,16 @@ class PostController {
     }
   };
 
+  public articleCatListing = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.postService.articleCatListing();
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public commentDelete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore

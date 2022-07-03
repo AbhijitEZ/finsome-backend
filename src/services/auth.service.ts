@@ -7,6 +7,7 @@ import {
   AppImprovementUserDto,
   ChangePasswordDto,
   CreateUserDto,
+  DeviceTokenLogoutDto,
   FollowDto,
   LoginDto,
   NotificationDto,
@@ -25,6 +26,7 @@ import { connection, Types } from 'mongoose';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
+import firecustom from '@utils/firecustom';
 import userModel from '@models/users.model';
 import otpValidationModel from '@models/otp-validation.model';
 import quickContactModel from '@models/quick-contact';
@@ -54,6 +56,7 @@ import userFollowerModel from '@/models/user-followers';
 import notificationModel from '@/models/notifications';
 import { PaginationDto } from '@/dtos/general.dto';
 import userRatesModel from '@/models/user-rates';
+import deviceTokenModel from '@/models/device-tokens';
 
 class AuthService {
   public users = userModel;
@@ -351,11 +354,38 @@ class AuthService {
     return await this.profile(id);
   }
 
-  public async logout(userData: User): Promise<void> {
+  public async logout(userData: User, reqData: DeviceTokenLogoutDto): Promise<void> {
     if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
 
     const findUser: User = await this.users.findOne({ email: userData.email, password: userData.password });
     if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
+
+    /* Revoking the device token for the logout users */
+    if (reqData.device_token) {
+      deviceTokenModel.findOneAndUpdate(
+        {
+          device_token: reqData.device_token,
+        },
+        {
+          revoked: true,
+        },
+      );
+    }
+  }
+  public async deviceTokenAdd(userData: User, reqData: DeviceTokenLogoutDto): Promise<void> {
+    const tokenExists = await deviceTokenModel.findOne({
+      user_id: userData._id,
+      device_token: reqData.device_token,
+    });
+
+    if (tokenExists) {
+      throw new HttpException(409, 'Same token cannot be added');
+    }
+
+    deviceTokenModel.create({
+      user_id: userData._id,
+      device_token: reqData.device_token,
+    });
   }
 
   public async appImprovementTypes(): Promise<any> {
@@ -453,17 +483,30 @@ class AuthService {
       accepted: followingUserDetail?.account_type === ACCOUNT_TYPE_CONST.PRIVATE ? false : true,
     });
 
-    if (acceptedState === ACCOUNT_TYPE_CONST.PUBLIC) {
-      notificationModel.create({
-        user_id: reqData.following_id,
-        message: `${fullname || 'User'} has requested to follow you`,
-        meta_data: {
-          follow: newFollower._id,
-          user_id: userId,
-          profile_photo: profileImageGenerator(profilePhoto),
-        },
-      });
-    }
+    const message =
+      acceptedState === ACCOUNT_TYPE_CONST.PRIVATE
+        ? `${fullname || 'User'} has started following you`
+        : `${fullname || 'User'} has requested to follow you`;
+
+    const metadata = {
+      follow: newFollower._id,
+      user_id: userId,
+      profile_photo: profileImageGenerator(profilePhoto),
+    };
+
+    notificationModel.create({
+      user_id: reqData.following_id,
+      message: message,
+      meta_data: metadata,
+    });
+
+    this.sendNotificationWrapper(reqData.following_id, {
+      notification: {
+        title: 'User Request',
+        content: message,
+      },
+      data: metadata,
+    });
 
     // @ts-ignore
     return newFollower;
@@ -1185,6 +1228,19 @@ class AuthService {
     const configExists = await userConfigurationModel.findOne({ user_id: id });
     if (!configExists) {
       userConfigurationModel.create({ user_id: id, account_type: ACCOUNT_TYPE_CONST.PUBLIC });
+    }
+  };
+
+  private sendNotificationWrapper = async (userId: string, messagePayload: any) => {
+    const deviceTokens = await deviceTokenModel.find({
+      user_id: userId,
+      revoked: true,
+    });
+
+    if (deviceTokens?.length) {
+      deviceTokens.forEach(data => {
+        firecustom.sendNotification(data.device_token, messagePayload);
+      });
     }
   };
 }

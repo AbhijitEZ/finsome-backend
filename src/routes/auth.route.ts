@@ -4,6 +4,7 @@ import {
   AppImprovementUserDto,
   ChangePasswordDto,
   CreateUserDto,
+  DeviceTokenLogoutDto,
   FollowDto,
   LoginDto,
   NotificationDto,
@@ -73,7 +74,13 @@ class AuthRoute implements Routes {
       authMiddleware,
       this.authController.notificationUpdate,
     );
-    this.router.post(`${this.path}logout`, authMiddleware, this.authController.logOut);
+    this.router.post(`${this.path}logout`, authMiddleware, validationMiddleware(DeviceTokenLogoutDto, 'body'), this.authController.logOut);
+    this.router.post(
+      `${this.path}device-token`,
+      authMiddleware,
+      validationMiddleware(DeviceTokenLogoutDto, 'body'),
+      this.authController.deviceTokenAdd,
+    );
 
     // SECTION: General APIS => START
     this.router.get(`${this.path}app-improvement-types`, this.authController.appImprovementTypes);

@@ -210,3 +210,9 @@ export class UserListingRateDto extends PaginationDto {
   @IsString()
   has_all_data?: string;
 }
+
+export class DeviceTokenLogoutDto {
+  @IsOptional()
+  @IsString()
+  device_token?: string;
+}
