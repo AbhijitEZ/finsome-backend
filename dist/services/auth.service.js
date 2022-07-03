@@ -435,7 +435,7 @@ class AuthService {
                 title: message,
             },
             data: {
-                payload: JSON.stringify(metadata),
+                payload: JSON.stringify(Object.assign(Object.assign({}, metadata), { type: constants_1.NOTIFICATION_TYPE_CONST.FOLLOW })),
             },
         });
         // @ts-ignore

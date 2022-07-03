@@ -505,7 +505,7 @@ class AuthService {
         title: message,
       },
       data: {
-        payload: JSON.stringify(metadata),
+        payload: JSON.stringify({ ...metadata, type: NOTIFICATION_TYPE_CONST.FOLLOW }),
       },
     });
 
