@@ -40,7 +40,7 @@ class App {
         this.initializeRoutes(routes);
         this.initializeErrorHandling();
         aws_1.default.init();
-        require('@/utils/firecustom.ts');
+        Promise.resolve().then(() => tslib_1.__importStar(require('./utils/firecustom')));
     }
     listen() {
         this.app.listen(this.port, () => {
