@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dateConstSwitcherHandler = exports.commentResponseMapper = exports.postResponseMapper = exports.userResponseFilter = exports.fileUploadPostCB = exports.fileUploadCSVCB = exports.fileUploadCB = exports.responseJSONMapper = void 0;
 const tslib_1 = require("tslib");
-const HttpException_1 = require("../../exceptions/HttpException");
+const HttpException_1 = require("@/exceptions/HttpException");
 const multer_1 = tslib_1.__importDefault(require("multer"));
 const os_1 = tslib_1.__importDefault(require("os"));
 const constants_1 = require("./constants");

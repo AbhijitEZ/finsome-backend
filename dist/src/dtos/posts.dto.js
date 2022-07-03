@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockSearchDto = exports.PostAssetDeleteDto = exports.ComplaintAddDto = exports.LikePostDto = exports.CommentsAddDto = exports.PostHomeDto = exports.PostCreateDto = exports.UserConfigurationDto = exports.StockUpdateTypeDto = exports.StockTypeDto = exports.IdPaginationDto = void 0;
 const tslib_1 = require("tslib");
-const constants_1 = require("../../utils/constants");
+const constants_1 = require("@/utils/constants");
 const class_validator_1 = require("class-validator");
 const general_dto_1 = require("./general.dto");
 class IdPaginationDto extends general_dto_1.PaginationDto {

@@ -1,5 +1,5 @@
 /// <reference types="mongoose" />
-import { User } from '../../interfaces/users.interface';
+import { User } from '@interfaces/users.interface';
 declare class UserService {
     users: import("mongoose").Model<User & import("mongoose").Document<any, any, any>, {}, {}>;
     findAllUser(): Promise<User[]>;

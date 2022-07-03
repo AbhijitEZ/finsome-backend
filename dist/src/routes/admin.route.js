@@ -2,12 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const express_1 = require("express");
-const validation_middleware_1 = tslib_1.__importDefault(require("../../middlewares/validation.middleware"));
-const admin_dto_1 = require("../../dtos/admin.dto");
-const admin_controller_1 = tslib_1.__importDefault(require("../../controllers/admin.controller"));
-const auth_middleware_1 = require("../../middlewares/auth.middleware");
-const posts_dto_1 = require("../../dtos/posts.dto");
-const global_1 = require("../../utils/global");
+const validation_middleware_1 = tslib_1.__importDefault(require("@middlewares/validation.middleware"));
+const admin_dto_1 = require("@/dtos/admin.dto");
+const admin_controller_1 = tslib_1.__importDefault(require("@/controllers/admin.controller"));
+const auth_middleware_1 = require("@/middlewares/auth.middleware");
+const posts_dto_1 = require("@/dtos/posts.dto");
+const global_1 = require("@/utils/global");
 /**
  * This route would only be used by the Web panel specifc to admin.
  */

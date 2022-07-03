@@ -160,6 +160,7 @@ class PostController {
       const data = await this.postService.articleCatListing();
       responseJSONMapper(res, 200, data);
     } catch (error) {
+      console.log(error);
       next(error);
     }
   };

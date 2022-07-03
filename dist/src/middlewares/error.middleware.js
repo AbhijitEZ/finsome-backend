@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const Sentry = tslib_1.__importStar(require("@sentry/node"));
-const logger_1 = require("../../utils/logger");
+const logger_1 = require("@utils/logger");
 const errorMiddleware = (error, req, res, next) => {
     var _a;
     try {

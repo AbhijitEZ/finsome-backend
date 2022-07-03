@@ -1,6 +1,6 @@
-import '../index';
+import '@/index';
 import express from 'express';
-import { Routes } from '../interfaces/routes.interface';
+import { Routes } from '@interfaces/routes.interface';
 declare class App {
     app: express.Application;
     port: string | number;

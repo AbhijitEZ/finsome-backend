@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
-const constants_1 = require("../../utils/constants");
+const constants_1 = require("@/utils/constants");
 const stockTypeSchema = new mongoose_1.Schema({
     name: {
         type: String,

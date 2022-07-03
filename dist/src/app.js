@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-require("../index");
+require("@/index");
 const config_1 = tslib_1.__importDefault(require("config"));
 const compression_1 = tslib_1.__importDefault(require("compression"));
 const cookie_parser_1 = tslib_1.__importDefault(require("cookie-parser"));
@@ -11,10 +11,10 @@ const helmet_1 = tslib_1.__importDefault(require("helmet"));
 const hpp_1 = tslib_1.__importDefault(require("hpp"));
 const morgan_1 = tslib_1.__importDefault(require("morgan"));
 const mongoose_1 = require("mongoose");
-const _databases_1 = require("../databases");
-const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
-const error_middleware_1 = tslib_1.__importDefault(require("../middlewares/error.middleware"));
-const logger_1 = require("../utils/logger");
+const _databases_1 = require("..");
+const aws_1 = tslib_1.__importDefault(require("@utils/aws"));
+const error_middleware_1 = tslib_1.__importDefault(require("@middlewares/error.middleware"));
+const logger_1 = require("@utils/logger");
 const Sentry = tslib_1.__importStar(require("@sentry/node"));
 const Tracing = tslib_1.__importStar(require("@sentry/tracing"));
 class App {

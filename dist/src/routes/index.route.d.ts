@@ -1,5 +1,5 @@
-import IndexController from '../../controllers/index.controller';
-import { Routes } from '../../interfaces/routes.interface';
+import IndexController from '@controllers/index.controller';
+import { Routes } from '@interfaces/routes.interface';
 declare class IndexRoute implements Routes {
     path: string;
     router: import("express-serve-static-core").Router;

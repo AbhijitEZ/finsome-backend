@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
-const constants_1 = require("../../utils/constants");
-const HttpException_1 = require("../../exceptions/HttpException");
+const constants_1 = require("@/utils/constants");
+const HttpException_1 = require("@/exceptions/HttpException");
 const userSchema = new mongoose_1.Schema({
     email: {
         type: String,

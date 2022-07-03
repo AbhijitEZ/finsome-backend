@@ -1,7 +1,7 @@
 /// <reference types="mongoose" />
-import { AdminLoginDto, PrivacyPolicyDto, ToggleUserStatusDto } from '../../dtos/admin.dto';
-import { User } from '../../interfaces/users.interface';
-import { StockUpdateTypeDto } from '../../dtos/posts.dto';
+import { AdminLoginDto, PrivacyPolicyDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
+import { User } from '@interfaces/users.interface';
+import { StockUpdateTypeDto } from '@/dtos/posts.dto';
 declare class AdminService {
     users: import("mongoose").Model<User & import("mongoose").Document<any, any, any>, {}, {}>;
     appImprovement: import("mongoose").Model<import("../interfaces/general.interface").AppImprovementInf & import("mongoose").Document<any, any, any>, {}, {}>;

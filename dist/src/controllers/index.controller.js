@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const bcrypt_1 = require("bcrypt");
-const users_model_1 = tslib_1.__importDefault(require("../../models/users.model"));
-const constants_1 = require("../../utils/constants");
-const HttpException_1 = require("../../exceptions/HttpException");
+const users_model_1 = tslib_1.__importDefault(require("@models/users.model"));
+const constants_1 = require("@/utils/constants");
+const HttpException_1 = require("@/exceptions/HttpException");
 const date_fns_1 = require("date-fns");
-const user_configurations_1 = tslib_1.__importDefault(require("../../models/user-configurations"));
+const user_configurations_1 = tslib_1.__importDefault(require("@/models/user-configurations"));
 class IndexController {
     constructor() {
         this.index = (req, res, next) => {

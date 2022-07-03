@@ -1,4 +1,4 @@
 import { Document } from 'mongoose';
-import { UserSuggestionImproveInf } from '../../interfaces/general.interface';
+import { UserSuggestionImproveInf } from '@interfaces/general.interface';
 declare const userSuggestionImprovementModel: import("mongoose").Model<UserSuggestionImproveInf & Document<any, any, any>, {}, {}>;
 export default userSuggestionImprovementModel;

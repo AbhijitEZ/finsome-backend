@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const admin_service_1 = tslib_1.__importDefault(require("../../services/admin.service"));
-const constants_1 = require("../../utils/constants");
-const HttpException_1 = require("../../exceptions/HttpException");
+const admin_service_1 = tslib_1.__importDefault(require("@services/admin.service"));
+const constants_1 = require("@/utils/constants");
+const HttpException_1 = require("@/exceptions/HttpException");
 class AdminController {
     constructor() {
         this.adminService = new admin_service_1.default();

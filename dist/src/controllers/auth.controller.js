@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const auth_service_1 = tslib_1.__importDefault(require("../../services/auth.service"));
-const constants_1 = require("../../utils/constants");
-const global_1 = require("../../utils/global");
+const auth_service_1 = tslib_1.__importDefault(require("@services/auth.service"));
+const constants_1 = require("@/utils/constants");
+const global_1 = require("@/utils/global");
 class AuthController {
     constructor() {
         this.authService = new auth_service_1.default();

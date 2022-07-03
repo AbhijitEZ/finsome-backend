@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { CommentsAddDto, ComplaintAddDto, IdPaginationDto, LikePostDto, PostAssetDeleteDto, PostCreateDto, PostHomeDto, StockSearchDto, StockTypeDto, UserConfigurationDto } from '../../dtos/posts.dto';
+import { CommentsAddDto, ComplaintAddDto, IdPaginationDto, LikePostDto, PostAssetDeleteDto, PostCreateDto, PostHomeDto, StockSearchDto, StockTypeDto, UserConfigurationDto } from '@/dtos/posts.dto';
 declare class PostService {
     countryObj: import("mongoose").Model<import("../interfaces/general.interface").CountryInf & import("mongoose").Document<any, any, any>, {}, {}>;
     stockTypesObj: import("mongoose").Model<import("../interfaces/general.interface").StockTypeInf & import("mongoose").Document<any, any, any>, {}, {}>;

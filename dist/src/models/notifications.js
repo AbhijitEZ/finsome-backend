@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
-const constants_1 = require("../../utils/constants");
+const constants_1 = require("@/utils/constants");
 const notificationsSchema = new mongoose_1.Schema({
     /* notification send to user */
     user_id: {

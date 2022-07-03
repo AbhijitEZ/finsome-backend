@@ -1,9 +1,9 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, DeviceTokenLogoutDto, FollowDto, LoginDto, NotificationDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, UserListingRateDto, UserRateDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../../dtos/users.dto';
-import { TokenData } from '../../interfaces/auth.interface';
-import { User } from '../../interfaces/users.interface';
-import { PaginationDto } from '../../dtos/general.dto';
+import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, DeviceTokenLogoutDto, FollowDto, LoginDto, NotificationDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, UserListingRateDto, UserRateDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '@dtos/users.dto';
+import { TokenData } from '@interfaces/auth.interface';
+import { User } from '@interfaces/users.interface';
+import { PaginationDto } from '@/dtos/general.dto';
 declare class AuthService {
     users: import("mongoose").Model<User & import("mongoose").Document<any, any, any>, {}, {}>;
     otpValidation: import("mongoose").Model<import("../interfaces/general.interface").OtpValidationInf & import("mongoose").Document<any, any, any>, {}, {}>;

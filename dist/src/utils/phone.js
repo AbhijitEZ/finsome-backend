@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.intervalDurationOTPCheck = exports.usCanadaPhoneNumberSMSHandler = exports.indiaPhoneNumberSMSHandler = exports.checkPhoneNumberCountryCodeForSMSCalling = exports.createPhoneCodeToVerify = void 0;
 const tslib_1 = require("tslib");
 const twilio = require('twilio');
-const HttpException_1 = require("../../exceptions/HttpException");
+const HttpException_1 = require("@/exceptions/HttpException");
 const constants_1 = require("./constants");
 const nanoid_1 = require("nanoid");
 const axios_1 = tslib_1.__importDefault(require("axios"));

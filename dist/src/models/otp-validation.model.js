@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
-const constants_1 = require("../../utils/constants");
+const constants_1 = require("@/utils/constants");
 const otpValidationSchema = new mongoose_1.Schema({
     phone_country_code: {
         type: String,
