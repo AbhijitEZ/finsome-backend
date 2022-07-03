@@ -505,7 +505,6 @@ class AuthService {
         title: 'User Request',
         content: message,
       },
-      data: metadata,
     });
 
     // @ts-ignore
