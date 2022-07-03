@@ -46,7 +46,7 @@ class App {
     this.initializeRoutes(routes);
     this.initializeErrorHandling();
     awsHandler.init();
-    require('./utils/firecustom.ts');
+    require('@/utils/firecustom.ts');
   }
 
   public listen() {
