@@ -432,8 +432,10 @@ class AuthService {
         });
         this.sendNotificationWrapper(reqData.following_id, {
             notification: {
-                title: 'User Request',
-                content: message,
+                title: message,
+            },
+            data: {
+                payload: JSON.stringify(metadata),
             },
         });
         // @ts-ignore
