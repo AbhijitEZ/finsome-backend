@@ -485,8 +485,8 @@ class AuthService {
 
     const message =
       acceptedState === ACCOUNT_TYPE_CONST.PRIVATE
-        ? `${fullname || 'User'} has started following you`
-        : `${fullname || 'User'} has requested to follow you`;
+        ? `${fullname || 'User'} has requested to follow you`
+        : `${fullname || 'User'} has started following you`;
 
     const metadata = {
       follow: newFollower._id,
