@@ -6,7 +6,7 @@ class FireCustom {
   }
 
   public async init() {
-    const firebaseConfig = await import(`../../firebase-admin-sdk.json`);
+    const firebaseConfig = await import(`../firebase-admin-sdk.json`);
     const firebaseParams = {
       type: firebaseConfig.type,
       projectId: firebaseConfig.project_id,
