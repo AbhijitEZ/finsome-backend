@@ -30,13 +30,21 @@ class FireCustom {
    * Notification method which shoots only notify `Android device` at present
    */
   public sendNotification(token, messagePayload) {
-    admin.messaging().send({
-      token,
-      android: {
-        priority: 'high',
-        ...messagePayload,
-      },
-    });
+    admin
+      .messaging()
+      .send({
+        token,
+        android: {
+          priority: 'high',
+          ...messagePayload,
+        },
+      })
+      .then(onFulfilled => {
+        console.log('>>>>>>>>>>>>>>>>>>> FIREBASE SEND Fulfilled', onFulfilled);
+      })
+      .catch(onRejected => {
+        console.log('>>>>>>>>>>>>>>>>>>> FIREBASE MESSAGE Rejected', onRejected);
+      });
   }
 }
 
