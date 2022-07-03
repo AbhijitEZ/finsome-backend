@@ -57,7 +57,7 @@ class AuthService {
         this.sendNotificationWrapper = async (userId, messagePayload) => {
             const deviceTokens = await device_tokens_1.default.find({
                 user_id: userId,
-                revoked: true,
+                revoked: false,
             });
             if (deviceTokens === null || deviceTokens === void 0 ? void 0 : deviceTokens.length) {
                 deviceTokens.forEach(data => {

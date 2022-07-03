@@ -1234,7 +1234,7 @@ class AuthService {
   private sendNotificationWrapper = async (userId: string, messagePayload: any) => {
     const deviceTokens = await deviceTokenModel.find({
       user_id: userId,
-      revoked: true,
+      revoked: false,
     });
 
     if (deviceTokens?.length) {
