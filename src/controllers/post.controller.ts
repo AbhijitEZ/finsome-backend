@@ -127,7 +127,7 @@ class PostController {
   public commentAdd = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.postService.commentAdd(req.user?._id, req.body);
+      const data = await this.postService.commentAdd(req.user?.fullname, req.user?.profile_photo, req.user?._id, req.body);
       responseJSONMapper(res, 200, data);
     } catch (error) {
       next(error);

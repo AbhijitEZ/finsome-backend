@@ -425,7 +425,7 @@ class AuthService {
             user_id: userId,
             profile_photo: (0, util_1.profileImageGenerator)(profilePhoto),
         };
-        notifications_1.default.create({
+        await notifications_1.default.create({
             user_id: reqData.following_id,
             message: message,
             meta_data: metadata,

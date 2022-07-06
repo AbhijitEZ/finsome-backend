@@ -11,6 +11,7 @@ import {
   UserConfigurationDto,
 } from '@/dtos/posts.dto';
 import countryModel from '@/models/countries';
+import firecustom from '@utils/firecustom';
 import postsModel from '@/models/posts';
 import awsHandler from '@utils/aws';
 import fs from 'fs';
@@ -44,6 +45,7 @@ import complaintModel from '@/models/complaints';
 import userFollowerModel from '@/models/user-followers';
 import notificationModel from '@/models/notifications';
 import articleCatModel from '@/models/article-categories';
+import deviceTokenModel from '@/models/device-tokens';
 
 class PostService {
   public countryObj = countryModel;
@@ -744,13 +746,42 @@ class PostService {
     return { result: commentsData, total_count };
   }
 
-  public async commentAdd(userId: string, reqData: CommentsAddDto): Promise<any> {
+  public async commentAdd(fullname: string, profile_photo: string, userId: string, reqData: CommentsAddDto): Promise<any> {
     const newComment = await commentsModel.create({
       user_id: userId,
       post_id: reqData.post_id,
       message: reqData.message,
       parent_id: reqData.parent_id ?? null,
     });
+
+    const postDetail = await this.postsObj.findOne({
+      _id: reqData.post_id,
+    });
+
+    if (postDetail.user_id) {
+      const message = `${fullname || 'User'} has added a comment to one your post`;
+      const metadata = {
+        post_id: postDetail._id,
+        user_id: postDetail.user_id,
+        profile_photo: profileImageGenerator(profile_photo),
+      };
+
+      await notificationModel.create({
+        user_id: postDetail.user_id,
+        type: NOTIFICATION_TYPE_CONST.COMMENT,
+        message: message,
+        meta_data: metadata,
+      });
+
+      this.sendNotificationWrapper(postDetail.user_id, {
+        notification: {
+          title: message,
+        },
+        data: {
+          payload: JSON.stringify({ ...metadata, type: NOTIFICATION_TYPE_CONST.COMMENT }),
+        },
+      });
+    }
 
     const commentCounts = await commentsModel.countDocuments({
       post_id: reqData.post_id,
@@ -1129,18 +1160,43 @@ class PostService {
     });
 
     if (userPostData) {
+      const message = `${fullname || 'User'} has like your post`;
+      const meta_data = {
+        post_id: reqData.post_id,
+        user_id: userId,
+        profile_photo: profileImageGenerator(profile_photo),
+      };
+      /* TODO: Need to add notification wrapper that takes care of all the stuff */
       notificationModel.create({
         user_id: userPostData.user_id,
         type: NOTIFICATION_TYPE_CONST.USER_LIKED,
-        message: `${fullname || 'User'} has like your post`,
-        meta_data: {
-          post_id: reqData.post_id,
-          user_id: userId,
-          profile_photo: profileImageGenerator(profile_photo),
+        message: message,
+        meta_data,
+      });
+
+      this.sendNotificationWrapper(userPostData.user_id, {
+        notification: {
+          title: message,
+        },
+        data: {
+          payload: JSON.stringify({ ...meta_data, type: NOTIFICATION_TYPE_CONST.USER_LIKED }),
         },
       });
     }
   }
+
+  private sendNotificationWrapper = async (userId: string, messagePayload: any) => {
+    const deviceTokens = await deviceTokenModel.find({
+      user_id: userId,
+      revoked: false,
+    });
+
+    if (deviceTokens?.length) {
+      deviceTokens.forEach(data => {
+        firecustom.sendNotification(data.device_token, messagePayload);
+      });
+    }
+  };
 }
 
 export default PostService;

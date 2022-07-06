@@ -70,12 +70,13 @@ declare class PostService {
     postDeleteAssets(userId: string, postId: string, reqData: PostAssetDeleteDto): Promise<any>;
     stockSearch(userId: string, reqData: StockSearchDto): Promise<any>;
     commentListing(userId: string, reqData: IdPaginationDto): Promise<any>;
-    commentAdd(userId: string, reqData: CommentsAddDto): Promise<any>;
+    commentAdd(fullname: string, profile_photo: string, userId: string, reqData: CommentsAddDto): Promise<any>;
     commentDelete(userId: string, postId: string, commentId: string): Promise<any>;
     postLikeUpdate(userId: string, fullname: string, profile_photo: string, reqData: LikePostDto): Promise<any>;
     complaintAdd(userId: string, reqData: ComplaintAddDto): Promise<any>;
     articleCatListing(): Promise<any>;
     protected singlePostAggreData(postId: string, userId: string): Promise<any>;
     private notificationUpdate;
+    private sendNotificationWrapper;
 }
 export default PostService;

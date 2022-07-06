@@ -102,6 +102,7 @@ export declare const DATE_FILTER_TYPE_CONST: {
 export declare const NOTIFICATION_TYPE_CONST: {
     FOLLOW: string;
     FOLLOW_ACCEPT: string;
+    COMMENT: string;
     USER_LIKED: string;
     CHANNEL: string;
 };

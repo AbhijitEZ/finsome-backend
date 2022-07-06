@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const countries_1 = tslib_1.__importDefault(require("../models/countries"));
+const firecustom_1 = tslib_1.__importDefault(require("../utils/firecustom"));
 const posts_1 = tslib_1.__importDefault(require("../models/posts"));
 const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
 const fs_1 = tslib_1.__importDefault(require("fs"));
@@ -20,6 +21,7 @@ const complaints_1 = tslib_1.__importDefault(require("../models/complaints"));
 const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
 const notifications_1 = tslib_1.__importDefault(require("../models/notifications"));
 const article_categories_1 = tslib_1.__importDefault(require("../models/article-categories"));
+const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -65,6 +67,17 @@ class PostService {
             user: 1,
             post: 1,
             reply: 1,
+        };
+        this.sendNotificationWrapper = async (userId, messagePayload) => {
+            const deviceTokens = await device_tokens_1.default.find({
+                user_id: userId,
+                revoked: false,
+            });
+            if (deviceTokens === null || deviceTokens === void 0 ? void 0 : deviceTokens.length) {
+                deviceTokens.forEach(data => {
+                    firecustom_1.default.sendNotification(data.device_token, messagePayload);
+                });
+            }
         };
     }
     async countriesGetAll() {
@@ -652,7 +665,7 @@ class PostService {
         commentsData = (_j = result === null || result === void 0 ? void 0 : result.map(comm => (0, global_1.commentResponseMapper)(comm))) !== null && _j !== void 0 ? _j : [];
         return { result: commentsData, total_count };
     }
-    async commentAdd(userId, reqData) {
+    async commentAdd(fullname, profile_photo, userId, reqData) {
         var _a;
         const newComment = await comments_1.default.create({
             user_id: userId,
@@ -660,6 +673,31 @@ class PostService {
             message: reqData.message,
             parent_id: (_a = reqData.parent_id) !== null && _a !== void 0 ? _a : null,
         });
+        const postDetail = await this.postsObj.findOne({
+            _id: reqData.post_id,
+        });
+        if (postDetail.user_id) {
+            const message = `${fullname || 'User'} has added a comment to one your post`;
+            const metadata = {
+                post_id: postDetail._id,
+                user_id: postDetail.user_id,
+                profile_photo: (0, util_1.profileImageGenerator)(profile_photo),
+            };
+            await notifications_1.default.create({
+                user_id: postDetail.user_id,
+                type: constants_1.NOTIFICATION_TYPE_CONST.COMMENT,
+                message: message,
+                meta_data: metadata,
+            });
+            this.sendNotificationWrapper(postDetail.user_id, {
+                notification: {
+                    title: message,
+                },
+                data: {
+                    payload: JSON.stringify(Object.assign(Object.assign({}, metadata), { type: constants_1.NOTIFICATION_TYPE_CONST.COMMENT })),
+                },
+            });
+        }
         const commentCounts = await comments_1.default.countDocuments({
             post_id: reqData.post_id,
             parent_id: {
@@ -1013,14 +1051,25 @@ class PostService {
             _id: new mongoose_1.Types.ObjectId(reqData.post_id),
         });
         if (userPostData) {
+            const message = `${fullname || 'User'} has like your post`;
+            const meta_data = {
+                post_id: reqData.post_id,
+                user_id: userId,
+                profile_photo: (0, util_1.profileImageGenerator)(profile_photo),
+            };
+            /* TODO: Need to add notification wrapper that takes care of all the stuff */
             notifications_1.default.create({
                 user_id: userPostData.user_id,
                 type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED,
-                message: `${fullname || 'User'} has like your post`,
-                meta_data: {
-                    post_id: reqData.post_id,
-                    user_id: userId,
-                    profile_photo: (0, util_1.profileImageGenerator)(profile_photo),
+                message: message,
+                meta_data,
+            });
+            this.sendNotificationWrapper(userPostData.user_id, {
+                notification: {
+                    title: message,
+                },
+                data: {
+                    payload: JSON.stringify(Object.assign(Object.assign({}, meta_data), { type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED })),
                 },
             });
         }
