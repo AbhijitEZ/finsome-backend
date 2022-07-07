@@ -1050,7 +1050,7 @@ class PostService {
         const userPostData = await posts_1.default.findOne({
             _id: new mongoose_1.Types.ObjectId(reqData.post_id),
         });
-        if (userPostData) {
+        if (userPostData && userId !== (userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id)) {
             const message = `${fullname || 'User'} has like your post`;
             const meta_data = {
                 post_id: reqData.post_id,

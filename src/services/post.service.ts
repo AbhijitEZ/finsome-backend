@@ -1159,7 +1159,7 @@ class PostService {
       _id: new Types.ObjectId(reqData.post_id),
     });
 
-    if (userPostData) {
+    if (userPostData && userId !== userPostData?.user_id) {
       const message = `${fullname || 'User'} has like your post`;
       const meta_data = {
         post_id: reqData.post_id,
