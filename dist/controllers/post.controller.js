@@ -178,6 +178,18 @@ class PostController {
                 next(error);
             }
         };
+        this.articleAdd = async (req, res, next) => {
+            var _a;
+            try {
+                // @ts-ignore
+                const data = await this.postService.articleAdd((_a = req.user) === null || _a === void 0 ? void 0 : _a.id, req.body);
+                (0, global_1.responseJSONMapper)(res, 201, data);
+            }
+            catch (error) {
+                console.log(error);
+                next(error);
+            }
+        };
         this.commentDelete = async (req, res, next) => {
             var _a, _b, _c;
             try {

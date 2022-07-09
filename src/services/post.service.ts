@@ -1,4 +1,5 @@
 import {
+  ArticleAddDto,
   CommentsAddDto,
   ComplaintAddDto,
   IdPaginationDto,
@@ -1014,10 +1015,21 @@ class PostService {
       .find({
         deleted_at: { $eq: null },
       })
+      .sort({ created_at: -1 })
       .lean();
 
     // @ts-ignore
     return articleCategories;
+  }
+
+  public async articleAdd(userId: string, reqData: ArticleAddDto): Promise<any> {
+    const newArticle = await articleCatModel.create({
+      user_id: new Types.ObjectId(userId),
+      ...reqData,
+    });
+
+    // @ts-ignore
+    return newArticle;
   }
 
   protected async singlePostAggreData(postId: string, userId: string): Promise<any> {

@@ -66,3 +66,6 @@ export declare class PostAssetDeleteDto {
 export declare class StockSearchDto extends PaginationDto {
     search?: string;
 }
+export declare class ArticleAddDto {
+    name: string;
+}

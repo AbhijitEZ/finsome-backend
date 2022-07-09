@@ -165,6 +165,17 @@ class PostController {
     }
   };
 
+  public articleAdd = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.postService.articleAdd(req.user?.id, req.body);
+      responseJSONMapper(res, 201, data);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
   public commentDelete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore

@@ -4,6 +4,7 @@ import PostController from '@/controllers/post.controller';
 import validationMiddleware from '@/middlewares/validation.middleware';
 import authMiddleware from '@/middlewares/auth.middleware';
 import {
+  ArticleAddDto,
   CommentsAddDto,
   ComplaintAddDto,
   IdPaginationDto,
@@ -67,6 +68,7 @@ class PostRoute implements Routes {
     this.router.delete(`${this.path}comment/:postId/:id`, authMiddleware, this.postController.commentDelete);
     this.router.post(`${this.path}like`, authMiddleware, validationMiddleware(LikePostDto, 'body'), this.postController.postLikeUpdate);
     this.router.post(`${this.path}complaint`, authMiddleware, validationMiddleware(ComplaintAddDto, 'body'), this.postController.complaintAdd);
+    this.router.post(`${this.path}article-categories`, authMiddleware, validationMiddleware(ArticleAddDto, 'body'), this.postController.articleAdd);
     this.router.get(`${this.path}article-categories`, authMiddleware, this.postController.articleCatListing);
   }
 }

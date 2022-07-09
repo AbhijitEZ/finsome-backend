@@ -911,9 +911,15 @@ class PostService {
             .find({
             deleted_at: { $eq: null },
         })
+            .sort({ created_at: -1 })
             .lean();
         // @ts-ignore
         return articleCategories;
+    }
+    async articleAdd(userId, reqData) {
+        const newArticle = await article_categories_1.default.create(Object.assign({ user_id: new mongoose_1.Types.ObjectId(userId) }, reqData));
+        // @ts-ignore
+        return newArticle;
     }
     async singlePostAggreData(postId, userId) {
         var _a;

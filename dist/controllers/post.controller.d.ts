@@ -18,6 +18,7 @@ declare class PostController {
     postLikeUpdate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     complaintAdd: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     articleCatListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    articleAdd: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     commentDelete: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default PostController;

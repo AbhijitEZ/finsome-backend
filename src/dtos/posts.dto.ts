@@ -215,3 +215,9 @@ export class StockSearchDto extends PaginationDto {
   @IsString()
   search?: string;
 }
+
+export class ArticleAddDto {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+}

@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { CommentsAddDto, ComplaintAddDto, IdPaginationDto, LikePostDto, PostAssetDeleteDto, PostCreateDto, PostHomeDto, StockSearchDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
+import { ArticleAddDto, CommentsAddDto, ComplaintAddDto, IdPaginationDto, LikePostDto, PostAssetDeleteDto, PostCreateDto, PostHomeDto, StockSearchDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
 declare class PostService {
     countryObj: import("mongoose").Model<import("../interfaces/general.interface").CountryInf & import("mongoose").Document<any, any, any>, {}, {}>;
     stockTypesObj: import("mongoose").Model<import("../interfaces/general.interface").StockTypeInf & import("mongoose").Document<any, any, any>, {}, {}>;
@@ -75,6 +75,7 @@ declare class PostService {
     postLikeUpdate(userId: string, fullname: string, profile_photo: string, reqData: LikePostDto): Promise<any>;
     complaintAdd(userId: string, reqData: ComplaintAddDto): Promise<any>;
     articleCatListing(): Promise<any>;
+    articleAdd(userId: string, reqData: ArticleAddDto): Promise<any>;
     protected singlePostAggreData(postId: string, userId: string): Promise<any>;
     private notificationUpdate;
     private sendNotificationWrapper;
