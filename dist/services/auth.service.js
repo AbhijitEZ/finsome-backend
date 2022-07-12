@@ -24,6 +24,7 @@ const user_followers_1 = tslib_1.__importDefault(require("../models/user-followe
 const notifications_1 = tslib_1.__importDefault(require("../models/notifications"));
 const user_rates_1 = tslib_1.__importDefault(require("../models/user-rates"));
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
+const notification_subscription_1 = tslib_1.__importDefault(require("../models/notification.subscription"));
 class AuthService {
     constructor() {
         this.users = users_model_1.default;
@@ -400,6 +401,22 @@ class AuthService {
         const count = await notifyqb.count();
         // @ts-ignore
         return count;
+    }
+    async subscriptionToggleNotification(userId, reqData) {
+        if (!reqData.is_notify) {
+            await notification_subscription_1.default.findOneAndDelete({
+                subscriber_id: reqData.subscriber_id,
+                user_id: userId,
+            });
+        }
+        else {
+            await notification_subscription_1.default.create({
+                subscriber_id: reqData.subscriber_id,
+                user_id: userId,
+            });
+        }
+        // @ts-ignore
+        return {};
     }
     async userMarkNotfication(userId, queryData) {
         var _a;
@@ -783,6 +800,24 @@ class AuthService {
                     ],
                 },
             },
+            /* TODO: Require check */
+            {
+                $lookup: {
+                    from: constants_1.NOTIFICATION_SUBSCRIPTION,
+                    localField: '_id',
+                    foreignField: 'subscriber_id',
+                    as: 'notification_subscription',
+                    pipeline: [
+                        {
+                            $match: {
+                                user_id: {
+                                    $eq: new mongoose_1.Types.ObjectId(userId),
+                                },
+                            },
+                        },
+                    ],
+                },
+            },
             {
                 $lookup: {
                     from: constants_1.USER_FOLLOWERS,
@@ -888,6 +923,12 @@ class AuthService {
             {
                 $unwind: {
                     path: '$follower_count',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: '$notification_subscription',
                     preserveNullAndEmptyArrays: true,
                 },
             },

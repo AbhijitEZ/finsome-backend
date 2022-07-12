@@ -12,6 +12,7 @@ import {
   LoginDto,
   NotificationDto,
   NotificationMarkReadDto,
+  NotificationSubscriptionDto,
   ProfileUpdateDto,
   QuickContactDto,
   ResetPasswordDto,
@@ -39,6 +40,7 @@ import {
   APP_IMPROVEMENT_TYPES,
   DEFAULT_TIMEZONE,
   LIMIT_DEF,
+  NOTIFICATION_SUBSCRIPTION,
   NOTIFICATION_TYPE_CONST,
   POSTS,
   SKIP_DEF,
@@ -58,6 +60,7 @@ import notificationModel from '@/models/notifications';
 import { PaginationDto } from '@/dtos/general.dto';
 import userRatesModel from '@/models/user-rates';
 import deviceTokenModel from '@/models/device-tokens';
+import notificationSubscriptionModel from '@/models/notification.subscription';
 
 class AuthService {
   public users = userModel;
@@ -462,6 +465,23 @@ class AuthService {
 
     // @ts-ignore
     return count;
+  }
+
+  public async subscriptionToggleNotification(userId: string, reqData: NotificationSubscriptionDto): Promise<any> {
+    if (!reqData.is_notify) {
+      await notificationSubscriptionModel.findOneAndDelete({
+        subscriber_id: reqData.subscriber_id,
+        user_id: userId,
+      });
+    } else {
+      await notificationSubscriptionModel.create({
+        subscriber_id: reqData.subscriber_id,
+        user_id: userId,
+      });
+    }
+
+    // @ts-ignore
+    return {};
   }
 
   public async userMarkNotfication(userId: string, queryData: NotificationMarkReadDto): Promise<any> {
@@ -875,6 +895,24 @@ class AuthService {
           ],
         },
       },
+      /* TODO: Require check */
+      {
+        $lookup: {
+          from: NOTIFICATION_SUBSCRIPTION,
+          localField: '_id',
+          foreignField: 'subscriber_id',
+          as: 'notification_subscription',
+          pipeline: [
+            {
+              $match: {
+                user_id: {
+                  $eq: new Types.ObjectId(userId),
+                },
+              },
+            },
+          ],
+        },
+      },
       {
         $lookup: {
           from: USER_FOLLOWERS,
@@ -980,6 +1018,12 @@ class AuthService {
       {
         $unwind: {
           path: '$follower_count',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$notification_subscription',
           preserveNullAndEmptyArrays: true,
         },
       },

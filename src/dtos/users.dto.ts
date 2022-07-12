@@ -222,3 +222,13 @@ export class NotificationMarkReadDto {
   @IsString({ each: true })
   notification_ids: string[];
 }
+
+export class NotificationSubscriptionDto {
+  @IsNotEmpty()
+  @IsBoolean()
+  is_notify: boolean;
+
+  @IsNotEmpty()
+  @IsString()
+  subscriber_id: string;
+}

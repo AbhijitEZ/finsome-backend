@@ -47,6 +47,7 @@ import userFollowerModel from '@/models/user-followers';
 import notificationModel from '@/models/notifications';
 import articleCatModel from '@/models/article-categories';
 import deviceTokenModel from '@/models/device-tokens';
+import notificationSubscriptionModel from '@/models/notification.subscription';
 
 class PostService {
   public countryObj = countryModel;
@@ -435,7 +436,14 @@ class PostService {
     return { result: postsMapping, total_count };
   }
 
-  public async postCreate(_id: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>, postId?: String): Promise<any> {
+  public async postCreate(
+    _id: string,
+    fullname: string,
+    profilePhoto: string,
+    reqData: PostCreateDto,
+    files?: Record<string, Array<Express.Multer.File>>,
+    postId?: String,
+  ): Promise<any> {
     // WAYROUND PATCH
     const payloadNew: any = { ...reqData, is_recommended: reqData.is_recommended === 'true' ? true : false };
     let post_images = [],
@@ -503,6 +511,8 @@ class PostService {
       const postSecurityIds = reqData.post_security_ids.map(security => ({ post_id: postData._id, stock_id: security }));
       await postStockModel.insertMany(postSecurityIds);
     }
+
+    this.sendNotificationToSubscripedUsers(_id, postData._id, fullname, profilePhoto);
 
     if (!isEmpty(files)) {
       files?.post_images?.map(file => {
@@ -1208,6 +1218,39 @@ class PostService {
         firecustom.sendNotification(data.device_token, messagePayload);
       });
     }
+  };
+
+  private sendNotificationToSubscripedUsers = async (userId: string, postId: string, fullname: string, profilePhoto?: string) => {
+    const subscripedUsers = await notificationSubscriptionModel.find({
+      user_id: userId,
+    });
+
+    subscripedUsers.map(async data => {
+      const deviceTokens = await deviceTokenModel.find({
+        user_id: data.subscriber_id,
+        revoked: false,
+      });
+
+      if (deviceTokens?.length) {
+        const message = `${fullname || 'User'} has added a post`;
+        const metadata = {
+          post_id: postId,
+          user_id: userId,
+          profile_photo: profileImageGenerator(profilePhoto),
+        };
+
+        deviceTokens.forEach(data => {
+          firecustom.sendNotification(data.device_token, {
+            notification: {
+              title: message,
+            },
+            data: {
+              payload: JSON.stringify({ ...metadata, type: NOTIFICATION_TYPE_CONST.POST }),
+            },
+          });
+        });
+      }
+    });
   };
 }
 

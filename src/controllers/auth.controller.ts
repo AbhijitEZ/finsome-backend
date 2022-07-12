@@ -291,6 +291,17 @@ class AuthController {
     }
   };
 
+  public subscriptionToggleNotification = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.authService.subscriptionToggleNotification(req.user?._id, req.body);
+
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public userMarkNotifications = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore

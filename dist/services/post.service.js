@@ -22,6 +22,7 @@ const user_followers_1 = tslib_1.__importDefault(require("../models/user-followe
 const notifications_1 = tslib_1.__importDefault(require("../models/notifications"));
 const article_categories_1 = tslib_1.__importDefault(require("../models/article-categories"));
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
+const notification_subscription_1 = tslib_1.__importDefault(require("../models/notification.subscription"));
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -78,6 +79,35 @@ class PostService {
                     firecustom_1.default.sendNotification(data.device_token, messagePayload);
                 });
             }
+        };
+        this.sendNotificationToSubscripedUsers = async (userId, postId, fullname, profilePhoto) => {
+            const subscripedUsers = await notification_subscription_1.default.find({
+                user_id: userId,
+            });
+            subscripedUsers.map(async (data) => {
+                const deviceTokens = await device_tokens_1.default.find({
+                    user_id: data.subscriber_id,
+                    revoked: false,
+                });
+                if (deviceTokens === null || deviceTokens === void 0 ? void 0 : deviceTokens.length) {
+                    const message = `${fullname || 'User'} has added a post`;
+                    const metadata = {
+                        post_id: postId,
+                        user_id: userId,
+                        profile_photo: (0, util_1.profileImageGenerator)(profilePhoto),
+                    };
+                    deviceTokens.forEach(data => {
+                        firecustom_1.default.sendNotification(data.device_token, {
+                            notification: {
+                                title: message,
+                            },
+                            data: {
+                                payload: JSON.stringify(Object.assign(Object.assign({}, metadata), { type: constants_1.NOTIFICATION_TYPE_CONST.POST })),
+                            },
+                        });
+                    });
+                }
+            });
         };
     }
     async countriesGetAll() {
@@ -391,7 +421,7 @@ class PostService {
         const postsMapping = result.map(post => (0, global_1.postResponseMapper)(post));
         return { result: postsMapping, total_count };
     }
-    async postCreate(_id, reqData, files, postId) {
+    async postCreate(_id, fullname, profilePhoto, reqData, files, postId) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         // WAYROUND PATCH
         const payloadNew = Object.assign(Object.assign({}, reqData), { is_recommended: reqData.is_recommended === 'true' ? true : false });
@@ -445,6 +475,7 @@ class PostService {
             const postSecurityIds = reqData.post_security_ids.map(security => ({ post_id: postData._id, stock_id: security }));
             await post_stocks_1.default.insertMany(postSecurityIds);
         }
+        this.sendNotificationToSubscripedUsers(_id, postData._id, fullname, profilePhoto);
         if (!(0, lodash_isempty_1.default)(files)) {
             (_l = files === null || files === void 0 ? void 0 : files.post_images) === null || _l === void 0 ? void 0 : _l.map(file => {
                 (0, util_1.fileUnSyncFromLocalStroage)(file.path);

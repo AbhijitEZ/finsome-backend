@@ -48,10 +48,10 @@ class PostController {
             }
         };
         this.postCreate = async (req, res, next) => {
-            var _a, _b;
+            var _a, _b, _c, _d;
             try {
                 // @ts-ignore
-                const data = await this.postService.postCreate((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.body, req.files, (_b = req.params) === null || _b === void 0 ? void 0 : _b.id);
+                const data = await this.postService.postCreate((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.user) === null || _b === void 0 ? void 0 : _b.fullname, (_c = req.user) === null || _c === void 0 ? void 0 : _c.profile_photo, req.body, req.files, (_d = req.params) === null || _d === void 0 ? void 0 : _d.id);
                 (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, data));
             }
             catch (error) {

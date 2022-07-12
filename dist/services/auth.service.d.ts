@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
-import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, DeviceTokenLogoutDto, FollowDto, LoginDto, NotificationDto, NotificationMarkReadDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, UserListingRateDto, UserRateDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
+import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, DeviceTokenLogoutDto, FollowDto, LoginDto, NotificationDto, NotificationMarkReadDto, NotificationSubscriptionDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, UserListingRateDto, UserRateDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
 import { TokenData } from '../interfaces/auth.interface';
 import { User } from '../interfaces/users.interface';
 import { PaginationDto } from '../dtos/general.dto';
@@ -43,6 +43,7 @@ declare class AuthService {
     updateUserAppImprovementSuggestion(reqData: AppImprovementUserDto, id: string): Promise<any>;
     userNotfication(userId: string, queryData: PaginationDto): Promise<any>;
     userUnReadNotfication(userId: string): Promise<any>;
+    subscriptionToggleNotification(userId: string, reqData: NotificationSubscriptionDto): Promise<any>;
     userMarkNotfication(userId: string, queryData: NotificationMarkReadDto): Promise<any>;
     addQuickContact(reqData: QuickContactDto): Promise<any>;
     followerRequest(userId: string, fullname: string, profilePhoto: string, reqData: FollowDto): Promise<any>;

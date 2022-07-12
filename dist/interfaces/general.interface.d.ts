@@ -69,6 +69,11 @@ export interface PrivacyPolicyInf {
     _id: string;
     content: string;
 }
+export interface NotificationSubscriptionInf {
+    _id: string;
+    user_id: string;
+    subscriber_id: string;
+}
 export interface PostStocksInf {
     _id: string;
     post_id: string;

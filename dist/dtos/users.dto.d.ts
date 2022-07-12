@@ -80,3 +80,7 @@ export declare class DeviceTokenLogoutDto {
 export declare class NotificationMarkReadDto {
     notification_ids: string[];
 }
+export declare class NotificationSubscriptionDto {
+    is_notify: boolean;
+    subscriber_id: string;
+}

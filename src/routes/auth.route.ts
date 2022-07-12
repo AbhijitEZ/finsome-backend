@@ -19,6 +19,7 @@ import {
   ValidateUserFieldDto,
   VerifyOtpDTO,
   VerifyPhoneDto,
+  NotificationSubscriptionDto,
 } from '@dtos/users.dto';
 import { Routes } from '@interfaces/routes.interface';
 import authMiddleware, { authOptionalMiddleware } from '@middlewares/auth.middleware';
@@ -125,6 +126,13 @@ class AuthRoute implements Routes {
       authMiddleware,
       validationMiddleware(NotificationMarkReadDto, 'body'),
       this.authController.userMarkNotifications,
+    );
+
+    this.router.get(
+      `${this.path}user/subscription-notifications`,
+      authMiddleware,
+      validationMiddleware(NotificationSubscriptionDto, 'query'),
+      this.authController.subscriptionToggleNotification,
     );
 
     this.router.post(`${this.path}user/rate/:userId`, validationMiddleware(UserRateDto, 'body'), authMiddleware, this.authController.userRating);

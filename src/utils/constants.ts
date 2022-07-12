@@ -117,6 +117,7 @@ export const NOTIFICATION_TYPE_CONST = {
   COMMENT: 'COMMENT',
   USER_LIKED: 'USER_LIKED',
   CHANNEL: 'CHANNEL',
+  POST: 'POST',
 };
 
 export const SKIP_DEF = '0';
@@ -140,6 +141,7 @@ export const COMMENTS = 'comments';
 export const PRIVACY_POLICIES = 'privacy-policies';
 export const TERMS_CONDITIONS = 'terms-conditions';
 export const OTP_VALIDATIONS = 'otp-validations';
+export const NOTIFICATION_SUBSCRIPTION = 'notification-subscriptions';
 export const USERS = 'users';
 export const POSTS = 'posts';
 export const USER_SUGGESTION_IMPROVEMENTS = 'user-suggestion-improvements';

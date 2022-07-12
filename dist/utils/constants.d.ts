@@ -105,6 +105,7 @@ export declare const NOTIFICATION_TYPE_CONST: {
     COMMENT: string;
     USER_LIKED: string;
     CHANNEL: string;
+    POST: string;
 };
 export declare const SKIP_DEF = "0";
 export declare const LIMIT_DEF = "10";
@@ -125,6 +126,7 @@ export declare const COMMENTS = "comments";
 export declare const PRIVACY_POLICIES = "privacy-policies";
 export declare const TERMS_CONDITIONS = "terms-conditions";
 export declare const OTP_VALIDATIONS = "otp-validations";
+export declare const NOTIFICATION_SUBSCRIPTION = "notification-subscriptions";
 export declare const USERS = "users";
 export declare const POSTS = "posts";
 export declare const USER_SUGGESTION_IMPROVEMENTS = "user-suggestion-improvements";
