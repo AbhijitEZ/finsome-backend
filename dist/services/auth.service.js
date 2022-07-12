@@ -405,14 +405,14 @@ class AuthService {
     async subscriptionToggleNotification(userId, reqData) {
         if (!reqData.is_notify) {
             await notification_subscription_1.default.findOneAndDelete({
-                subscriber_id: reqData.subscriber_id,
-                user_id: userId,
+                subscriber_id: userId,
+                user_id: reqData.subscribe_to_id,
             });
         }
         else {
             await notification_subscription_1.default.create({
-                subscriber_id: reqData.subscriber_id,
-                user_id: userId,
+                subscriber_id: userId,
+                user_id: reqData.subscribe_to_id,
             });
         }
         // @ts-ignore

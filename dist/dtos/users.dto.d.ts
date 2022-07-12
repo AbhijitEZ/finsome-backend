@@ -82,5 +82,5 @@ export declare class NotificationMarkReadDto {
 }
 export declare class NotificationSubscriptionDto {
     is_notify: boolean;
-    subscriber_id: string;
+    subscribe_to_id: string;
 }

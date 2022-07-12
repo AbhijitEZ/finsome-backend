@@ -301,6 +301,6 @@ tslib_1.__decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     tslib_1.__metadata("design:type", String)
-], NotificationSubscriptionDto.prototype, "subscriber_id", void 0);
+], NotificationSubscriptionDto.prototype, "subscribe_to_id", void 0);
 exports.NotificationSubscriptionDto = NotificationSubscriptionDto;
 //# sourceMappingURL=users.dto.js.map

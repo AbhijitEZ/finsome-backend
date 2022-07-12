@@ -230,5 +230,5 @@ export class NotificationSubscriptionDto {
 
   @IsNotEmpty()
   @IsString()
-  subscriber_id: string;
+  subscribe_to_id: string;
 }
