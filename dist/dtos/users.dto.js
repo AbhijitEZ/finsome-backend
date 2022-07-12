@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeviceTokenLogoutDto = exports.UserListingRateDto = exports.UserListingDto = exports.UserRateDto = exports.FollowDto = exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ResetPasswordDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
+exports.NotificationMarkReadDto = exports.DeviceTokenLogoutDto = exports.UserListingRateDto = exports.UserListingDto = exports.UserRateDto = exports.FollowDto = exports.QuickContactDto = exports.AppImprovementUserDto = exports.NotificationDto = exports.ProfileUpdateDto = exports.ResetPasswordDto = exports.ChangePasswordDto = exports.LoginDto = exports.CreateUserDto = exports.SignupPhoneDto = exports.ValidateUserFieldDto = exports.VerifyOtpDTO = exports.VerifyPhoneDto = void 0;
 const tslib_1 = require("tslib");
 const constants_1 = require("../utils/constants");
 const class_validator_1 = require("class-validator");
@@ -282,4 +282,12 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], DeviceTokenLogoutDto.prototype, "device_token", void 0);
 exports.DeviceTokenLogoutDto = DeviceTokenLogoutDto;
+class NotificationMarkReadDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    tslib_1.__metadata("design:type", Array)
+], NotificationMarkReadDto.prototype, "notification_ids", void 0);
+exports.NotificationMarkReadDto = NotificationMarkReadDto;
 //# sourceMappingURL=users.dto.js.map

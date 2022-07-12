@@ -11,6 +11,7 @@ import {
   FollowDto,
   LoginDto,
   NotificationDto,
+  NotificationMarkReadDto,
   ProfileUpdateDto,
   QuickContactDto,
   ResetPasswordDto,
@@ -450,6 +451,30 @@ class AuthService {
 
     // @ts-ignore
     return data;
+  }
+
+  public async userUnReadNotfication(userId: string): Promise<any> {
+    const notifyqb = notificationModel.find({
+      user_id: userId,
+    });
+
+    const count = await notifyqb.count();
+
+    // @ts-ignore
+    return count;
+  }
+
+  public async userMarkNotfication(userId: string, queryData: NotificationMarkReadDto): Promise<any> {
+    await Promise.all(
+      queryData.notification_ids?.map(async id => {
+        await notificationModel.findByIdAndUpdate(id, {
+          is_read: true,
+        });
+      }),
+    );
+
+    // @ts-ignore
+    return {};
   }
 
   public async addQuickContact(reqData: QuickContactDto): Promise<any> {

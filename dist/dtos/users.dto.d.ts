@@ -77,3 +77,6 @@ export declare class UserListingRateDto extends PaginationDto {
 export declare class DeviceTokenLogoutDto {
     device_token?: string;
 }
+export declare class NotificationMarkReadDto {
+    notification_ids: string[];
+}

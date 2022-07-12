@@ -26,6 +26,8 @@ declare class AuthController {
     followAcceptByUser: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userNotifications: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    userUnReadNotifications: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    userMarkNotifications: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userDetail: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     followDeleteRequest: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     followerListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;

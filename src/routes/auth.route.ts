@@ -8,6 +8,7 @@ import {
   FollowDto,
   LoginDto,
   NotificationDto,
+  NotificationMarkReadDto,
   ProfileUpdateDto,
   QuickContactDto,
   ResetPasswordDto,
@@ -117,6 +118,13 @@ class AuthRoute implements Routes {
       authMiddleware,
       validationMiddleware(PaginationDto, 'query'),
       this.authController.userNotifications,
+    );
+    this.router.get(`${this.path}user/total-unread-notifications`, authMiddleware, this.authController.userUnReadNotifications);
+    this.router.post(
+      `${this.path}user/mark-read-notifications`,
+      authMiddleware,
+      validationMiddleware(NotificationMarkReadDto, 'body'),
+      this.authController.userMarkNotifications,
     );
 
     this.router.post(`${this.path}user/rate/:userId`, validationMiddleware(UserRateDto, 'body'), authMiddleware, this.authController.userRating);

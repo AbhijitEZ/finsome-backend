@@ -280,6 +280,28 @@ class AuthController {
     }
   };
 
+  public userUnReadNotifications = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.authService.userUnReadNotfication(req.user?._id);
+
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public userMarkNotifications = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.authService.userMarkNotfication(req.user?._id, req.body);
+
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public userDetail = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore

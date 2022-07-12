@@ -393,6 +393,24 @@ class AuthService {
         // @ts-ignore
         return data;
     }
+    async userUnReadNotfication(userId) {
+        const notifyqb = notifications_1.default.find({
+            user_id: userId,
+        });
+        const count = await notifyqb.count();
+        // @ts-ignore
+        return count;
+    }
+    async userMarkNotfication(userId, queryData) {
+        var _a;
+        await Promise.all((_a = queryData.notification_ids) === null || _a === void 0 ? void 0 : _a.map(async (id) => {
+            await notifications_1.default.findByIdAndUpdate(id, {
+                is_read: true,
+            });
+        }));
+        // @ts-ignore
+        return {};
+    }
     async addQuickContact(reqData) {
         const newContact = await this.quickContact.create(Object.assign({}, reqData));
         // @ts-ignore

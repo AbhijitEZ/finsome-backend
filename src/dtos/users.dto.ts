@@ -216,3 +216,9 @@ export class DeviceTokenLogoutDto {
   @IsString()
   device_token?: string;
 }
+
+export class NotificationMarkReadDto {
+  @IsNotEmpty()
+  @IsString({ each: true })
+  notification_ids: string[];
+}

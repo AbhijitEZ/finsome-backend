@@ -18,6 +18,10 @@ const notificationsSchema: Schema = new Schema(
       enum: Object.keys(NOTIFICATION_TYPE_CONST),
       default: NOTIFICATION_TYPE_CONST.FOLLOW,
     },
+    is_read: {
+      type: Boolean,
+      default: false,
+    },
     meta_data: {
       type: Object,
     },

@@ -17,6 +17,10 @@ const notificationsSchema = new mongoose_1.Schema({
         enum: Object.keys(constants_1.NOTIFICATION_TYPE_CONST),
         default: constants_1.NOTIFICATION_TYPE_CONST.FOLLOW,
     },
+    is_read: {
+        type: Boolean,
+        default: false,
+    },
     meta_data: {
         type: Object,
     },

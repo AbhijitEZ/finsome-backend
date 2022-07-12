@@ -47,6 +47,7 @@ export interface UserFollowerInf {
 export interface NotificationInf {
     user_id: string;
     message: string;
+    is_read?: boolean;
     meta_data?: Record<string, any>;
     created_at: string;
     updated_at: string;
