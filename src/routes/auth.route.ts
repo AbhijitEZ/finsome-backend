@@ -128,10 +128,10 @@ class AuthRoute implements Routes {
       this.authController.userMarkNotifications,
     );
 
-    this.router.get(
+    this.router.post(
       `${this.path}user/subscription-notifications`,
       authMiddleware,
-      validationMiddleware(NotificationSubscriptionDto, 'query'),
+      validationMiddleware(NotificationSubscriptionDto, 'body'),
       this.authController.subscriptionToggleNotification,
     );
 
