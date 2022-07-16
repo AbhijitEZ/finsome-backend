@@ -459,6 +459,7 @@ class AuthService {
   public async userUnReadNotfication(userId: string): Promise<any> {
     const notifyqb = notificationModel.find({
       user_id: userId,
+      is_read: false,
     });
 
     const count = await notifyqb.count();

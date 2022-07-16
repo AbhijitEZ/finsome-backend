@@ -397,6 +397,7 @@ class AuthService {
     async userUnReadNotfication(userId) {
         const notifyqb = notifications_1.default.find({
             user_id: userId,
+            is_read: false,
         });
         const count = await notifyqb.count();
         // @ts-ignore
