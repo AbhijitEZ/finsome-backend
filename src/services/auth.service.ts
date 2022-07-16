@@ -474,6 +474,15 @@ class AuthService {
         user_id: reqData.subscribe_to_id,
       });
     } else {
+      const existingSubscription = await notificationSubscriptionModel.findOne({
+        subscriber_id: userId,
+        user_id: reqData.subscribe_to_id,
+      });
+
+      if (existingSubscription) {
+        throw new HttpException(400, APP_ERROR_MESSAGE.follower_exists);
+      }
+
       await notificationSubscriptionModel.create({
         subscriber_id: userId,
         user_id: reqData.subscribe_to_id,
@@ -900,15 +909,18 @@ class AuthService {
         $lookup: {
           from: NOTIFICATION_SUBSCRIPTION,
           localField: '_id',
-          foreignField: 'subscriber_id',
+          foreignField: 'user_id',
           as: 'notification_subscription',
           pipeline: [
             {
               $match: {
-                user_id: {
+                subscriber_id: {
                   $eq: new Types.ObjectId(userId),
                 },
               },
+            },
+            {
+              $project: { user_id: 1, subscriber_id: 1 },
             },
           ],
         },
@@ -1124,6 +1136,28 @@ class AuthService {
               },
             },
           ],
+        },
+      },
+      {
+        $lookup: {
+          from: USER_RATES,
+          localField: 'rated_by_user',
+          foreignField: 'user_id',
+          as: 'user_rates',
+          pipeline: [
+            {
+              $group: {
+                _id: '$user_id',
+                avg: { $avg: '$rate' },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$user_rates',
+          preserveNullAndEmptyArrays: true,
         },
       },
       {

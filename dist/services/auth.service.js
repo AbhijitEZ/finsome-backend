@@ -410,6 +410,13 @@ class AuthService {
             });
         }
         else {
+            const existingSubscription = await notification_subscription_1.default.findOne({
+                subscriber_id: userId,
+                user_id: reqData.subscribe_to_id,
+            });
+            if (existingSubscription) {
+                throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.follower_exists);
+            }
             await notification_subscription_1.default.create({
                 subscriber_id: userId,
                 user_id: reqData.subscribe_to_id,
@@ -805,15 +812,18 @@ class AuthService {
                 $lookup: {
                     from: constants_1.NOTIFICATION_SUBSCRIPTION,
                     localField: '_id',
-                    foreignField: 'subscriber_id',
+                    foreignField: 'user_id',
                     as: 'notification_subscription',
                     pipeline: [
                         {
                             $match: {
-                                user_id: {
+                                subscriber_id: {
                                     $eq: new mongoose_1.Types.ObjectId(userId),
                                 },
                             },
+                        },
+                        {
+                            $project: { user_id: 1, subscriber_id: 1 },
                         },
                     ],
                 },
@@ -1016,6 +1026,28 @@ class AuthService {
                             },
                         },
                     ],
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USER_RATES,
+                    localField: 'rated_by_user',
+                    foreignField: 'user_id',
+                    as: 'user_rates',
+                    pipeline: [
+                        {
+                            $group: {
+                                _id: '$user_id',
+                                avg: { $avg: '$rate' },
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: '$user_rates',
+                    preserveNullAndEmptyArrays: true,
                 },
             },
             {
