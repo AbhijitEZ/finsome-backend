@@ -908,6 +908,28 @@ class AuthService {
                 },
             },
             {
+                $lookup: {
+                    from: constants_1.USER_RATES,
+                    localField: '_id',
+                    foreignField: 'user_id',
+                    as: 'user_rates',
+                    pipeline: [
+                        {
+                            $group: {
+                                _id: '$user_id',
+                                avg: { $avg: '$rate' },
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: '$user_rates',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
                 $unwind: {
                     path: '$user_configuration',
                     preserveNullAndEmptyArrays: true,
