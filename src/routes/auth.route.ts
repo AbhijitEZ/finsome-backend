@@ -120,7 +120,9 @@ class AuthRoute implements Routes {
       validationMiddleware(PaginationDto, 'query'),
       this.authController.userNotifications,
     );
+
     this.router.get(`${this.path}user/total-unread-notifications`, authMiddleware, this.authController.userUnReadNotifications);
+
     this.router.post(
       `${this.path}user/mark-read-notifications`,
       authMiddleware,
