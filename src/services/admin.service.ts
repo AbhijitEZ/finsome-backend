@@ -19,6 +19,8 @@ import stockTypeModel from '@/models/stock-types';
 import fs from 'fs';
 import { parse as csvParser } from 'csv-parse/sync';
 import postsModel from '@/models/posts';
+import deviceTokenModel from '@/models/device-tokens';
+import userFollowerModel from '@/models/user-followers';
 
 class AdminService {
   public users = userModel;
@@ -51,7 +53,7 @@ class AdminService {
   }
 
   public async userListing(user: User): Promise<Record<string, any>> {
-    const users = await this.users
+    const users: any = await this.users
       .find({
         _id: { $ne: user._id },
         role: { $ne: USER_ROLE.ADMIN },
@@ -59,6 +61,12 @@ class AdminService {
       .sort({ created_at: -1 })
       .select(['-password', '-updated_at', '-term_agree_timestamp'])
       .lean();
+
+      for (let i = 0; i < users.length; i++) {
+        users[i].total_posts = await postsModel.countDocuments({ user_id: users[i]._id });
+        users[i].total_followers = await userFollowerModel.countDocuments({ follower_id: users[i]._id });
+        users[i].total_followings = await userFollowerModel.countDocuments({ user_id: users[i]._id });
+      }
 
     const userSanitized = users.map(user => ({ ...user, profile_photo: profileImageGenerator(user.profile_photo) }));
 
@@ -77,7 +85,10 @@ class AdminService {
     const appImproves = await this.appImprovement.find({});
     const quickContacts = await this.quickContact.find({});
     const suggestions = await this.userSuggestion.find({});
-    const posts = await postsModel.find({});
+    const postsCount = await postsModel.countDocuments();
+    const cryptPostCount = await postsModel.countDocuments({ stock_type: 'CRYPT' });
+    const equityPostCount = await postsModel.countDocuments({ stock_type: 'EQUITY' });
+    const generalPostCount = await postsModel.countDocuments({ stock_type: 'OTHER' });
 
     let active_user = 0,
       inactive_user = 0,
@@ -105,7 +116,10 @@ class AdminService {
       app_improves: appImproves.length,
       quick_contacts: quickContacts.length,
       suggestions: suggestions.length,
-      posts: posts.length,
+      posts: postsCount,
+      crypt_post: cryptPostCount,
+      equity_post: equityPostCount,
+      general_post: generalPostCount,
     };
   }
 
@@ -289,6 +303,21 @@ class AdminService {
     await stockTypeModel.insertMany(finalRecords);
 
     fileUnSyncFromLocalStroage(path);
+  }
+
+  public async getAllUserTokens(userIds: []): Promise<any> {
+    let userTokens: any = await deviceTokenModel
+      .find({
+        user_id: {
+          $in: userIds,
+        },
+        revoked: false,
+      })
+      .select('device_token')
+      .lean();
+    userTokens = userTokens.map((e: any) => e.device_token);
+    userTokens = userTokens.filter((e: any) => e != null && e != '' && e != undefined);
+    return userTokens;
   }
 }
 

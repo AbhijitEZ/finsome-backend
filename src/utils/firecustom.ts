@@ -46,6 +46,18 @@ class FireCustom {
         console.log('>>>>>>>>>>>>>>>>>>> FIREBASE MESSAGE Rejected', onRejected);
       });
   }
+
+  public sendAllNotification = (messages: any) =>{
+    return admin
+      .messaging()
+      .sendMulticast(messages)
+      .then(onFulfilled => {
+        return onFulfilled;
+      })
+      .catch(onRejected => {
+        console.log('>>>>>>>>>>>>>>>>>>> FIREBASE MESSAGE Rejected', onRejected);
+      });
+  }
 }
 
 export default new FireCustom();

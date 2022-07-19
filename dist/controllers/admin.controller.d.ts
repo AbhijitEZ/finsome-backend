@@ -17,5 +17,6 @@ declare class AdminController {
     stockTypeAdd: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     stockTypeDelete: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     stockTypeUpload: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    sendNotification: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default AdminController;

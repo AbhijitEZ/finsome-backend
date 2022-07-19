@@ -15,6 +15,7 @@ export declare const APP_SUCCESS_MESSAGE: {
     password_reset_success: string;
     verify_otp_success: string;
     assets_image_success: string;
+    notification_success: string;
 };
 export declare const APP_ERROR_MESSAGE: {
     invalid_token: string;

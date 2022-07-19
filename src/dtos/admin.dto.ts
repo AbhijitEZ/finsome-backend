@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsArray, IsBoolean, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class IdDto {
   @IsNotEmpty()
@@ -28,4 +28,17 @@ export class PrivacyPolicyDto {
   @IsNotEmpty()
   @IsString()
   content: string;
+}
+
+export class SendNotificationDto {
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsNotEmpty()
+  @IsString()
+  body: string;
+
+  @IsArray()
+  userIds: any[];
 }

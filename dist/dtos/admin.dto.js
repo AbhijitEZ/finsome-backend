@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PrivacyPolicyDto = exports.ToggleUserStatusDto = exports.AdminLoginDto = exports.IdDto = void 0;
+exports.SendNotificationDto = exports.PrivacyPolicyDto = exports.ToggleUserStatusDto = exports.AdminLoginDto = exports.IdDto = void 0;
 const tslib_1 = require("tslib");
 const class_validator_1 = require("class-validator");
 class IdDto {
@@ -42,4 +42,21 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], PrivacyPolicyDto.prototype, "content", void 0);
 exports.PrivacyPolicyDto = PrivacyPolicyDto;
+class SendNotificationDto {
+}
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], SendNotificationDto.prototype, "title", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
+], SendNotificationDto.prototype, "body", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsArray)(),
+    tslib_1.__metadata("design:type", Array)
+], SendNotificationDto.prototype, "userIds", void 0);
+exports.SendNotificationDto = SendNotificationDto;
 //# sourceMappingURL=admin.dto.js.map

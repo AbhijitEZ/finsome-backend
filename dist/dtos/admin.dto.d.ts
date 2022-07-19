@@ -11,3 +11,8 @@ export declare class ToggleUserStatusDto extends IdDto {
 export declare class PrivacyPolicyDto {
     content: string;
 }
+export declare class SendNotificationDto {
+    title: string;
+    body: string;
+    userIds: any[];
+}

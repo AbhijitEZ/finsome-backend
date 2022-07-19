@@ -15,6 +15,7 @@ export const APP_SUCCESS_MESSAGE = {
   password_reset_success: 'Password Reset successfully.',
   verify_otp_success: 'OTP is verified.',
   assets_image_success: 'Assests has been uploaded successfully.',
+  notification_success: 'Notification sent successfully.'
 };
 
 export const APP_ERROR_MESSAGE = {

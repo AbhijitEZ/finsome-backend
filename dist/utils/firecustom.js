@@ -4,6 +4,17 @@ const tslib_1 = require("tslib");
 const admin = tslib_1.__importStar(require("firebase-admin"));
 class FireCustom {
     constructor() {
+        this.sendAllNotification = (messages) => {
+            return admin
+                .messaging()
+                .sendMulticast(messages)
+                .then(onFulfilled => {
+                return onFulfilled;
+            })
+                .catch(onRejected => {
+                console.log('>>>>>>>>>>>>>>>>>>> FIREBASE MESSAGE Rejected', onRejected);
+            });
+        };
         this.init();
     }
     async init() {

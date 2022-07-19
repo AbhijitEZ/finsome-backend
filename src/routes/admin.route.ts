@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 
 import validationMiddleware from '@middlewares/validation.middleware';
-import { AdminLoginDto, PrivacyPolicyDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
+import { AdminLoginDto, PrivacyPolicyDto, SendNotificationDto, ToggleUserStatusDto } from '@/dtos/admin.dto';
 import AdminController from '@/controllers/admin.controller';
 import { authAdminMiddleware } from '@/middlewares/auth.middleware';
 import { StockUpdateTypeDto } from '@/dtos/posts.dto';
@@ -67,6 +67,11 @@ class AdminRoute implements Routes {
       validationMiddleware(PrivacyPolicyDto, 'body'),
       authAdminMiddleware,
       this.adminController.termsConditionUpdate,
+    );
+    this.router.post(
+      `${this.path}send-notification`,
+      validationMiddleware(SendNotificationDto, 'body'),
+      this.adminController.sendNotification,
     );
     /* !Policies */
   }

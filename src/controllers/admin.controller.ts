@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import AdminService from '@services/admin.service';
 import { APP_ERROR_MESSAGE, APP_SUCCESS_MESSAGE, STOCK_TYPE_CONST } from '@/utils/constants';
 import { HttpException } from '@/exceptions/HttpException';
+import firecustom from '@utils/firecustom';
+import _lodash from 'lodash';
 
 class AdminController {
   public adminService = new AdminService();
@@ -160,6 +162,43 @@ class AdminController {
       await this.adminService.stockTypeUpload(req.params?.type || STOCK_TYPE_CONST.EQUITY, req.file.path);
 
       res.status(200).json({ data: {}, message: APP_SUCCESS_MESSAGE.csv_upload_success });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public sendNotification = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const title = req.body.title;
+      const body = req.body.body;
+      const userIds = req.body.userIds;
+      let tokens = await this.adminService.getAllUserTokens(userIds);
+
+      let promises: any[] = [];
+      const chunks = _lodash.chunk(tokens, 100);
+      chunks.forEach(e => {
+        const msg = {
+          notification: {
+            title: title,
+            body: body,
+          },
+          tokens: e,
+          android: {
+            priority: 'high',
+          },
+        };
+        promises.push(firecustom.sendAllNotification(msg));
+      });
+      const result = await Promise.all(promises);
+      let accepted = 0;
+      let rejected = 0;
+      result.forEach(response => {
+        if (response != undefined) {
+          accepted += response.successCount;
+          rejected += response.failureCount;
+        }
+      });
+      res.status(200).json({ data: { accepted, rejected }, message: APP_SUCCESS_MESSAGE.notification_success });
     } catch (error) {
       next(error);
     }

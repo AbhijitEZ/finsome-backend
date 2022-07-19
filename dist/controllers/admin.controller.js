@@ -4,6 +4,8 @@ const tslib_1 = require("tslib");
 const admin_service_1 = tslib_1.__importDefault(require("../services/admin.service"));
 const constants_1 = require("../utils/constants");
 const HttpException_1 = require("../exceptions/HttpException");
+const firecustom_1 = tslib_1.__importDefault(require("../utils/firecustom"));
+const lodash_1 = tslib_1.__importDefault(require("lodash"));
 class AdminController {
     constructor() {
         this.adminService = new admin_service_1.default();
@@ -148,6 +150,42 @@ class AdminController {
                 // @ts-ignore
                 await this.adminService.stockTypeUpload(((_a = req.params) === null || _a === void 0 ? void 0 : _a.type) || constants_1.STOCK_TYPE_CONST.EQUITY, req.file.path);
                 res.status(200).json({ data: {}, message: constants_1.APP_SUCCESS_MESSAGE.csv_upload_success });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.sendNotification = async (req, res, next) => {
+            try {
+                const title = req.body.title;
+                const body = req.body.body;
+                const userIds = req.body.userIds;
+                let tokens = await this.adminService.getAllUserTokens(userIds);
+                let promises = [];
+                const chunks = lodash_1.default.chunk(tokens, 100);
+                chunks.forEach(e => {
+                    const msg = {
+                        notification: {
+                            title: title,
+                            body: body,
+                        },
+                        tokens: e,
+                        android: {
+                            priority: 'high',
+                        },
+                    };
+                    promises.push(firecustom_1.default.sendAllNotification(msg));
+                });
+                const result = await Promise.all(promises);
+                let accepted = 0;
+                let rejected = 0;
+                result.forEach(response => {
+                    if (response != undefined) {
+                        accepted += response.successCount;
+                        rejected += response.failureCount;
+                    }
+                });
+                res.status(200).json({ data: { accepted, rejected }, message: constants_1.APP_SUCCESS_MESSAGE.notification_success });
             }
             catch (error) {
                 next(error);

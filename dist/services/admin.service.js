@@ -19,6 +19,8 @@ const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 const fs_1 = tslib_1.__importDefault(require("fs"));
 const sync_1 = require("csv-parse/sync");
 const posts_1 = tslib_1.__importDefault(require("../models/posts"));
+const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
+const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
@@ -55,6 +57,11 @@ class AdminService {
             .sort({ created_at: -1 })
             .select(['-password', '-updated_at', '-term_agree_timestamp'])
             .lean();
+        for (let i = 0; i < users.length; i++) {
+            users[i].total_posts = await posts_1.default.countDocuments({ user_id: users[i]._id });
+            users[i].total_followers = await user_followers_1.default.countDocuments({ follower_id: users[i]._id });
+            users[i].total_followings = await user_followers_1.default.countDocuments({ user_id: users[i]._id });
+        }
         const userSanitized = users.map(user => (Object.assign(Object.assign({}, user), { profile_photo: (0, util_1.profileImageGenerator)(user.profile_photo) })));
         return userSanitized;
     }
@@ -69,7 +76,10 @@ class AdminService {
         const appImproves = await this.appImprovement.find({});
         const quickContacts = await this.quickContact.find({});
         const suggestions = await this.userSuggestion.find({});
-        const posts = await posts_1.default.find({});
+        const postsCount = await posts_1.default.countDocuments();
+        const cryptPostCount = await posts_1.default.countDocuments({ stock_type: 'CRYPT' });
+        const equityPostCount = await posts_1.default.countDocuments({ stock_type: 'EQUITY' });
+        const generalPostCount = await posts_1.default.countDocuments({ stock_type: 'OTHER' });
         let active_user = 0, inactive_user = 0, total_user = 0, completed_registered_user = 0;
         users.map(usr => {
             total_user = total_user + 1;
@@ -91,7 +101,10 @@ class AdminService {
             app_improves: appImproves.length,
             quick_contacts: quickContacts.length,
             suggestions: suggestions.length,
-            posts: posts.length,
+            posts: postsCount,
+            crypt_post: cryptPostCount,
+            equity_post: equityPostCount,
+            general_post: generalPostCount,
         };
     }
     async toggleUserStatus(user) {
@@ -237,6 +250,20 @@ class AdminService {
         }));
         await stock_types_1.default.insertMany(finalRecords);
         (0, util_1.fileUnSyncFromLocalStroage)(path);
+    }
+    async getAllUserTokens(userIds) {
+        let userTokens = await device_tokens_1.default
+            .find({
+            user_id: {
+                $in: userIds,
+            },
+            revoked: false,
+        })
+            .select('device_token')
+            .lean();
+        userTokens = userTokens.map((e) => e.device_token);
+        userTokens = userTokens.filter((e) => e != null && e != '' && e != undefined);
+        return userTokens;
     }
 }
 exports.default = AdminService;

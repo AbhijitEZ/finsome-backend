@@ -27,5 +27,6 @@ declare class AdminService {
     stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any>;
     stockTypeDelete(type: string, _id: string): Promise<any>;
     stockTypeUpload(type: string, path: string): Promise<any>;
+    getAllUserTokens(userIds: []): Promise<any>;
 }
 export default AdminService;
