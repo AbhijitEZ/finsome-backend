@@ -52,25 +52,31 @@ class AdminService {
     return { token };
   }
 
-  public async userListing(user: User): Promise<Record<string, any>> {
-    const users: any = await this.users
-      .find({
-        _id: { $ne: user._id },
-        role: { $ne: USER_ROLE.ADMIN },
-      })
-      .sort({ created_at: -1 })
-      .select(['-password', '-updated_at', '-term_agree_timestamp'])
-      .lean();
+  public async userListing(user: User, req: any): Promise<Record<string, any>> {
+    const { page, limit, search, status } = req.body;
+    const model: any = userModel;
+    let searchRegex = new RegExp(search, 'i');
+    let query: any = {
+      _id: { $ne: user._id },
+      role: { $ne: USER_ROLE.ADMIN },
+      $or: [{ name: searchRegex }, { phone_number: searchRegex }, { eamil: searchRegex }],
+    };
 
-      for (let i = 0; i < users.length; i++) {
-        users[i].total_posts = await postsModel.countDocuments({ user_id: users[i]._id });
-        users[i].total_followers = await userFollowerModel.countDocuments({ follower_id: users[i]._id });
-        users[i].total_followings = await userFollowerModel.countDocuments({ user_id: users[i]._id });
-      }
+    if (status != '') {
+      query['is_registration_complete'] = status;
+    }
 
-    const userSanitized = users.map(user => ({ ...user, profile_photo: profileImageGenerator(user.profile_photo) }));
-
-    return userSanitized;
+    let users: any = await model.paginate(query, {
+      page: page,
+      limit: limit,
+      lean: true,
+      select: '-password -updated_at -term_agree_timestamp',
+      sort: { created_at: -1 },
+    });
+    let data: any = users.docs;
+    const userSanitized = data.map(d => ({ ...d, profile_photo: profileImageGenerator(d.profile_photo) }));
+    users.docs = userSanitized;
+    return users;
   }
 
   public async dashboardData(user: User): Promise<Record<string, any>> {
@@ -82,9 +88,9 @@ class AdminService {
       .sort({ created_at: -1 })
       .lean();
 
-    const appImproves = await this.appImprovement.find({});
-    const quickContacts = await this.quickContact.find({});
-    const suggestions = await this.userSuggestion.find({});
+    const appImproves = await this.appImprovement.countDocuments();
+    const quickContacts = await this.quickContact.countDocuments();
+    const suggestions = await this.userSuggestion.countDocuments();
     const postsCount = await postsModel.countDocuments();
     const cryptPostCount = await postsModel.countDocuments({ stock_type: 'CRYPT' });
     const equityPostCount = await postsModel.countDocuments({ stock_type: 'EQUITY' });
@@ -113,9 +119,9 @@ class AdminService {
       inactive_user,
       total_user,
       completed_registered_user,
-      app_improves: appImproves.length,
-      quick_contacts: quickContacts.length,
-      suggestions: suggestions.length,
+      app_improves: appImproves,
+      quick_contacts: quickContacts,
+      suggestions: suggestions,
       posts: postsCount,
       crypt_post: cryptPostCount,
       equity_post: equityPostCount,
@@ -179,15 +185,40 @@ class AdminService {
     await this.termsConditionM.findByIdAndUpdate(findData._id, { ...data });
   }
 
-  public async appImprovementSuggestion(): Promise<any> {
-    let allSuggestion = await this.userSuggestion
-      .find({})
-      .populate('user_id', ['fullname', 'phone_number'])
-      .sort({ timestamp: -1 })
-      .populate('app_improve_type_id', ['_id', 'name']);
+  public async appImprovementSuggestion(body: any): Promise<any> {
+    const { page, limit, search, status } = body;
+    const model: any = userSuggestionImprovementModel;
+    let searchRegex = new RegExp(search, 'i');
+    let query: any = {
+      $or: [{ description: searchRegex }],
+    };
+
+    if (status != null && status != '') {
+      let findStatus = await appImprovementModel.findOne({ name: status });
+      if (findStatus != null) {
+        query['app_improve_type_id'] = findStatus._id;
+      }
+    }
+
+    let allData: any = await model.paginate(query, {
+      page: page,
+      limit: limit,
+      sort: { timestamp: -1 },
+      lean: true,
+      populate: [
+        {
+          path: 'user_id',
+          select: 'fullname phone_number',
+        },
+        {
+          path: 'app_improve_type_id',
+          select: '_id name',
+        },
+      ],
+    });
 
     // @ts-ignore
-    allSuggestion = allSuggestion.map((suggestion: any) => {
+    allData.docs = allData.docs.map((suggestion: any) => {
       return {
         _id: suggestion.id,
         phone_number: suggestion?.user_id?.phone_number ?? '',
@@ -201,12 +232,24 @@ class AdminService {
       };
     });
 
-    return allSuggestion;
+    return allData;
   }
 
-  public async quickContactListing(): Promise<Record<string, any>> {
-    const quickContacts = await this.quickContact.find({}).sort({ created_at: -1 }).lean();
-
+  public async quickContactListing(body: any): Promise<any> {
+    const { page, limit, search } = body;
+    let model: any = quickContactModel;
+    let searchRegex = new RegExp(search, 'i');
+    const quickContacts = await model.paginate(
+      {
+        $or: [{ name: searchRegex }, { email: searchRegex }, { message: searchRegex }],
+      },
+      {
+        page: page,
+        limit: limit,
+        sort: { created_at: -1 },
+        lean: true,
+      },
+    );
     return quickContacts;
   }
 

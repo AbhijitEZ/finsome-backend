@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { CommentsInf } from '@interfaces/general.interface';
 import { COMMENTS, POSTS, USERS } from '@/utils/constants';
 
@@ -28,7 +29,7 @@ const commentsSchema: Schema = new Schema(
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   },
 );
-
+commentsSchema.plugin(paginate);
 const commentsModel = model<CommentsInf & Document>(COMMENTS, commentsSchema);
 
 export default commentsModel;

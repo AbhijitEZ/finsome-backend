@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { QuickContactInf } from '@interfaces/general.interface';
 import { QUICK_CONTACTS } from '@/utils/constants';
 
@@ -22,6 +23,7 @@ const quickContactSchema: Schema = new Schema(
   },
 );
 
+quickContactSchema.plugin(paginate);
 const quickContactModel = model<QuickContactInf & Document>(QUICK_CONTACTS, quickContactSchema);
 
 export default quickContactModel;

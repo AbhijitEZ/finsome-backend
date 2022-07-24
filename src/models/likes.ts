@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { LikesInf } from '@interfaces/general.interface';
 import { LIKES, POSTS, USERS } from '@/utils/constants';
 
@@ -21,6 +22,7 @@ const likesSchema: Schema = new Schema(
   },
 );
 
+likesSchema.plugin(paginate);
 const likesModel = model<LikesInf & Document>(LIKES, likesSchema);
 
 export default likesModel;

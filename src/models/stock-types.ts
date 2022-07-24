@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { StockTypeInf } from '@interfaces/general.interface';
 import { STOCK_TYPES, STOCK_TYPE_CONST } from '@/utils/constants';
 
@@ -30,6 +31,7 @@ const stockTypeSchema: Schema = new Schema(
   },
 );
 
+stockTypeSchema.plugin(paginate);
 const stockTypeModel = model<StockTypeInf & Document>(STOCK_TYPES, stockTypeSchema);
 
 export default stockTypeModel;

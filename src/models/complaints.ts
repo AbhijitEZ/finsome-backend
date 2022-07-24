@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { ComplaintsInf } from '@interfaces/general.interface';
 import { COMPLAINTS, POSTS, USERS } from '@/utils/constants';
 
@@ -33,6 +34,7 @@ const compliantsSchema: Schema = new Schema(
   },
 );
 
+compliantsSchema.plugin(paginate);
 const complaintModel = model<ComplaintsInf & Document>(COMPLAINTS, compliantsSchema);
 
 export default complaintModel;

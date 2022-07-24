@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { UserSuggestionImproveInf } from '@interfaces/general.interface';
 import { APP_IMPROVEMENT_TYPES, USERS, USER_SUGGESTION_IMPROVEMENTS } from '@/utils/constants';
 
@@ -21,6 +22,7 @@ const userSuggestionImprovement: Schema = new Schema(
   },
 );
 
+userSuggestionImprovement.plugin(paginate);
 const userSuggestionImprovementModel = model<UserSuggestionImproveInf & Document>(USER_SUGGESTION_IMPROVEMENTS, userSuggestionImprovement);
 
 export default userSuggestionImprovementModel;

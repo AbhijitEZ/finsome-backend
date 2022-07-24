@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { OtpValidationInf } from '@interfaces/general.interface';
 import { OTP_VALIDATIONS } from '@/utils/constants';
 
@@ -26,6 +27,7 @@ const otpValidationSchema: Schema = new Schema(
   },
 );
 
+otpValidationSchema.plugin(paginate);
 const otpValidationModel = model<OtpValidationInf & Document>(OTP_VALIDATIONS, otpValidationSchema);
 
 export default otpValidationModel;

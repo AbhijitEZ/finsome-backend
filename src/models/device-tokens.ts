@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { DEVICE_TOKENS, USERS } from '@/utils/constants';
 import { DeviceTokenInf } from '@/interfaces/users.interface';
 
@@ -23,7 +24,7 @@ const deviceTokenSchema: Schema = new Schema(
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   },
 );
-
+deviceTokenSchema.plugin(paginate);
 const deviceTokenModel = model<DeviceTokenInf & Document>(DEVICE_TOKENS, deviceTokenSchema);
 
 export default deviceTokenModel;

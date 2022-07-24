@@ -23,20 +23,20 @@ class AdminRoute implements Routes {
   private initializeRoutes() {
     this.router.post(`${this.path}login`, validationMiddleware(AdminLoginDto, 'body'), this.adminController.adminLogin);
     /* User */
-    this.router.get(`${this.path}users`, authAdminMiddleware, this.adminController.userListing);
-    this.router.get(`${this.path}dashboard`, authAdminMiddleware, this.adminController.dashboardData);
+    this.router.post(`${this.path}users`, authAdminMiddleware, this.adminController.userListing);
+    this.router.post(`${this.path}dashboard`, authAdminMiddleware, this.adminController.dashboardData);
     this.router.post(
       `${this.path}toggle-user-status`,
       validationMiddleware(ToggleUserStatusDto, 'body'),
       authAdminMiddleware,
       this.adminController.toggleUserStatus,
     );
-    this.router.delete(`${this.path}user/:id`, authAdminMiddleware, this.adminController.deleteUser);
+    this.router.post(`${this.path}deleteUser`, authAdminMiddleware, this.adminController.deleteUser);
     /* !User */
 
     /* App Suggestion and Contacts */
-    this.router.get(`${this.path}app-improvement-suggestions`, authAdminMiddleware, this.adminController.appImprovementSuggestion);
-    this.router.get(`${this.path}quick-contacts`, authAdminMiddleware, this.adminController.quickContactListing);
+    this.router.post(`${this.path}app-improvement-suggestions`, authAdminMiddleware, this.adminController.appImprovementSuggestion);
+    this.router.post(`${this.path}quick-contacts`, authAdminMiddleware, this.adminController.quickContactListing);
     /* !App Suggestion and Contacts */
 
     /* Stocks */

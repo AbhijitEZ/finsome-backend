@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { UserConfigurationInf } from '@interfaces/general.interface';
 import { ACCOUNT_TYPE_CONST, ANALYSIS_TYPE_CONST, STOCK_TYPE_CONST, TRADE_TYPE_CONST, USERS, USER_CONFIGURATIONS } from '@/utils/constants';
 
@@ -31,6 +32,7 @@ const userConfigurationSchema: Schema = new Schema(
   },
 );
 
+userConfigurationSchema.plugin(paginate);
 const userConfigurationModel = model<UserConfigurationInf & Document>(USER_CONFIGURATIONS, userConfigurationSchema);
 
 export default userConfigurationModel;

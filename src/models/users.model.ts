@@ -1,4 +1,5 @@
-import { model, Schema, Document } from 'mongoose';
+import { model, Schema, Document, PaginateResult } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { User } from '@interfaces/users.interface';
 import { APP_ERROR_MESSAGE, USERS, USER_ROLE } from '@/utils/constants';
 import { HttpException } from '@/exceptions/HttpException';
@@ -88,6 +89,7 @@ const userSchema: Schema = new Schema(
   },
 );
 
+
 userSchema.index({
   fullname: 'text',
   email: 'text',
@@ -106,7 +108,7 @@ userSchema.post('save', function (error, doc, next) {
     next(error);
   }
 });
-
-const userModel = model<User & Document>(USERS, userSchema);
+userSchema.plugin(paginate);
+const userModel = model(USERS, userSchema);
 
 export default userModel;

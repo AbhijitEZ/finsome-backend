@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { NotificationInf } from '@interfaces/general.interface';
 import { NOTFICATIONS, NOTIFICATION_TYPE_CONST, USERS } from '@/utils/constants';
 
@@ -34,6 +35,7 @@ const notificationsSchema: Schema = new Schema(
   },
 );
 
+notificationsSchema.plugin(paginate);
 const notificationModel = model<NotificationInf & Document>(NOTFICATIONS, notificationsSchema);
 
 export default notificationModel;

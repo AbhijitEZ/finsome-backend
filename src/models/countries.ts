@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { CountryInf } from '@interfaces/general.interface';
 import { COUNTRIES } from '@/utils/constants';
 
@@ -28,6 +29,7 @@ const countrySchema: Schema = new Schema(
   },
 );
 
+countrySchema.plugin(paginate);
 const countryModel = model<CountryInf & Document>(COUNTRIES, countrySchema);
 
 export default countryModel;

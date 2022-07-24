@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { UserFollowerInf } from '@interfaces/general.interface';
 import { USERS, USER_FOLLOWERS } from '@/utils/constants';
 
@@ -25,6 +26,7 @@ const userFollowerSchema: Schema = new Schema(
   },
 );
 
+userFollowerSchema.plugin(paginate);
 const userFollowerModel = model<UserFollowerInf & Document>(USER_FOLLOWERS, userFollowerSchema);
 
 export default userFollowerModel;

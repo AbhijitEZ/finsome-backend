@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import { PrivacyPolicyInf } from '@interfaces/general.interface';
 import { TERMS_CONDITIONS } from '@/utils/constants';
 
@@ -14,6 +15,7 @@ const termsConditionSchema: Schema = new Schema(
   },
 );
 
+termsConditionSchema.plugin(paginate);
 const termsConditionModel = model<PrivacyPolicyInf & Document>(TERMS_CONDITIONS, termsConditionSchema);
 
 export default termsConditionModel;
