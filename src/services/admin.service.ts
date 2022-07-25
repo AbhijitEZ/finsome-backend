@@ -59,7 +59,7 @@ class AdminService {
     let query: any = {
       _id: { $ne: user._id },
       role: { $ne: USER_ROLE.ADMIN },
-      $or: [{ name: searchRegex }, { phone_number: searchRegex }, { eamil: searchRegex }],
+      $or: [{ fullname: searchRegex }, { phone_number: searchRegex }, { email: searchRegex }],
     };
 
     if (status != '') {
@@ -349,15 +349,13 @@ class AdminService {
   }
 
   public async getAllUserTokens(userIds: []): Promise<any> {
-    let userTokens: any = await deviceTokenModel
-      .find({
-        user_id: {
-          $in: userIds,
-        },
-        revoked: false,
-      })
-      .select('device_token')
-      .lean();
+    let query = { revoked: false };
+    if (userIds.length > 0) {
+      query['user_id'] = {
+        $in: userIds,
+      };
+    }
+    let userTokens: any = await deviceTokenModel.find(query).select('device_token').lean();
     userTokens = userTokens.map((e: any) => e.device_token);
     userTokens = userTokens.filter((e: any) => e != null && e != '' && e != undefined);
     return userTokens;
