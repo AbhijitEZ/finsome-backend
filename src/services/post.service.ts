@@ -186,6 +186,8 @@ class PostService {
       };
     }
 
+
+
     const postsQb = this.postsObj.aggregate([
       {
         $project: this.postResObj,
@@ -414,26 +416,29 @@ class PostService {
     }
 
     if (queryData.has_all_data) {
+      let searchRegex: any = new RegExp(queryData.search, "i");
       postsQb.append({
-        $facet: {
-          totalRecords: [
-            {
-              $count: 'total',
-            },
-          ],
-          result: [],
-        },
+        $match: {
+          $or: [ 
+            { caption: searchRegex },
+            { stock_type: searchRegex },
+            { "user.fullname": searchRegex }
+          ]
+        }
       });
+      let model: any = postsModel;
+      let posts = await model.aggregatePaginate(postsQb, {
+        page: queryData.skip,
+        limit: queryData.limit,
+      });
+      return posts;
+    } else {
+      const posts = await postsQb.exec();
+      const total_count = posts?.[0]?.totalRecords?.[0]?.total ?? 0;
+      const result = posts?.[0]?.result ?? [];
+      const postsMapping = result.map(post => postResponseMapper(post));
+      return { result: postsMapping, total_count };
     }
-
-    const posts = await postsQb.exec();
-
-    const total_count = posts?.[0]?.totalRecords?.[0]?.total ?? 0;
-    const result = posts?.[0]?.result ?? [];
-
-    const postsMapping = result.map(post => postResponseMapper(post));
-
-    return { result: postsMapping, total_count };
   }
 
   public async postCreate(

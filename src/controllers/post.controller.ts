@@ -67,7 +67,7 @@ class PostController {
   public postHome = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.postService.postHome(req.user?._id, req.query);
+      const data = await this.postService.postHome(req.user?._id, req.method == 'POST' ? req.body : req.query);
       responseJSONMapper(res, 200, data);
     } catch (error) {
       next(error);
@@ -87,7 +87,7 @@ class PostController {
   public postDelete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.postService.postDelete(req.user?._id, req.params?.postId);
+      const data = await this.postService.postDelete(req.user?._id, req.method == 'POST'? req.body : req.params?.postId);
       responseJSONMapper(res, 200, data);
     } catch (error) {
       next(error);

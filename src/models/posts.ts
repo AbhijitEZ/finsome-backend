@@ -1,5 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
+import aggregatePaginate from 'mongoose-aggregate-paginate-v2';
 import { PostsInf } from '@interfaces/general.interface';
 import { ANALYSIS_TYPE_CONST, POSTS, STOCK_RECOMMENDED_CONST, STOCK_TYPES, STOCK_TYPE_CONST, TRADE_TYPE_CONST, USERS } from '@/utils/constants';
 
@@ -68,6 +69,7 @@ const postsSch: Schema = new Schema(
 );
 
 postsSch.plugin(paginate);
-const postsModel = model<PostsInf & Document>(POSTS, postsSch);
+postsSch.plugin(aggregatePaginate);
+const postsModel = model(POSTS, postsSch);
 
 export default postsModel;
