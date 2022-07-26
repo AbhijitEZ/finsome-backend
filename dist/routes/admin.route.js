@@ -21,14 +21,14 @@ class AdminRoute {
     initializeRoutes() {
         this.router.post(`${this.path}login`, (0, validation_middleware_1.default)(admin_dto_1.AdminLoginDto, 'body'), this.adminController.adminLogin);
         /* User */
-        this.router.get(`${this.path}users`, auth_middleware_1.authAdminMiddleware, this.adminController.userListing);
-        this.router.get(`${this.path}dashboard`, auth_middleware_1.authAdminMiddleware, this.adminController.dashboardData);
+        this.router.post(`${this.path}users`, auth_middleware_1.authAdminMiddleware, this.adminController.userListing);
+        this.router.post(`${this.path}dashboard`, auth_middleware_1.authAdminMiddleware, this.adminController.dashboardData);
         this.router.post(`${this.path}toggle-user-status`, (0, validation_middleware_1.default)(admin_dto_1.ToggleUserStatusDto, 'body'), auth_middleware_1.authAdminMiddleware, this.adminController.toggleUserStatus);
-        this.router.delete(`${this.path}user/:id`, auth_middleware_1.authAdminMiddleware, this.adminController.deleteUser);
+        this.router.post(`${this.path}deleteUser`, auth_middleware_1.authAdminMiddleware, this.adminController.deleteUser);
         /* !User */
         /* App Suggestion and Contacts */
-        this.router.get(`${this.path}app-improvement-suggestions`, auth_middleware_1.authAdminMiddleware, this.adminController.appImprovementSuggestion);
-        this.router.get(`${this.path}quick-contacts`, auth_middleware_1.authAdminMiddleware, this.adminController.quickContactListing);
+        this.router.post(`${this.path}app-improvement-suggestions`, auth_middleware_1.authAdminMiddleware, this.adminController.appImprovementSuggestion);
+        this.router.post(`${this.path}quick-contacts`, auth_middleware_1.authAdminMiddleware, this.adminController.quickContactListing);
         /* !App Suggestion and Contacts */
         /* Stocks */
         this.router.post(`${this.path}stock/:type`, auth_middleware_1.authAdminMiddleware, (0, validation_middleware_1.default)(posts_dto_1.StockUpdateTypeDto, 'body'), this.adminController.stockTypeAdd);

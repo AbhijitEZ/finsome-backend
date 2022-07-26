@@ -1,3 +1,4 @@
+/// <reference types="mongoose-paginate-v2" />
 import { Document } from 'mongoose';
 import { LikesInf } from '../interfaces/general.interface';
 declare const likesModel: import("mongoose").Model<LikesInf & Document<any, any, any>, {}, {}>;

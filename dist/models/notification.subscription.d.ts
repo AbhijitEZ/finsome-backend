@@ -1,3 +1,4 @@
+/// <reference types="mongoose-paginate-v2" />
 import { Document } from 'mongoose';
 import { NotificationSubscriptionInf } from '../interfaces/general.interface';
 declare const notificationSubscriptionModel: import("mongoose").Model<NotificationSubscriptionInf & Document<any, any, any>, {}, {}>;

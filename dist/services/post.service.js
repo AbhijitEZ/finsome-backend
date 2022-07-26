@@ -404,22 +404,30 @@ class PostService {
             });
         }
         if (queryData.has_all_data) {
+            let searchRegex = new RegExp(queryData.search, "i");
             postsQb.append({
-                $facet: {
-                    totalRecords: [
-                        {
-                            $count: 'total',
-                        },
-                    ],
-                    result: [],
-                },
+                $match: {
+                    $or: [
+                        { caption: searchRegex },
+                        { stock_type: searchRegex },
+                        { "user.fullname": searchRegex }
+                    ]
+                }
             });
+            let model = posts_1.default;
+            let posts = await model.aggregatePaginate(postsQb, {
+                page: queryData.skip,
+                limit: queryData.limit,
+            });
+            return posts;
         }
-        const posts = await postsQb.exec();
-        const total_count = (_f = (_e = (_d = (_c = posts === null || posts === void 0 ? void 0 : posts[0]) === null || _c === void 0 ? void 0 : _c.totalRecords) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.total) !== null && _f !== void 0 ? _f : 0;
-        const result = (_h = (_g = posts === null || posts === void 0 ? void 0 : posts[0]) === null || _g === void 0 ? void 0 : _g.result) !== null && _h !== void 0 ? _h : [];
-        const postsMapping = result.map(post => (0, global_1.postResponseMapper)(post));
-        return { result: postsMapping, total_count };
+        else {
+            const posts = await postsQb.exec();
+            const total_count = (_f = (_e = (_d = (_c = posts === null || posts === void 0 ? void 0 : posts[0]) === null || _c === void 0 ? void 0 : _c.totalRecords) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.total) !== null && _f !== void 0 ? _f : 0;
+            const result = (_h = (_g = posts === null || posts === void 0 ? void 0 : posts[0]) === null || _g === void 0 ? void 0 : _g.result) !== null && _h !== void 0 ? _h : [];
+            const postsMapping = result.map(post => (0, global_1.postResponseMapper)(post));
+            return { result: postsMapping, total_count };
+        }
     }
     async postCreate(_id, fullname, profilePhoto, reqData, files, postId) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;

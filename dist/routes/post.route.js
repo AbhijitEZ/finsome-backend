@@ -24,8 +24,10 @@ class PostRoute {
         this.router.delete(`${this.path}delete-asset/:postId`, (0, validation_middleware_1.default)(posts_dto_1.PostAssetDeleteDto, 'query'), auth_middleware_1.default, this.postController.postDeleteAssets);
         this.router.get(`${this.path}detail/:postId`, auth_middleware_1.default, this.postController.postDetail);
         this.router.delete(`${this.path}delete/:postId`, auth_middleware_1.default, this.postController.postDelete);
+        this.router.post(`${this.path}delete`, auth_middleware_1.default, this.postController.postDelete);
         this.router.get(`${this.path}explore`, auth_middleware_1.default, this.postController.postExplore);
         this.router.get(`${this.path}home`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.PostHomeDto, 'query'), this.postController.postHome);
+        this.router.post(`${this.path}home`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.PostHomeDto, 'body'), this.postController.postHome);
         this.router.get(`${this.path}stocks/search`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.StockSearchDto, 'query'), this.postController.stockSearch);
         this.router.post(`${this.path}comment`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.CommentsAddDto, 'body'), this.postController.commentAdd);
         this.router.get(`${this.path}comment`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.IdPaginationDto, 'query'), this.postController.commentListing);

@@ -1,11 +1,12 @@
 /// <reference types="multer" />
 /// <reference types="mongoose" />
+/// <reference types="mongoose-paginate-v2" />
 import { AppImprovementUserDto, ChangePasswordDto, CreateUserDto, DeviceTokenLogoutDto, FollowDto, LoginDto, NotificationDto, NotificationMarkReadDto, NotificationSubscriptionDto, ProfileUpdateDto, QuickContactDto, ResetPasswordDto, SignupPhoneDto, UserListingDto, UserListingRateDto, UserRateDto, ValidateUserFieldDto, VerifyOtpDTO, VerifyPhoneDto } from '../dtos/users.dto';
 import { TokenData } from '../interfaces/auth.interface';
 import { User } from '../interfaces/users.interface';
 import { PaginationDto } from '../dtos/general.dto';
 declare class AuthService {
-    users: import("mongoose").Model<User & import("mongoose").Document<any, any, any>, {}, {}>;
+    users: import("mongoose").Model<import("mongoose").Document<any, any, any>, any, any>;
     otpValidation: import("mongoose").Model<import("../interfaces/general.interface").OtpValidationInf & import("mongoose").Document<any, any, any>, {}, {}>;
     appImprovement: import("mongoose").Model<import("../interfaces/general.interface").AppImprovementInf & import("mongoose").Document<any, any, any>, {}, {}>;
     quickContact: import("mongoose").Model<import("../interfaces/general.interface").QuickContactInf & import("mongoose").Document<any, any, any>, {}, {}>;

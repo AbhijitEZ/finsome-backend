@@ -20,7 +20,7 @@ class AdminController {
         };
         this.userListing = async (req, res, next) => {
             try {
-                const users = await this.adminService.userListing(req.user);
+                const users = await this.adminService.userListing(req.user, req);
                 res.status(200).json({ data: users });
             }
             catch (error) {
@@ -47,11 +47,11 @@ class AdminController {
         };
         this.deleteUser = async (req, res, next) => {
             try {
-                const { id } = req.params;
-                if (!id) {
+                const { userId } = req.body;
+                if (!userId) {
                     throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.id_not_exists);
                 }
-                await this.adminService.deleteUser(id);
+                await this.adminService.deleteUser(userId);
                 res.status(200).json({ data: {}, message: constants_1.APP_SUCCESS_MESSAGE.delete_user_success });
             }
             catch (error) {
@@ -96,7 +96,7 @@ class AdminController {
         };
         this.appImprovementSuggestion = async (req, res, next) => {
             try {
-                const data = await this.adminService.appImprovementSuggestion();
+                const data = await this.adminService.appImprovementSuggestion(req.body);
                 res.status(200).json({ data });
             }
             catch (error) {
@@ -105,7 +105,7 @@ class AdminController {
         };
         this.quickContactListing = async (req, res, next) => {
             try {
-                const users = await this.adminService.quickContactListing();
+                const users = await this.adminService.quickContactListing(req.body);
                 res.status(200).json({ data: users });
             }
             catch (error) {

@@ -1,4 +1,4 @@
+/// <reference types="mongoose-paginate-v2" />
 import { Document } from 'mongoose';
-import { PostsInf } from '../interfaces/general.interface';
-declare const postsModel: import("mongoose").Model<PostsInf & Document<any, any, any>, {}, {}>;
+declare const postsModel: import("mongoose").Model<Document<any, any, any>, any, any>;
 export default postsModel;

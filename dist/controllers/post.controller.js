@@ -72,7 +72,7 @@ class PostController {
             var _a;
             try {
                 // @ts-ignore
-                const data = await this.postService.postHome((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.query);
+                const data = await this.postService.postHome((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.method == 'POST' ? req.body : req.query);
                 (0, global_1.responseJSONMapper)(res, 200, data);
             }
             catch (error) {
@@ -94,7 +94,7 @@ class PostController {
             var _a, _b;
             try {
                 // @ts-ignore
-                const data = await this.postService.postDelete((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, (_b = req.params) === null || _b === void 0 ? void 0 : _b.postId);
+                const data = await this.postService.postDelete((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.method == 'POST' ? req.body : (_b = req.params) === null || _b === void 0 ? void 0 : _b.postId);
                 (0, global_1.responseJSONMapper)(res, 200, data);
             }
             catch (error) {

@@ -20,7 +20,6 @@ const fs_1 = tslib_1.__importDefault(require("fs"));
 const sync_1 = require("csv-parse/sync");
 const posts_1 = tslib_1.__importDefault(require("../models/posts"));
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
-const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
@@ -48,22 +47,29 @@ class AdminService {
         const token = (0, jsonwebtoken_1.sign)(dataStoredInToken, secretKey, { expiresIn });
         return { token };
     }
-    async userListing(user) {
-        const users = await this.users
-            .find({
+    async userListing(user, req) {
+        const { page, limit, search, status } = req.body;
+        const model = users_model_1.default;
+        let searchRegex = new RegExp(search, 'i');
+        let query = {
             _id: { $ne: user._id },
             role: { $ne: constants_1.USER_ROLE.ADMIN },
-        })
-            .sort({ created_at: -1 })
-            .select(['-password', '-updated_at', '-term_agree_timestamp'])
-            .lean();
-        for (let i = 0; i < users.length; i++) {
-            users[i].total_posts = await posts_1.default.countDocuments({ user_id: users[i]._id });
-            users[i].total_followers = await user_followers_1.default.countDocuments({ follower_id: users[i]._id });
-            users[i].total_followings = await user_followers_1.default.countDocuments({ user_id: users[i]._id });
+            $or: [{ fullname: searchRegex }, { phone_number: searchRegex }, { email: searchRegex }],
+        };
+        if (status != '') {
+            query['is_registration_complete'] = status;
         }
-        const userSanitized = users.map(user => (Object.assign(Object.assign({}, user), { profile_photo: (0, util_1.profileImageGenerator)(user.profile_photo) })));
-        return userSanitized;
+        let users = await model.paginate(query, {
+            page: page,
+            limit: limit,
+            lean: true,
+            select: '-password -updated_at -term_agree_timestamp',
+            sort: { created_at: -1 },
+        });
+        let data = users.docs;
+        const userSanitized = data.map(d => (Object.assign(Object.assign({}, d), { profile_photo: (0, util_1.profileImageGenerator)(d.profile_photo) })));
+        users.docs = userSanitized;
+        return users;
     }
     async dashboardData(user) {
         const users = await this.users
@@ -73,9 +79,9 @@ class AdminService {
         })
             .sort({ created_at: -1 })
             .lean();
-        const appImproves = await this.appImprovement.find({});
-        const quickContacts = await this.quickContact.find({});
-        const suggestions = await this.userSuggestion.find({});
+        const appImproves = await this.appImprovement.countDocuments();
+        const quickContacts = await this.quickContact.countDocuments();
+        const suggestions = await this.userSuggestion.countDocuments();
         const postsCount = await posts_1.default.countDocuments();
         const cryptPostCount = await posts_1.default.countDocuments({ stock_type: 'CRYPT' });
         const equityPostCount = await posts_1.default.countDocuments({ stock_type: 'EQUITY' });
@@ -98,9 +104,9 @@ class AdminService {
             inactive_user,
             total_user,
             completed_registered_user,
-            app_improves: appImproves.length,
-            quick_contacts: quickContacts.length,
-            suggestions: suggestions.length,
+            app_improves: appImproves,
+            quick_contacts: quickContacts,
+            suggestions: suggestions,
             posts: postsCount,
             crypt_post: cryptPostCount,
             equity_post: equityPostCount,
@@ -151,14 +157,37 @@ class AdminService {
         }
         await this.termsConditionM.findByIdAndUpdate(findData._id, Object.assign({}, data));
     }
-    async appImprovementSuggestion() {
-        let allSuggestion = await this.userSuggestion
-            .find({})
-            .populate('user_id', ['fullname', 'phone_number'])
-            .sort({ timestamp: -1 })
-            .populate('app_improve_type_id', ['_id', 'name']);
+    async appImprovementSuggestion(body) {
+        const { page, limit, search, status } = body;
+        const model = user_suggestion_improvement_1.default;
+        let searchRegex = new RegExp(search, 'i');
+        let query = {
+            $or: [{ description: searchRegex }],
+        };
+        if (status != null && status != '') {
+            let findStatus = await app_improvement_type_1.default.findOne({ name: status });
+            if (findStatus != null) {
+                query['app_improve_type_id'] = findStatus._id;
+            }
+        }
+        let allData = await model.paginate(query, {
+            page: page,
+            limit: limit,
+            sort: { timestamp: -1 },
+            lean: true,
+            populate: [
+                {
+                    path: 'user_id',
+                    select: 'fullname phone_number',
+                },
+                {
+                    path: 'app_improve_type_id',
+                    select: '_id name',
+                },
+            ],
+        });
         // @ts-ignore
-        allSuggestion = allSuggestion.map((suggestion) => {
+        allData.docs = allData.docs.map((suggestion) => {
             var _a, _b, _c, _d, _e, _f, _g, _h;
             return {
                 _id: suggestion.id,
@@ -172,10 +201,20 @@ class AdminService {
                 },
             };
         });
-        return allSuggestion;
+        return allData;
     }
-    async quickContactListing() {
-        const quickContacts = await this.quickContact.find({}).sort({ created_at: -1 }).lean();
+    async quickContactListing(body) {
+        const { page, limit, search } = body;
+        let model = quick_contact_1.default;
+        let searchRegex = new RegExp(search, 'i');
+        const quickContacts = await model.paginate({
+            $or: [{ name: searchRegex }, { email: searchRegex }, { message: searchRegex }],
+        }, {
+            page: page,
+            limit: limit,
+            sort: { created_at: -1 },
+            lean: true,
+        });
         return quickContacts;
     }
     async complaintsListing(type) {
@@ -252,15 +291,13 @@ class AdminService {
         (0, util_1.fileUnSyncFromLocalStroage)(path);
     }
     async getAllUserTokens(userIds) {
-        let userTokens = await device_tokens_1.default
-            .find({
-            user_id: {
+        let query = { revoked: false };
+        if (userIds.length > 0) {
+            query['user_id'] = {
                 $in: userIds,
-            },
-            revoked: false,
-        })
-            .select('device_token')
-            .lean();
+            };
+        }
+        let userTokens = await device_tokens_1.default.find(query).select('device_token').lean();
         userTokens = userTokens.map((e) => e.device_token);
         userTokens = userTokens.filter((e) => e != null && e != '' && e != undefined);
         return userTokens;
