@@ -1106,6 +1106,73 @@ class AuthService {
         const data = (0, util_1.listingResponseSanitize)(userRatings);
         return data;
     }
+    async userListingRate2(_, reqData, userId) {
+        let query = user_rates_1.default.aggregate([
+            {
+                $match: {
+                    deleted_at: {
+                        $eq: null,
+                    },
+                    user_id: new mongoose_1.Types.ObjectId(userId),
+                },
+            },
+            {
+                $addFields: {
+                    updated_at_tz: { $dateToString: { date: '$updated_at', timezone: constants_1.DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USERS,
+                    localField: 'rated_by_user',
+                    foreignField: '_id',
+                    as: 'user_detail',
+                    pipeline: [
+                        {
+                            $project: {
+                                fullname: 1,
+                                profile_photo: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $lookup: {
+                    from: constants_1.USER_RATES,
+                    localField: 'rated_by_user',
+                    foreignField: 'user_id',
+                    as: 'user_rates',
+                    pipeline: [
+                        {
+                            $group: {
+                                _id: '$user_id',
+                                avg: { $avg: '$rate' },
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: '$user_rates',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: '$user_detail',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $sort: { updated_at: -1 },
+            },
+        ]);
+        let model = user_rates_1.default;
+        let data = await model.aggregatePaginate(query, { page: reqData.page, limit: reqData.limit });
+        return data;
+    }
     async userRateDetails(userId, userRateId) {
         const userRateExists = await this.users.findOne({
             _id: userRateId,

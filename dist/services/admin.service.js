@@ -57,7 +57,12 @@ class AdminService {
             $or: [{ fullname: searchRegex }, { phone_number: searchRegex }, { email: searchRegex }],
         };
         if (status != '') {
-            query['is_registration_complete'] = status;
+            if (status == "true") {
+                query['deleted_at'] = null;
+            }
+            else {
+                query['deleted_at'] = { $ne: null };
+            }
         }
         let users = await model.paginate(query, {
             page: page,
@@ -126,6 +131,10 @@ class AdminService {
         // ANCHOR This would be added on, when more models gets associated with Users.
         await this.userSuggestion.findOneAndDelete({ user_id: id }).exec();
         await this.users.findOneAndDelete({ _id: id }).exec();
+    }
+    async getUser(id) {
+        const findUser = await this.users.findOne({ _id: id }).select('-password').lean();
+        return findUser;
     }
     async privacyPolicyListing() {
         const findData = await this.privacyPolicy.findOne({}).lean();

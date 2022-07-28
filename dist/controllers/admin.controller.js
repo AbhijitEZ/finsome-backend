@@ -45,6 +45,19 @@ class AdminController {
                 next(error);
             }
         };
+        this.userById = async (req, res, next) => {
+            try {
+                const { userId } = req.body;
+                if (!userId) {
+                    throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.id_not_exists);
+                }
+                let user = await this.adminService.getUser(userId);
+                res.status(200).json({ data: user, message: constants_1.APP_SUCCESS_MESSAGE.delete_user_success });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.deleteUser = async (req, res, next) => {
             try {
                 const { userId } = req.body;

@@ -49,6 +49,7 @@ class AuthRoute {
         this.router.post(`${this.path}user/subscription-notifications`, auth_middleware_1.default, (0, validation_middleware_1.default)(users_dto_1.NotificationSubscriptionDto, 'body'), this.authController.subscriptionToggleNotification);
         this.router.post(`${this.path}user/rate/:userId`, (0, validation_middleware_1.default)(users_dto_1.UserRateDto, 'body'), auth_middleware_1.default, this.authController.userRating);
         this.router.get(`${this.path}user/rate/:userId`, (0, validation_middleware_1.default)(users_dto_1.UserListingRateDto, 'query'), auth_middleware_1.default, this.authController.userListingRate);
+        this.router.post(`${this.path}user/rate`, auth_middleware_1.default, this.authController.userListingRate2);
         this.router.get(`${this.path}user/rate-detail/:userRateId`, auth_middleware_1.default, this.authController.userRateDetails);
         this.router.delete(`${this.path}user/rate/delete/:userRateId`, auth_middleware_1.default, this.authController.userRateRemove);
         this.router.get(`${this.path}user/rate-statistics/:userId`, auth_middleware_1.default, this.authController.userRatingStatistics);

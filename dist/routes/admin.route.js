@@ -24,6 +24,7 @@ class AdminRoute {
         this.router.post(`${this.path}users`, auth_middleware_1.authAdminMiddleware, this.adminController.userListing);
         this.router.post(`${this.path}dashboard`, auth_middleware_1.authAdminMiddleware, this.adminController.dashboardData);
         this.router.post(`${this.path}toggle-user-status`, (0, validation_middleware_1.default)(admin_dto_1.ToggleUserStatusDto, 'body'), auth_middleware_1.authAdminMiddleware, this.adminController.toggleUserStatus);
+        this.router.post(`${this.path}userById`, auth_middleware_1.authAdminMiddleware, this.adminController.userById);
         this.router.post(`${this.path}deleteUser`, auth_middleware_1.authAdminMiddleware, this.adminController.deleteUser);
         /* !User */
         /* App Suggestion and Contacts */

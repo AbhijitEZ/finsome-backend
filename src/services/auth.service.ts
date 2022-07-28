@@ -1220,6 +1220,75 @@ class AuthService {
     return data;
   }
 
+  public async userListingRate2(_: string, reqData: any, userId): Promise<any> {
+    let query: any = userRatesModel.aggregate([
+      {
+        $match: {
+          deleted_at: {
+            $eq: null,
+          },
+          user_id: new Types.ObjectId(userId),
+        },
+      },
+      {
+        $addFields: {
+          updated_at_tz: { $dateToString: { date: '$updated_at', timezone: DEFAULT_TIMEZONE, format: '%Y-%m-%dT%H:%M:%S.%LZ' } },
+        },
+      },
+      {
+        $lookup: {
+          from: USERS,
+          localField: 'rated_by_user',
+          foreignField: '_id',
+          as: 'user_detail',
+          pipeline: [
+            {
+              $project: {
+                fullname: 1,
+                profile_photo: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: USER_RATES,
+          localField: 'rated_by_user',
+          foreignField: 'user_id',
+          as: 'user_rates',
+          pipeline: [
+            {
+              $group: {
+                _id: '$user_id',
+                avg: { $avg: '$rate' },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$user_rates',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$user_detail',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $sort: { updated_at: -1 },
+      },
+    ]);
+
+    let model: any = userRatesModel;
+    let data: any = await model.aggregatePaginate(query, { page: reqData.page, limit: reqData.limit });
+    return data;
+  }
+
   public async userRateDetails(userId: string, userRateId: string): Promise<any> {
     const userRateExists = await this.users.findOne({
       _id: userRateId,

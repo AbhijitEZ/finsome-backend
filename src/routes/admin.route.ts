@@ -31,6 +31,7 @@ class AdminRoute implements Routes {
       authAdminMiddleware,
       this.adminController.toggleUserStatus,
     );
+    this.router.post(`${this.path}userById`, authAdminMiddleware, this.adminController.userById);
     this.router.post(`${this.path}deleteUser`, authAdminMiddleware, this.adminController.deleteUser);
     /* !User */
 

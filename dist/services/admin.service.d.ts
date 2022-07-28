@@ -18,6 +18,7 @@ declare class AdminService {
     dashboardData(user: User): Promise<Record<string, any>>;
     toggleUserStatus(user: ToggleUserStatusDto): Promise<void>;
     deleteUser(id: string): Promise<void>;
+    getUser(id: string): Promise<void>;
     privacyPolicyListing(): Promise<any>;
     privacyPolicyUpdate(data: PrivacyPolicyDto): Promise<void>;
     termsConditionListing(): Promise<any>;

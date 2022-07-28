@@ -342,6 +342,16 @@ class AuthController {
                 next(error);
             }
         };
+        this.userListingRate2 = async (req, res, next) => {
+            var _a;
+            try {
+                const data = await this.authService.userListingRate2((_a = req.user) === null || _a === void 0 ? void 0 : _a._id, req.body, req.body.userId);
+                (0, global_1.responseJSONMapper)(res, 201, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.userRateDetails = async (req, res, next) => {
             var _a, _b;
             try {

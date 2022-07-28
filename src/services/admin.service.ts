@@ -63,7 +63,11 @@ class AdminService {
     };
 
     if (status != '') {
-      query['is_registration_complete'] = status;
+      if(status == "true"){
+        query['deleted_at'] = null;
+      }else{
+        query['deleted_at'] = { $ne: null }
+      }
     }
 
     let users: any = await model.paginate(query, {
@@ -145,6 +149,11 @@ class AdminService {
     // ANCHOR This would be added on, when more models gets associated with Users.
     await this.userSuggestion.findOneAndDelete({ user_id: id }).exec();
     await this.users.findOneAndDelete({ _id: id }).exec();
+  }
+
+  public async getUser(id: string): Promise<void> {
+    const findUser = await this.users.findOne({ _id: id }).select('-password').lean();
+    return findUser;
   }
 
   public async privacyPolicyListing(): Promise<any> {
