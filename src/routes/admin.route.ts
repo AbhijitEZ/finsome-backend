@@ -51,7 +51,7 @@ class AdminRoute implements Routes {
     /* !Stocks */
 
     /* Complaints */
-    this.router.get(`${this.path}complaints/:type`, authAdminMiddleware, this.adminController.complaintsListing);
+    this.router.post(`${this.path}complaints`, authAdminMiddleware, this.adminController.complaintsListing);
 
     /* Policies */
     this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);

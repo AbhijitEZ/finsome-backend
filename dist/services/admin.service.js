@@ -217,26 +217,29 @@ class AdminService {
         });
         return quickContacts;
     }
-    async complaintsListing(type) {
-        let complaints = [];
-        if (type === constants_1.COMPLAINT_TYPE.POST) {
-            complaints = await this.complaintM
-                .find({
-                user_complain_id: null,
-            })
-                .populate('user_id', ['fullname', 'phone_number'])
-                .sort({ created_at: -1 })
-                .lean();
+    async complaintsListing(body) {
+        let complaints;
+        let model = complaints_1.default;
+        let searchRegex = new RegExp(body.search, 'i');
+        let query = {
+            $or: [{ reason: searchRegex }, { description: searchRegex }],
+        };
+        if (body.type == constants_1.COMPLAINT_TYPE.POST) {
+            query['user_complain_id'] = null;
         }
         else {
-            complaints = await this.complaintM
-                .find({
-                post_complain_id: null,
-            })
-                .populate('user_id', ['fullname', 'phone_number'])
-                .sort({ created_at: -1 })
-                .lean();
+            query['post_complain_id'] = null;
         }
+        complaints = await model.paginate(query, {
+            page: body.page,
+            limit: body.limit,
+            lean: true,
+            sort: { created_at: -1 },
+            populate: {
+                path: 'user_id',
+                select: 'fullname phone_number',
+            },
+        });
         return complaints;
     }
     async stockTypeAdd(type, reqData) {
@@ -246,19 +249,32 @@ class AdminService {
         if (type === constants_1.STOCK_TYPE_CONST.EQUITY && !reqData.country_code) {
             throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.country_code_required);
         }
-        const stockExists = await stock_types_1.default.findOne({ code: reqData.code });
-        if (stockExists) {
-            throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.stock_type_code_exists);
+        if (reqData.id == null || reqData.id == '') {
+            const stockExists = await stock_types_1.default.findOne({ code: reqData.code });
+            if (stockExists) {
+                throw new HttpException_1.HttpException(409, constants_1.APP_ERROR_MESSAGE.stock_type_code_exists);
+            }
+            const stockNewData = await stock_types_1.default.create({
+                s_type: type,
+                code: reqData.code,
+                name: reqData.name,
+                country_code: reqData.country_code || undefined,
+                image: reqData.image || undefined,
+            });
+            // @ts-ignore
+            return stockNewData._doc;
         }
-        const stockNewData = await stock_types_1.default.create({
-            s_type: type,
-            code: reqData.code,
-            name: reqData.name,
-            country_code: reqData.country_code || undefined,
-            image: reqData.image || undefined,
-        });
-        // @ts-ignore
-        return stockNewData._doc;
+        else {
+            const stockNewData = await stock_types_1.default.findByIdAndUpdate(reqData.id, {
+                s_type: type,
+                code: reqData.code,
+                name: reqData.name,
+                country_code: reqData.country_code || undefined,
+                image: reqData.image || undefined,
+            }, { new: true });
+            // @ts-ignore
+            return stockNewData._doc;
+        }
     }
     async stockTypeDelete(type, _id) {
         if (!Object.keys(constants_1.STOCK_TYPE_CONST).includes(type)) {
@@ -291,12 +307,24 @@ class AdminService {
         (0, util_1.fileUnSyncFromLocalStroage)(path);
     }
     async getAllUserTokens(userIds) {
-        let query = { revoked: false };
+        let innerQuery = {};
         if (userIds.length > 0) {
-            query['user_id'] = {
+            innerQuery['_id'] = {
                 $in: userIds,
             };
+            innerQuery['allow_notification'] = true;
         }
+        else {
+            innerQuery['allow_notification'] = true;
+        }
+        let user = await users_model_1.default.find(innerQuery).select('_id').lean();
+        userIds = user.map(a => a._id);
+        let query = {
+            user_id: {
+                $in: userIds,
+            },
+            revoked: false,
+        };
         let userTokens = await device_tokens_1.default.find(query).select('device_token').lean();
         userTokens = userTokens.map((e) => e.device_token);
         userTokens = userTokens.filter((e) => e != null && e != '' && e != undefined);

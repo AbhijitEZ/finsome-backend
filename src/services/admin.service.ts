@@ -253,27 +253,28 @@ class AdminService {
     return quickContacts;
   }
 
-  public async complaintsListing(type: string): Promise<Record<string, any>> {
-    let complaints = [];
-
-    if (type === COMPLAINT_TYPE.POST) {
-      complaints = await this.complaintM
-        .find({
-          user_complain_id: null,
-        })
-        .populate('user_id', ['fullname', 'phone_number'])
-        .sort({ created_at: -1 })
-        .lean();
+  public async complaintsListing(body: any): Promise<Record<string, any>> {
+    let complaints: any;
+    let model: any = complaintModel;
+    let searchRegex: any = new RegExp(body.search, 'i');
+    let query: any = {
+      $or: [{ reason: searchRegex }, { description: searchRegex }],
+    };
+    if (body.type == COMPLAINT_TYPE.POST) {
+      query['user_complain_id'] = null;
     } else {
-      complaints = await this.complaintM
-        .find({
-          post_complain_id: null,
-        })
-        .populate('user_id', ['fullname', 'phone_number'])
-        .sort({ created_at: -1 })
-        .lean();
+      query['post_complain_id'] = null;
     }
-
+    complaints = await model.paginate(query, {
+      page: body.page,
+      limit: body.limit,
+      lean: true,
+      sort: { created_at: -1 },
+      populate: {
+        path: 'user_id',
+        select: 'fullname phone_number',
+      },
+    });
     return complaints;
   }
 
@@ -286,22 +287,39 @@ class AdminService {
       throw new HttpException(400, APP_ERROR_MESSAGE.country_code_required);
     }
 
-    const stockExists = await stockTypeModel.findOne({ code: reqData.code });
+    if (reqData.id == null || reqData.id == '') {
+      const stockExists = await stockTypeModel.findOne({ code: reqData.code });
 
-    if (stockExists) {
-      throw new HttpException(409, APP_ERROR_MESSAGE.stock_type_code_exists);
+      if (stockExists) {
+        throw new HttpException(409, APP_ERROR_MESSAGE.stock_type_code_exists);
+      }
+
+      const stockNewData = await stockTypeModel.create({
+        s_type: type,
+        code: reqData.code,
+        name: reqData.name,
+        country_code: reqData.country_code || undefined,
+        image: reqData.image || undefined,
+      });
+
+      // @ts-ignore
+      return stockNewData._doc;
+    } else {
+      const stockNewData = await stockTypeModel.findByIdAndUpdate(
+        reqData.id,
+        {
+          s_type: type,
+          code: reqData.code,
+          name: reqData.name,
+          country_code: reqData.country_code || undefined,
+          image: reqData.image || undefined,
+        },
+        { new: true },
+      );
+
+      // @ts-ignore
+      return stockNewData._doc;
     }
-
-    const stockNewData = await stockTypeModel.create({
-      s_type: type,
-      code: reqData.code,
-      name: reqData.name,
-      country_code: reqData.country_code || undefined,
-      image: reqData.image || undefined,
-    });
-
-    // @ts-ignore
-    return stockNewData._doc;
   }
 
   public async stockTypeDelete(type: string, _id: string): Promise<any> {
@@ -349,12 +367,24 @@ class AdminService {
   }
 
   public async getAllUserTokens(userIds: []): Promise<any> {
-    let query = { revoked: false };
+    let innerQuery: any = {};
     if (userIds.length > 0) {
-      query['user_id'] = {
+      innerQuery['_id'] = {
         $in: userIds,
       };
+      innerQuery['allow_notification'] = true;
+    } else {
+      innerQuery['allow_notification'] = true;
     }
+
+    let user: any = await userModel.find(innerQuery).select('_id').lean();
+    userIds = user.map(a => a._id);
+    let query: any = {
+      user_id: {
+        $in: userIds,
+      },
+      revoked: false,
+    };
     let userTokens: any = await deviceTokenModel.find(query).select('device_token').lean();
     userTokens = userTokens.map((e: any) => e.device_token);
     userTokens = userTokens.filter((e: any) => e != null && e != '' && e != undefined);

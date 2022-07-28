@@ -120,7 +120,7 @@ class AdminController {
 
   public complaintsListing = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const users = await this.adminService.complaintsListing(req.params?.type);
+      const users = await this.adminService.complaintsListing(req.body);
 
       res.status(200).json({ data: users });
     } catch (error) {

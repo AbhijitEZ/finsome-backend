@@ -101,31 +101,37 @@ class PostService {
   }
 
   public async stockTypesShares(reqData: StockTypeDto): Promise<any> {
-    let stQb = this.stockTypesObj.find({
-      s_type: reqData.type,
-    });
+    let query: any = { s_type: reqData.type };
+    // let stQb = this.stockTypesObj.find({
+    //   s_type: reqData.type,
+    // });
 
     if (reqData.type === STOCK_TYPE_CONST.EQUITY && reqData.country_code) {
-      stQb = stQb.and([{ country_code: reqData.country_code }]);
+      query['$and'] = [{ country_code: reqData.country_code }];
+      // stQb = stQb.and([{ country_code: reqData.country_code }]);
     }
 
     if (reqData.search) {
-      stQb = stQb.and([{ $or: [{ name: { $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }]);
+      query['$and']=[{ $or: [{ name: { $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }];
+      // stQb = stQb.and([{ $or: [{ name: {find $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }]);
     }
 
-    const QueryCloned = stQb.toConstructor();
-    const totalCountQuery = new QueryCloned();
 
-    const stocks = reqData.has_all_data
-      ? await stQb.exec()
-      : await stQb
-          .limit(parseInt(reqData.limit ?? LIMIT_DEF))
-          .skip(parseInt(reqData.skip ?? SKIP_DEF))
-          .exec();
-
-    const total_count = await totalCountQuery.count();
-
-    return { stocks, total_count };
+    if (reqData.has_all_data) {
+      let model: any = stockTypeModel;
+      let output: any = await model.paginate(query, { 
+        page: reqData.page, 
+        limit: reqData.limit
+      });
+      return output;
+    } else {
+      let output = await this.stockTypesObj.find(query)
+        .limit(parseInt(reqData.limit ?? LIMIT_DEF))
+        .skip(parseInt(reqData.skip ?? SKIP_DEF))
+        .exec();
+        const total_count = await this.stockTypesObj.countDocuments(query);
+        return { output, total_count };
+    }
   }
 
   public async userConfigListing(_id: string): Promise<any> {
@@ -185,8 +191,6 @@ class PostService {
         $in: allUserPostDisplayIds,
       };
     }
-
-
 
     const postsQb = this.postsObj.aggregate([
       {
@@ -416,15 +420,11 @@ class PostService {
     }
 
     if (queryData.has_all_data) {
-      let searchRegex: any = new RegExp(queryData.search, "i");
+      let searchRegex: any = new RegExp(queryData.search, 'i');
       postsQb.append({
         $match: {
-          $or: [ 
-            { caption: searchRegex },
-            { stock_type: searchRegex },
-            { "user.fullname": searchRegex }
-          ]
-        }
+          $or: [{ caption: searchRegex }, { stock_type: searchRegex }, { 'user.fullname': searchRegex }],
+        },
       });
       let model: any = postsModel;
       let posts = await model.aggregatePaginate(postsQb, {

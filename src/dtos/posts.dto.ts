@@ -28,9 +28,21 @@ export class StockTypeDto extends PaginationDto {
   @IsOptional()
   @IsString()
   has_all_data?: string;
+
+  @IsOptional()
+  @IsString()
+  page?: string;
+
+  @IsOptional()
+  @IsString()
+  limit?: string;
 }
 
 export class StockUpdateTypeDto {
+  @IsOptional()
+  @IsString()
+  id: string;
+
   @IsNotEmpty()
   @IsString()
   name: string;

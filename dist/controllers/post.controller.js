@@ -18,7 +18,7 @@ class PostController {
         this.stockTypesController = async (req, res, next) => {
             try {
                 // @ts-ignore
-                const data = await this.postService.stockTypesShares(req.query);
+                const data = await this.postService.stockTypesShares(req.method == 'POST' ? req.body : req.query);
                 (0, global_1.responseJSONMapper)(res, 200, Object.assign({}, data));
             }
             catch (error) {

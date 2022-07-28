@@ -24,7 +24,7 @@ declare class AdminService {
     termsConditionUpdate(data: PrivacyPolicyDto): Promise<void>;
     appImprovementSuggestion(body: any): Promise<any>;
     quickContactListing(body: any): Promise<any>;
-    complaintsListing(type: string): Promise<Record<string, any>>;
+    complaintsListing(body: any): Promise<Record<string, any>>;
     stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any>;
     stockTypeDelete(type: string, _id: string): Promise<any>;
     stockTypeUpload(type: string, path: string): Promise<any>;

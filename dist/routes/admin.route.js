@@ -36,7 +36,7 @@ class AdminRoute {
         this.router.post(`${this.path}stock-upload/:type`, auth_middleware_1.authAdminMiddleware, global_1.fileUploadCSVCB, this.adminController.stockTypeUpload);
         /* !Stocks */
         /* Complaints */
-        this.router.get(`${this.path}complaints/:type`, auth_middleware_1.authAdminMiddleware, this.adminController.complaintsListing);
+        this.router.post(`${this.path}complaints`, auth_middleware_1.authAdminMiddleware, this.adminController.complaintsListing);
         /* Policies */
         this.router.get(`${this.path}privacy-policy`, this.adminController.privacyPolicy);
         this.router.post(`${this.path}privacy-policy`, (0, validation_middleware_1.default)(admin_dto_1.PrivacyPolicyDto, 'body'), auth_middleware_1.authAdminMiddleware, this.adminController.privacyPolicyUpdate);

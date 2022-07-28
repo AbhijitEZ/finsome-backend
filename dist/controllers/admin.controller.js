@@ -113,9 +113,8 @@ class AdminController {
             }
         };
         this.complaintsListing = async (req, res, next) => {
-            var _a;
             try {
-                const users = await this.adminService.complaintsListing((_a = req.params) === null || _a === void 0 ? void 0 : _a.type);
+                const users = await this.adminService.complaintsListing(req.body);
                 res.status(200).json({ data: users });
             }
             catch (error) {

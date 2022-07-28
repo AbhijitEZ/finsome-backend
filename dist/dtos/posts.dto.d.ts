@@ -8,8 +8,11 @@ export declare class StockTypeDto extends PaginationDto {
     search?: string;
     country_code?: string;
     has_all_data?: string;
+    page?: string;
+    limit?: string;
 }
 export declare class StockUpdateTypeDto {
+    id: string;
     name: string;
     code: string;
     image?: string;

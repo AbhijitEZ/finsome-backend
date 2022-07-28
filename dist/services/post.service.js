@@ -116,25 +116,34 @@ class PostService {
     }
     async stockTypesShares(reqData) {
         var _a, _b;
-        let stQb = this.stockTypesObj.find({
-            s_type: reqData.type,
-        });
+        let query = { s_type: reqData.type };
+        // let stQb = this.stockTypesObj.find({
+        //   s_type: reqData.type,
+        // });
         if (reqData.type === constants_1.STOCK_TYPE_CONST.EQUITY && reqData.country_code) {
-            stQb = stQb.and([{ country_code: reqData.country_code }]);
+            query['$and'] = [{ country_code: reqData.country_code }];
+            // stQb = stQb.and([{ country_code: reqData.country_code }]);
         }
         if (reqData.search) {
-            stQb = stQb.and([{ $or: [{ name: { $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }]);
+            query['$and'] = [{ $or: [{ name: { $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }];
+            // stQb = stQb.and([{ $or: [{ name: {find $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }]);
         }
-        const QueryCloned = stQb.toConstructor();
-        const totalCountQuery = new QueryCloned();
-        const stocks = reqData.has_all_data
-            ? await stQb.exec()
-            : await stQb
+        if (reqData.has_all_data) {
+            let model = stock_types_1.default;
+            let output = await model.paginate(query, {
+                page: reqData.page,
+                limit: reqData.limit
+            });
+            return output;
+        }
+        else {
+            let output = await this.stockTypesObj.find(query)
                 .limit(parseInt((_a = reqData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF))
                 .skip(parseInt((_b = reqData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF))
                 .exec();
-        const total_count = await totalCountQuery.count();
-        return { stocks, total_count };
+            const total_count = await this.stockTypesObj.countDocuments(query);
+            return { output, total_count };
+        }
     }
     async userConfigListing(_id) {
         const userConfig = await this.userConfigObj.findOne({ user_id: _id }).lean();
@@ -404,15 +413,11 @@ class PostService {
             });
         }
         if (queryData.has_all_data) {
-            let searchRegex = new RegExp(queryData.search, "i");
+            let searchRegex = new RegExp(queryData.search, 'i');
             postsQb.append({
                 $match: {
-                    $or: [
-                        { caption: searchRegex },
-                        { stock_type: searchRegex },
-                        { "user.fullname": searchRegex }
-                    ]
-                }
+                    $or: [{ caption: searchRegex }, { stock_type: searchRegex }, { 'user.fullname': searchRegex }],
+                },
             });
             let model = posts_1.default;
             let posts = await model.aggregatePaginate(postsQb, {

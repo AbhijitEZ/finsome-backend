@@ -30,6 +30,7 @@ class PostRoute implements Routes {
   private initializeRoutes() {
     this.router.get(`${this.path}countries`, this.postController.countriesController);
     this.router.get(`${this.path}stock-type`, authMiddleware, validationMiddleware(StockTypeDto, 'query'), this.postController.stockTypesController);
+    this.router.post(`${this.path}stock-type`, authMiddleware, validationMiddleware(StockTypeDto, 'body'), this.postController.stockTypesController);
     this.router.get(`${this.path}user-configurations`, authMiddleware, this.postController.userConfigurationListing);
     this.router.post(
       `${this.path}user-configurations`,
