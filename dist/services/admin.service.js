@@ -20,6 +20,9 @@ const fs_1 = tslib_1.__importDefault(require("fs"));
 const sync_1 = require("csv-parse/sync");
 const posts_1 = tslib_1.__importDefault(require("../models/posts"));
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
+const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
+const articles_1 = tslib_1.__importDefault(require("../models/articles"));
+const mongoose_1 = tslib_1.__importDefault(require("mongoose"));
 class AdminService {
     constructor() {
         this.users = users_model_1.default;
@@ -57,7 +60,7 @@ class AdminService {
             $or: [{ fullname: searchRegex }, { phone_number: searchRegex }, { email: searchRegex }],
         };
         if (status != '') {
-            if (status == "true") {
+            if (status == 'true') {
                 query['deleted_at'] = null;
             }
             else {
@@ -291,6 +294,53 @@ class AdminService {
         }
         // ANCHOR This would be added on, when more models gets associated with Stock.
         await stock_types_1.default.findOneAndDelete({ _id, s_type: type }).exec();
+    }
+    async getArticles(requestData) {
+        let model = articles_1.default;
+        let searchRegex = new RegExp(requestData.search, 'i');
+        let data = await model.paginate({ title: searchRegex }, {
+            page: requestData.page,
+            limit: requestData.limit,
+        });
+        return data;
+    }
+    async deleteArticle(requestData) {
+        if (mongoose_1.default.isValidObjectId(requestData.id)) {
+            await articles_1.default.findByIdAndRemove(requestData.id, { new: true });
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    async saveArticle(requestData, file) {
+        let imageFile;
+        if (file) {
+            imageFile = await aws_1.default.addAssets(file);
+        }
+        let query = {
+            title: requestData.title,
+            category: requestData.category,
+            description: requestData.description,
+            readingTime: requestData.readingTime,
+            content: requestData.content,
+        };
+        if (requestData.id == '0') {
+            if (file) {
+                query.coverImage = imageFile != null ? imageFile : '';
+            }
+            await articles_1.default.create(query);
+            return true;
+        }
+        else {
+            if (mongoose_1.default.isValidObjectId(requestData.id)) {
+                await articles_1.default.findByIdAndUpdate(requestData.id, query);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
     }
     async stockTypeUpload(type, path) {
         if (!Object.keys(constants_1.STOCK_TYPE_CONST).includes(type)) {

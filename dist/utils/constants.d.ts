@@ -119,6 +119,7 @@ export declare const COUNTRIES = "countries";
 export declare const POST_STOCKS = "post-stocks";
 export declare const LIKES = "likes";
 export declare const DEVICE_TOKENS = "device-tokens";
+export declare const ARTICLES = "articles";
 export declare const ARTICLE_CATEGORIES = "article-categories";
 export declare const USER_RATES = "user-rates";
 export declare const COMPLAINTS = "complaints";

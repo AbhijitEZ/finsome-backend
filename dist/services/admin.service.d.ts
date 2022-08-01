@@ -1,16 +1,16 @@
-/// <reference types="mongoose" />
-/// <reference types="mongoose-paginate-v2" />
+/// <reference types="multer" />
 import { AdminLoginDto, PrivacyPolicyDto, ToggleUserStatusDto } from '../dtos/admin.dto';
 import { User } from '../interfaces/users.interface';
 import { StockUpdateTypeDto } from '../dtos/posts.dto';
+import mongoose from 'mongoose';
 declare class AdminService {
-    users: import("mongoose").Model<import("mongoose").Document<any, any, any>, any, any>;
-    appImprovement: import("mongoose").Model<import("../interfaces/general.interface").AppImprovementInf & import("mongoose").Document<any, any, any>, {}, {}>;
-    quickContact: import("mongoose").Model<import("../interfaces/general.interface").QuickContactInf & import("mongoose").Document<any, any, any>, {}, {}>;
-    userSuggestion: import("mongoose").Model<import("../interfaces/general.interface").UserSuggestionImproveInf & import("mongoose").Document<any, any, any>, {}, {}>;
-    privacyPolicy: import("mongoose").Model<import("../interfaces/general.interface").PrivacyPolicyInf & import("mongoose").Document<any, any, any>, {}, {}>;
-    termsConditionM: import("mongoose").Model<import("../interfaces/general.interface").PrivacyPolicyInf & import("mongoose").Document<any, any, any>, {}, {}>;
-    complaintM: import("mongoose").Model<import("../interfaces/general.interface").ComplaintsInf & import("mongoose").Document<any, any, any>, {}, {}>;
+    users: mongoose.Model<mongoose.Document<any, any, any>, any, any>;
+    appImprovement: mongoose.Model<import("../interfaces/general.interface").AppImprovementInf & mongoose.Document<any, any, any>, {}, {}>;
+    quickContact: mongoose.Model<import("../interfaces/general.interface").QuickContactInf & mongoose.Document<any, any, any>, {}, {}>;
+    userSuggestion: mongoose.Model<import("../interfaces/general.interface").UserSuggestionImproveInf & mongoose.Document<any, any, any>, {}, {}>;
+    privacyPolicy: mongoose.Model<import("../interfaces/general.interface").PrivacyPolicyInf & mongoose.Document<any, any, any>, {}, {}>;
+    termsConditionM: mongoose.Model<import("../interfaces/general.interface").PrivacyPolicyInf & mongoose.Document<any, any, any>, {}, {}>;
+    complaintM: mongoose.Model<import("../interfaces/general.interface").ComplaintsInf & mongoose.Document<any, any, any>, {}, {}>;
     adminLogin(loginDto: AdminLoginDto): Promise<{
         token: string;
     }>;
@@ -28,6 +28,9 @@ declare class AdminService {
     complaintsListing(body: any): Promise<Record<string, any>>;
     stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any>;
     stockTypeDelete(type: string, _id: string): Promise<any>;
+    getArticles(requestData: any): Promise<any>;
+    deleteArticle(requestData: any): Promise<any>;
+    saveArticle(requestData: any, file: Express.Multer.File): Promise<any>;
     stockTypeUpload(type: string, path: string): Promise<any>;
     getAllUserTokens(userIds: []): Promise<any>;
 }

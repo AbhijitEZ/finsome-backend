@@ -15,6 +15,15 @@ class PostController {
                 next(error);
             }
         };
+        this.articleListing = async (req, res, next) => {
+            try {
+                let response = await this.postService.getArticles(req.body);
+                res.status(200).json({ data: response, message: 'Article listing!' });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.stockTypesController = async (req, res, next) => {
             try {
                 // @ts-ignore

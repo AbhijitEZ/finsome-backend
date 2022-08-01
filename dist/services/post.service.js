@@ -22,6 +22,7 @@ const user_followers_1 = tslib_1.__importDefault(require("../models/user-followe
 const notifications_1 = tslib_1.__importDefault(require("../models/notifications"));
 const article_categories_1 = tslib_1.__importDefault(require("../models/article-categories"));
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
+const articles_1 = tslib_1.__importDefault(require("../models/articles"));
 const notification_subscription_1 = tslib_1.__importDefault(require("../models/notification.subscription"));
 class PostService {
     constructor() {
@@ -165,6 +166,12 @@ class PostService {
         const postsListing = await posts_1.default.find({ deleted_at: undefined }).populate('user_id', ['fullname', 'email']).lean();
         const postsMapping = postsListing.map(post => (0, global_1.postResponseMapper)(post));
         return postsMapping;
+    }
+    async getArticles(requestData) {
+        let model = articles_1.default;
+        let searchRegex = new RegExp(requestData.search, 'i');
+        let data = await model.find({ title: searchRegex }).skip(requestData.skip).limit(requestData.limit);
+        return data;
     }
     async postHome(_id, queryData) {
         var _a, _b, _c, _d, _e, _f, _g, _h;

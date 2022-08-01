@@ -47,6 +47,7 @@ import userFollowerModel from '@/models/user-followers';
 import notificationModel from '@/models/notifications';
 import articleCatModel from '@/models/article-categories';
 import deviceTokenModel from '@/models/device-tokens';
+import articleModel from '@/models/articles';
 import notificationSubscriptionModel from '@/models/notification.subscription';
 
 class PostService {
@@ -164,6 +165,13 @@ class PostService {
     return postsMapping;
   }
 
+  public async getArticles(requestData: any): Promise<any> {
+    let model: any = articleModel;
+    let searchRegex = new RegExp(requestData.search, 'i');
+    let data = await model.find({ title: searchRegex }).skip(requestData.skip).limit(requestData.limit);
+    return data;
+  }
+
   public async postHome(_id: string, queryData: PostHomeDto): Promise<any> {
     const usersFollower = await userFollowerModel
       .find({
@@ -191,6 +199,8 @@ class PostService {
         $in: allUserPostDisplayIds,
       };
     }
+
+    
 
     const postsQb = this.postsObj.aggregate([
       {

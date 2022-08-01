@@ -167,6 +167,33 @@ class AdminController {
                 next(error);
             }
         };
+        this.articleListing = async (req, res, next) => {
+            try {
+                let response = await this.adminService.getArticles(req.body);
+                res.status(200).json({ data: response, message: 'Article listing!' });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.saveArticle = async (req, res, next) => {
+            try {
+                let response = await this.adminService.saveArticle(req.body, req.file);
+                res.status(200).json({ data: response, message: response ? 'Article saved!' : 'Unable to save article' });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.deleteArticle = async (req, res, next) => {
+            try {
+                let response = await this.adminService.deleteArticle(req.body);
+                res.status(200).json({ data: response, message: response ? 'Article deleted!' : 'Unable to delete article' });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.sendNotification = async (req, res, next) => {
             try {
                 const title = req.body.title;

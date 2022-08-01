@@ -37,6 +37,7 @@ class PostRoute {
         this.router.post(`${this.path}complaint`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.ComplaintAddDto, 'body'), this.postController.complaintAdd);
         this.router.post(`${this.path}article-categories`, auth_middleware_1.default, (0, validation_middleware_1.default)(posts_dto_1.ArticleAddDto, 'body'), this.postController.articleAdd);
         this.router.get(`${this.path}article-categories`, auth_middleware_1.default, this.postController.articleCatListing);
+        this.router.post(`${this.path}get-article-listing`, auth_middleware_1.default, this.postController.articleListing);
     }
 }
 exports.default = PostRoute;

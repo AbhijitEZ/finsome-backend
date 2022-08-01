@@ -3,6 +3,7 @@ import PostService from '../services/post.service';
 declare class PostController {
     postService: PostService;
     countriesController: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    articleListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     stockTypesController: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userConfigurationListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userConfigurationUpdate: (req: Request, res: Response, next: NextFunction) => Promise<void>;

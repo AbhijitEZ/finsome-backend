@@ -14,6 +14,16 @@ class PostController {
     }
   };
 
+  public articleListing = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let response = await this.postService.getArticles(req.body);
+      res.status(200).json({ data: response, message: 'Article listing!' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
   public stockTypesController = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore

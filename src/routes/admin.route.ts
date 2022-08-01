@@ -6,7 +6,7 @@ import { AdminLoginDto, PrivacyPolicyDto, SendNotificationDto, ToggleUserStatusD
 import AdminController from '@/controllers/admin.controller';
 import { authAdminMiddleware } from '@/middlewares/auth.middleware';
 import { StockUpdateTypeDto } from '@/dtos/posts.dto';
-import { fileUploadCSVCB } from '@/utils/global';
+import { fileUploadCB, fileUploadCSVCB } from '@/utils/global';
 
 /**
  * This route would only be used by the Web panel specifc to admin.
@@ -69,12 +69,13 @@ class AdminRoute implements Routes {
       authAdminMiddleware,
       this.adminController.termsConditionUpdate,
     );
-    this.router.post(
-      `${this.path}send-notification`,
-      validationMiddleware(SendNotificationDto, 'body'),
-      this.adminController.sendNotification,
-    );
+    this.router.post(`${this.path}send-notification`, validationMiddleware(SendNotificationDto, 'body'), this.adminController.sendNotification);
     /* !Policies */
+
+    //Article
+    this.router.post(`${this.path}get-article-listing`, authAdminMiddleware, this.adminController.articleListing);
+    this.router.post(`${this.path}save-article`, fileUploadCB, this.adminController.saveArticle);
+    this.router.post(`${this.path}delete-article`, this.adminController.deleteArticle);
   }
 }
 

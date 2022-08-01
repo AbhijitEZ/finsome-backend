@@ -134,6 +134,7 @@ export const COUNTRIES = 'countries';
 export const POST_STOCKS = 'post-stocks';
 export const LIKES = 'likes';
 export const DEVICE_TOKENS = 'device-tokens';
+export const ARTICLES = 'articles';
 export const ARTICLE_CATEGORIES = 'article-categories';
 export const USER_RATES = 'user-rates';
 export const COMPLAINTS = 'complaints';

@@ -21,6 +21,9 @@ import { parse as csvParser } from 'csv-parse/sync';
 import postsModel from '@/models/posts';
 import deviceTokenModel from '@/models/device-tokens';
 import userFollowerModel from '@/models/user-followers';
+import awsHandler from '@utils/aws';
+import articleModel from '@/models/articles';
+import mongoose from 'mongoose';
 
 class AdminService {
   public users = userModel;
@@ -63,10 +66,10 @@ class AdminService {
     };
 
     if (status != '') {
-      if(status == "true"){
+      if (status == 'true') {
         query['deleted_at'] = null;
-      }else{
-        query['deleted_at'] = { $ne: null }
+      } else {
+        query['deleted_at'] = { $ne: null };
       }
     }
 
@@ -338,6 +341,58 @@ class AdminService {
 
     // ANCHOR This would be added on, when more models gets associated with Stock.
     await stockTypeModel.findOneAndDelete({ _id, s_type: type }).exec();
+  }
+
+  public async getArticles(requestData: any): Promise<any> {
+    let model: any = articleModel;
+    let searchRegex = new RegExp(requestData.search, 'i');
+    let data = await model.paginate(
+      { title: searchRegex },
+      {
+        page: requestData.page,
+        limit: requestData.limit,
+      },
+    );
+    return data;
+  }
+
+  public async deleteArticle(requestData: any): Promise<any> {
+    if (mongoose.isValidObjectId(requestData.id)) {
+      await articleModel.findByIdAndRemove(requestData.id,{new: true});
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public async saveArticle(requestData: any, file: Express.Multer.File): Promise<any> {
+    let imageFile: any;
+    if (file) {
+      imageFile = await awsHandler.addAssets(file);
+    }
+
+    let query: any = {
+      title: requestData.title,
+      category: requestData.category,
+      description: requestData.description,
+      readingTime: requestData.readingTime,
+      content: requestData.content,
+    };
+
+    if (requestData.id == '0') {
+      if (file) {
+        query.coverImage = imageFile != null ? imageFile : '';
+      }
+      await articleModel.create(query);
+      return true;
+    } else {
+      if (mongoose.isValidObjectId(requestData.id)) {
+        await articleModel.findByIdAndUpdate(requestData.id, query);
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   public async stockTypeUpload(type: string, path: string): Promise<any> {

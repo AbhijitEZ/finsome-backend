@@ -64,6 +64,7 @@ declare class PostService {
     userConfigListing(_id: string): Promise<any>;
     userConfigUpdate(_id: string, reqData: UserConfigurationDto): Promise<any>;
     postExplore(_id: string): Promise<any>;
+    getArticles(requestData: any): Promise<any>;
     postHome(_id: string, queryData: PostHomeDto): Promise<any>;
     postCreate(_id: string, fullname: string, profilePhoto: string, reqData: PostCreateDto, files?: Record<string, Array<Express.Multer.File>>, postId?: String): Promise<any>;
     postDetail(userId: string, postId: string): Promise<any>;

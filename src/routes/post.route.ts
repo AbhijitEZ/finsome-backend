@@ -73,6 +73,7 @@ class PostRoute implements Routes {
     this.router.post(`${this.path}complaint`, authMiddleware, validationMiddleware(ComplaintAddDto, 'body'), this.postController.complaintAdd);
     this.router.post(`${this.path}article-categories`, authMiddleware, validationMiddleware(ArticleAddDto, 'body'), this.postController.articleAdd);
     this.router.get(`${this.path}article-categories`, authMiddleware, this.postController.articleCatListing);
+    this.router.post(`${this.path}get-article-listing`, authMiddleware, this.postController.articleListing);
   }
 }
 
