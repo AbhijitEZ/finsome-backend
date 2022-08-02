@@ -22,6 +22,8 @@ const posts_1 = tslib_1.__importDefault(require("../models/posts"));
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
 const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
 const articles_1 = tslib_1.__importDefault(require("../models/articles"));
+const article_categories_1 = tslib_1.__importDefault(require("../models/article-categories"));
+const user_rates_1 = tslib_1.__importDefault(require("../models/user-rates"));
 const mongoose_1 = tslib_1.__importDefault(require("mongoose"));
 class AdminService {
     constructor() {
@@ -74,6 +76,21 @@ class AdminService {
             select: '-password -updated_at -term_agree_timestamp',
             sort: { created_at: -1 },
         });
+        for (let i = 0; i < users.docs.length; i++) {
+            users.docs[i].rating = await user_rates_1.default.aggregate([
+                {
+                    $match: {
+                        user_id: mongoose_1.default.Types.ObjectId(users.docs[i]._id),
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$user_id',
+                        avg: { $avg: '$rate' },
+                    },
+                },
+            ]).exec();
+        }
         let data = users.docs;
         const userSanitized = data.map(d => (Object.assign(Object.assign({}, d), { profile_photo: (0, util_1.profileImageGenerator)(d.profile_photo) })));
         users.docs = userSanitized;
@@ -190,7 +207,7 @@ class AdminService {
             populate: [
                 {
                     path: 'user_id',
-                    select: 'fullname phone_number',
+                    select: 'fullname phone_country_code phone_number',
                 },
                 {
                     path: 'app_improve_type_id',
@@ -200,16 +217,17 @@ class AdminService {
         });
         // @ts-ignore
         allData.docs = allData.docs.map((suggestion) => {
-            var _a, _b, _c, _d, _e, _f, _g, _h;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
             return {
                 _id: suggestion.id,
                 phone_number: (_b = (_a = suggestion === null || suggestion === void 0 ? void 0 : suggestion.user_id) === null || _a === void 0 ? void 0 : _a.phone_number) !== null && _b !== void 0 ? _b : '',
-                fullname: (_d = (_c = suggestion === null || suggestion === void 0 ? void 0 : suggestion.user_id) === null || _c === void 0 ? void 0 : _c.fullname) !== null && _d !== void 0 ? _d : '',
+                phone_country_code: (_d = (_c = suggestion === null || suggestion === void 0 ? void 0 : suggestion.user_id) === null || _c === void 0 ? void 0 : _c.phone_country_code) !== null && _d !== void 0 ? _d : '',
+                fullname: (_f = (_e = suggestion === null || suggestion === void 0 ? void 0 : suggestion.user_id) === null || _e === void 0 ? void 0 : _e.fullname) !== null && _f !== void 0 ? _f : '',
                 app_improvement_suggestion: {
-                    id: (_e = suggestion === null || suggestion === void 0 ? void 0 : suggestion.app_improve_type_id) === null || _e === void 0 ? void 0 : _e._id,
-                    description: (_f = suggestion.description) !== null && _f !== void 0 ? _f : '',
+                    id: (_g = suggestion === null || suggestion === void 0 ? void 0 : suggestion.app_improve_type_id) === null || _g === void 0 ? void 0 : _g._id,
+                    description: (_h = suggestion.description) !== null && _h !== void 0 ? _h : '',
                     timestamp: suggestion.timestamp,
-                    name: (_h = (_g = suggestion === null || suggestion === void 0 ? void 0 : suggestion.app_improve_type_id) === null || _g === void 0 ? void 0 : _g.name) !== null && _h !== void 0 ? _h : '',
+                    name: (_k = (_j = suggestion === null || suggestion === void 0 ? void 0 : suggestion.app_improve_type_id) === null || _j === void 0 ? void 0 : _j.name) !== null && _k !== void 0 ? _k : '',
                 },
             };
         });
@@ -295,14 +313,35 @@ class AdminService {
         // ANCHOR This would be added on, when more models gets associated with Stock.
         await stock_types_1.default.findOneAndDelete({ _id, s_type: type }).exec();
     }
+    async getArticleCategories() {
+        let data = await article_categories_1.default.find();
+        return data;
+    }
     async getArticles(requestData) {
         let model = articles_1.default;
         let searchRegex = new RegExp(requestData.search, 'i');
         let data = await model.paginate({ title: searchRegex }, {
             page: requestData.page,
             limit: requestData.limit,
+            populate: {
+                path: 'category'
+            }
         });
         return data;
+    }
+    async getSingleArticle(requestData) {
+        let model = articles_1.default;
+        let data = await model.findById(requestData.id);
+        return data;
+    }
+    async deleteUserRating(requestData) {
+        if (mongoose_1.default.isValidObjectId(requestData.id)) {
+            await user_rates_1.default.findByIdAndRemove(requestData.id, { new: true });
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     async deleteArticle(requestData) {
         if (mongoose_1.default.isValidObjectId(requestData.id)) {
@@ -325,6 +364,7 @@ class AdminService {
             readingTime: requestData.readingTime,
             content: requestData.content,
         };
+        console.log(query);
         if (requestData.id == '0') {
             if (file) {
                 query.coverImage = imageFile != null ? imageFile : '';

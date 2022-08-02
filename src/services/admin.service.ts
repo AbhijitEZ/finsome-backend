@@ -23,6 +23,8 @@ import deviceTokenModel from '@/models/device-tokens';
 import userFollowerModel from '@/models/user-followers';
 import awsHandler from '@utils/aws';
 import articleModel from '@/models/articles';
+import articleCatModel from '@/models/article-categories';
+import userRatesModel from '@/models/user-rates';
 import mongoose from 'mongoose';
 
 class AdminService {
@@ -80,6 +82,21 @@ class AdminService {
       select: '-password -updated_at -term_agree_timestamp',
       sort: { created_at: -1 },
     });
+    for (let i = 0; i < users.docs.length; i++) {
+      users.docs[i].rating = await userRatesModel.aggregate([
+        {
+          $match: {
+            user_id: mongoose.Types.ObjectId(users.docs[i]._id),
+          },
+        },
+        {
+          $group: {
+            _id: '$user_id',
+            avg: { $avg: '$rate' },
+          },
+        },
+      ]).exec();
+    }
     let data: any = users.docs;
     const userSanitized = data.map(d => ({ ...d, profile_photo: profileImageGenerator(d.profile_photo) }));
     users.docs = userSanitized;
@@ -220,7 +237,7 @@ class AdminService {
       populate: [
         {
           path: 'user_id',
-          select: 'fullname phone_number',
+          select: 'fullname phone_country_code phone_number',
         },
         {
           path: 'app_improve_type_id',
@@ -234,6 +251,7 @@ class AdminService {
       return {
         _id: suggestion.id,
         phone_number: suggestion?.user_id?.phone_number ?? '',
+        phone_country_code: suggestion?.user_id?.phone_country_code ?? '',
         fullname: suggestion?.user_id?.fullname ?? '',
         app_improvement_suggestion: {
           id: suggestion?.app_improve_type_id?._id,
@@ -343,6 +361,11 @@ class AdminService {
     await stockTypeModel.findOneAndDelete({ _id, s_type: type }).exec();
   }
 
+  public async getArticleCategories(): Promise<any> {
+    let data = await articleCatModel.find();
+    return data;
+  }
+
   public async getArticles(requestData: any): Promise<any> {
     let model: any = articleModel;
     let searchRegex = new RegExp(requestData.search, 'i');
@@ -351,14 +374,32 @@ class AdminService {
       {
         page: requestData.page,
         limit: requestData.limit,
+        populate: {
+          path: 'category'
+        }
       },
     );
     return data;
   }
 
+  public async getSingleArticle(requestData: any): Promise<any> {
+    let model: any = articleModel;
+    let data = await model.findById(requestData.id);
+    return data;
+  }
+
+  public async deleteUserRating(requestData: any): Promise<any> {
+    if (mongoose.isValidObjectId(requestData.id)) {
+      await userRatesModel.findByIdAndRemove(requestData.id, { new: true });
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public async deleteArticle(requestData: any): Promise<any> {
     if (mongoose.isValidObjectId(requestData.id)) {
-      await articleModel.findByIdAndRemove(requestData.id,{new: true});
+      await articleModel.findByIdAndRemove(requestData.id, { new: true });
       return true;
     } else {
       return false;
@@ -378,6 +419,8 @@ class AdminService {
       readingTime: requestData.readingTime,
       content: requestData.content,
     };
+
+    console.log(query);
 
     if (requestData.id == '0') {
       if (file) {

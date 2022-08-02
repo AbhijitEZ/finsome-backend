@@ -168,7 +168,7 @@ class PostService {
   public async getArticles(requestData: any): Promise<any> {
     let model: any = articleModel;
     let searchRegex = new RegExp(requestData.search, 'i');
-    let data = await model.find({ title: searchRegex }).skip(requestData.skip).limit(requestData.limit);
+    let data = await model.find({ title: searchRegex }).populate("category").skip(requestData.skip).limit(requestData.limit);
     return data;
   }
 

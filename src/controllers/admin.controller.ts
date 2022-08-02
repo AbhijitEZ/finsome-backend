@@ -73,6 +73,19 @@ class AdminController {
     }
   };
 
+  public deleteUserRating = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { ratingId } = req.body;
+      if (!ratingId) {
+        throw new HttpException(409, APP_ERROR_MESSAGE.id_not_exists);
+      }
+      let response: any = await this.adminService.deleteUserRating({id: ratingId});
+      res.status(200).json({ data: response, message: APP_SUCCESS_MESSAGE.delete_user_success });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public privacyPolicy = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.adminService.privacyPolicyListing();
@@ -177,6 +190,24 @@ class AdminController {
   public articleListing = async (req: Request, res: Response, next: NextFunction) => {
     try {
       let response = await this.adminService.getArticles(req.body);
+      res.status(200).json({ data: response, message: 'Article listing!' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getSingleArticle = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let response = await this.adminService.getSingleArticle(req.body);
+      res.status(200).json({ data: response, message: 'Article listing!' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public articleCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let response = await this.adminService.getArticleCategories();
       res.status(200).json({ data: response, message: 'Article listing!' });
     } catch (error) {
       next(error);

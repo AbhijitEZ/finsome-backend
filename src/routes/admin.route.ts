@@ -72,8 +72,12 @@ class AdminRoute implements Routes {
     this.router.post(`${this.path}send-notification`, validationMiddleware(SendNotificationDto, 'body'), this.adminController.sendNotification);
     /* !Policies */
 
+    this.router.post(`${this.path}delete-user-rating`, authAdminMiddleware, this.adminController.deleteUserRating);
+
     //Article
+    this.router.post(`${this.path}get-article-category`, authAdminMiddleware, this.adminController.articleCategory);
     this.router.post(`${this.path}get-article-listing`, authAdminMiddleware, this.adminController.articleListing);
+    this.router.post(`${this.path}get-single-article`, authAdminMiddleware, this.adminController.getSingleArticle);
     this.router.post(`${this.path}save-article`, fileUploadCB, this.adminController.saveArticle);
     this.router.post(`${this.path}delete-article`, this.adminController.deleteArticle);
   }

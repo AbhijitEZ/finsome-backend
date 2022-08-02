@@ -170,7 +170,7 @@ class PostService {
     async getArticles(requestData) {
         let model = articles_1.default;
         let searchRegex = new RegExp(requestData.search, 'i');
-        let data = await model.find({ title: searchRegex }).skip(requestData.skip).limit(requestData.limit);
+        let data = await model.find({ title: searchRegex }).populate("category").skip(requestData.skip).limit(requestData.limit);
         return data;
     }
     async postHome(_id, queryData) {

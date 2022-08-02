@@ -8,6 +8,7 @@ declare class AdminController {
     toggleUserStatus: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     userById: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     deleteUser: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteUserRating: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     privacyPolicy: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     termsConditionListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     termsConditionUpdate: (req: Request, res: Response, next: NextFunction) => Promise<void>;
@@ -19,6 +20,8 @@ declare class AdminController {
     stockTypeDelete: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     stockTypeUpload: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     articleListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getSingleArticle: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    articleCategory: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     saveArticle: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     deleteArticle: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     sendNotification: (req: Request, res: Response, next: NextFunction) => Promise<void>;
