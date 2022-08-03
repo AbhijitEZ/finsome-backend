@@ -126,12 +126,12 @@ class PostService {
       });
       return output;
     } else {
-      let output = await this.stockTypesObj.find(query)
+      let stock = await this.stockTypesObj.find(query)
         .limit(parseInt(reqData.limit ?? LIMIT_DEF))
         .skip(parseInt(reqData.skip ?? SKIP_DEF))
         .exec();
         const total_count = await this.stockTypesObj.countDocuments(query);
-        return { output, total_count };
+        return { stock, total_count };
     }
   }
 
