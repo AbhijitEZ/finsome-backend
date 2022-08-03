@@ -138,12 +138,12 @@ class PostService {
             return output;
         }
         else {
-            let stock = await this.stockTypesObj.find(query)
+            let stocks = await this.stockTypesObj.find(query)
                 .limit(parseInt((_a = reqData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF))
                 .skip(parseInt((_b = reqData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF))
                 .exec();
             const total_count = await this.stockTypesObj.countDocuments(query);
-            return { stock, total_count };
+            return { stocks, total_count };
         }
     }
     async userConfigListing(_id) {
