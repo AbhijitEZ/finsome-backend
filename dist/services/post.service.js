@@ -133,12 +133,13 @@ class PostService {
             let model = stock_types_1.default;
             let output = await model.paginate(query, {
                 page: reqData.page,
-                limit: reqData.limit
+                limit: reqData.limit,
             });
             return output;
         }
         else {
-            let stocks = await this.stockTypesObj.find(query)
+            let stocks = await this.stockTypesObj
+                .find(query)
                 .limit(parseInt((_a = reqData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF))
                 .skip(parseInt((_b = reqData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF))
                 .exec();
@@ -170,7 +171,11 @@ class PostService {
     async getArticles(requestData) {
         let model = articles_1.default;
         let searchRegex = new RegExp(requestData.search, 'i');
-        let data = await model.find({ title: searchRegex }).populate("category").skip(requestData.skip).limit(requestData.limit);
+        let query = { title: searchRegex };
+        if (requestData.categoryId != null && requestData.categoryId != '') {
+            query['category'] = requestData.categoryId;
+        }
+        let data = await model.find(query).populate('category').sort({ sequence: 1 }).skip(requestData.skip).limit(requestData.limit);
         return data;
     }
     async postHome(_id, queryData) {
@@ -962,7 +967,7 @@ class PostService {
             .find({
             deleted_at: { $eq: null },
         })
-            .sort({ created_at: -1 })
+            .sort({ sequence: -1 })
             .lean();
         // @ts-ignore
         return articleCategories;
@@ -1130,6 +1135,15 @@ class PostService {
                 },
             });
         }
+    }
+    async getArticleCategories() {
+        let data = await article_categories_1.default
+            .find({
+            deleted_at: { $eq: null },
+        })
+            .sort({ sequence: -1 })
+            .lean();
+        return data;
     }
 }
 exports.default = PostService;

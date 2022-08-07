@@ -28,6 +28,8 @@ declare class AdminService {
     complaintsListing(body: any): Promise<Record<string, any>>;
     stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any>;
     stockTypeDelete(type: string, _id: string): Promise<any>;
+    saveArticleCategory(request: any): Promise<boolean>;
+    deleteArticleCategory(requestData: any): Promise<any>;
     getArticleCategories(): Promise<any>;
     getArticles(requestData: any): Promise<any>;
     getSingleArticle(requestData: any): Promise<any>;

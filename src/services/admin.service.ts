@@ -83,19 +83,21 @@ class AdminService {
       sort: { created_at: -1 },
     });
     for (let i = 0; i < users.docs.length; i++) {
-      users.docs[i].rating = await userRatesModel.aggregate([
-        {
-          $match: {
-            user_id: mongoose.Types.ObjectId(users.docs[i]._id),
+      users.docs[i].rating = await userRatesModel
+        .aggregate([
+          {
+            $match: {
+              user_id: mongoose.Types.ObjectId(users.docs[i]._id),
+            },
           },
-        },
-        {
-          $group: {
-            _id: '$user_id',
-            avg: { $avg: '$rate' },
+          {
+            $group: {
+              _id: '$user_id',
+              avg: { $avg: '$rate' },
+            },
           },
-        },
-      ]).exec();
+        ])
+        .exec();
     }
     let data: any = users.docs;
     const userSanitized = data.map(d => ({ ...d, profile_photo: profileImageGenerator(d.profile_photo) }));
@@ -361,24 +363,60 @@ class AdminService {
     await stockTypeModel.findOneAndDelete({ _id, s_type: type }).exec();
   }
 
+  public async saveArticleCategory(request: any) {
+    if (request.id == '0') {
+      let existing = await articleCatModel.find({ name: request.name });
+      if (existing.length == 1) {
+        return false;
+      } else {
+        await articleCatModel.create({
+          name: request.name,
+          sequence: request.sequence,
+        });
+        return true;
+      }
+    } else {
+      await articleCatModel.findByIdAndUpdate(
+        request.id,
+        {
+          name: request.name,
+          sequence: request.sequence,
+        },
+        { new: true },
+      );
+      return true;
+    }
+  }
+  public async deleteArticleCategory(requestData: any): Promise<any> {
+    if (mongoose.isValidObjectId(requestData.id)) {
+      await articleCatModel.findByIdAndRemove(requestData.id, { new: true });
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public async getArticleCategories(): Promise<any> {
-    let data = await articleCatModel.find();
+    let data = await articleCatModel.find({ deleted_at: { $eq: null } }).sort({ sequence: 1 }).lean();
     return data;
   }
 
   public async getArticles(requestData: any): Promise<any> {
     let model: any = articleModel;
     let searchRegex = new RegExp(requestData.search, 'i');
-    let data = await model.paginate(
-      { title: searchRegex },
-      {
-        page: requestData.page,
-        limit: requestData.limit,
-        populate: {
-          path: 'category'
-        }
+    let query: any = { title: searchRegex };
+    if (requestData.categoryId != '') {
+      query['category'] = requestData.categoryId;
+    }
+
+    let data = await model.paginate(query, {
+      page: requestData.page,
+      limit: requestData.limit,
+      sort: { sequence: 1 },
+      populate: {
+        path: 'category',
       },
-    );
+    });
     return data;
   }
 

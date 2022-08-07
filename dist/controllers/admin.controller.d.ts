@@ -21,6 +21,8 @@ declare class AdminController {
     stockTypeUpload: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     articleListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     getSingleArticle: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    saveArticleCategory: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    deleteArticleCategory: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     articleCategory: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     saveArticle: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     deleteArticle: (req: Request, res: Response, next: NextFunction) => Promise<void>;

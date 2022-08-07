@@ -199,6 +199,15 @@ class PostController {
                 next(error);
             }
         };
+        this.articleCategory = async (req, res, next) => {
+            try {
+                let response = await this.postService.getArticleCategories();
+                res.status(200).json({ data: response, message: 'Article listing!' });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.commentDelete = async (req, res, next) => {
             var _a, _b, _c;
             try {

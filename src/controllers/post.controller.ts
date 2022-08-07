@@ -186,6 +186,15 @@ class PostController {
     }
   };
 
+  public articleCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let response = await this.postService.getArticleCategories();
+      res.status(200).json({ data: response, message: 'Article listing!' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public commentDelete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore

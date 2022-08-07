@@ -205,6 +205,32 @@ class AdminController {
     }
   };
 
+  public saveArticleCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+      const response = await this.adminService.saveArticleCategory(req.body);
+      if(response){
+        res.status(200).json({ data: 1, message: 'Article category saved!' });
+      }else{
+        res.status(200).json({ data: 0, message: 'Unable to save article category!' });
+      }
+    }catch(error){
+      next(error);
+    }
+  } 
+  
+  public deleteArticleCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+      const response = await this.adminService.saveArticleCategory(req.body);
+      if(response){
+        res.status(200).json({ data: 1, message: 'Article category saved!' });
+      }else{
+        res.status(200).json({ data: 0, message: 'Unable to save article category!' });
+      }
+    }catch(error){
+      next(error);
+    }
+  }
+
   public articleCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       let response = await this.adminService.getArticleCategories();

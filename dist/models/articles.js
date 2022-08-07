@@ -29,6 +29,10 @@ const articleSchema = new mongoose_1.Schema({
         type: String,
         default: '',
     },
+    sequence: {
+        typpe: Number,
+        default: 0
+    },
     deleted_at: {
         type: Date,
     },

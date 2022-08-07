@@ -39,7 +39,7 @@ import { fileUnSyncFromLocalStroage, listingResponseSanitize, profileImageGenera
 import { commentResponseMapper, dateConstSwitcherHandler, postResponseMapper } from '@/utils/global';
 import postStockModel from '@/models/post-stocks';
 import commentsModel from '@/models/comments';
-import { Types } from 'mongoose';
+import { Mongoose, Types } from 'mongoose';
 import likesModel from '@/models/likes';
 import { HttpException } from '@/exceptions/HttpException';
 import complaintModel from '@/models/complaints';
@@ -113,25 +113,25 @@ class PostService {
     }
 
     if (reqData.search) {
-      query['$and']=[{ $or: [{ name: { $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }];
+      query['$and'] = [{ $or: [{ name: { $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }];
       // stQb = stQb.and([{ $or: [{ name: {find $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }]);
     }
 
-
     if (reqData.has_all_data) {
       let model: any = stockTypeModel;
-      let output: any = await model.paginate(query, { 
-        page: reqData.page, 
-        limit: reqData.limit
+      let output: any = await model.paginate(query, {
+        page: reqData.page,
+        limit: reqData.limit,
       });
       return output;
     } else {
-      let stocks = await this.stockTypesObj.find(query)
+      let stocks = await this.stockTypesObj
+        .find(query)
         .limit(parseInt(reqData.limit ?? LIMIT_DEF))
         .skip(parseInt(reqData.skip ?? SKIP_DEF))
         .exec();
-        const total_count = await this.stockTypesObj.countDocuments(query);
-        return { stocks, total_count };
+      const total_count = await this.stockTypesObj.countDocuments(query);
+      return { stocks, total_count };
     }
   }
 
@@ -168,7 +168,11 @@ class PostService {
   public async getArticles(requestData: any): Promise<any> {
     let model: any = articleModel;
     let searchRegex = new RegExp(requestData.search, 'i');
-    let data = await model.find({ title: searchRegex }).populate("category").skip(requestData.skip).limit(requestData.limit);
+    let query = { title: searchRegex };
+    if (requestData.categoryId != null && requestData.categoryId != '') {
+      query['category'] = requestData.categoryId;
+    }
+    let data = await model.find(query).populate('category').sort({ sequence: 1 }).skip(requestData.skip).limit(requestData.limit);
     return data;
   }
 
@@ -199,8 +203,6 @@ class PostService {
         $in: allUserPostDisplayIds,
       };
     }
-
-    
 
     const postsQb = this.postsObj.aggregate([
       {
@@ -1040,7 +1042,7 @@ class PostService {
       .find({
         deleted_at: { $eq: null },
       })
-      .sort({ created_at: -1 })
+      .sort({ sequence: -1 })
       .lean();
 
     // @ts-ignore
@@ -1267,6 +1269,16 @@ class PostService {
       }
     });
   };
+
+  public async getArticleCategories(): Promise<any> {
+    let data = await articleCatModel
+      .find({
+        deleted_at: { $eq: null },
+      })
+      .sort({ sequence: -1 })
+      .lean();
+    return data;
+  }
 }
 
 export default PostService;

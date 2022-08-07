@@ -77,7 +77,8 @@ class AdminService {
             sort: { created_at: -1 },
         });
         for (let i = 0; i < users.docs.length; i++) {
-            users.docs[i].rating = await user_rates_1.default.aggregate([
+            users.docs[i].rating = await user_rates_1.default
+                .aggregate([
                 {
                     $match: {
                         user_id: mongoose_1.default.Types.ObjectId(users.docs[i]._id),
@@ -89,7 +90,8 @@ class AdminService {
                         avg: { $avg: '$rate' },
                     },
                 },
-            ]).exec();
+            ])
+                .exec();
         }
         let data = users.docs;
         const userSanitized = data.map(d => (Object.assign(Object.assign({}, d), { profile_photo: (0, util_1.profileImageGenerator)(d.profile_photo) })));
@@ -313,19 +315,55 @@ class AdminService {
         // ANCHOR This would be added on, when more models gets associated with Stock.
         await stock_types_1.default.findOneAndDelete({ _id, s_type: type }).exec();
     }
+    async saveArticleCategory(request) {
+        if (request.id == '0') {
+            let existing = await article_categories_1.default.find({ name: request.name });
+            if (existing.length == 1) {
+                return false;
+            }
+            else {
+                await article_categories_1.default.create({
+                    name: request.name,
+                    sequence: request.sequence,
+                });
+                return true;
+            }
+        }
+        else {
+            await article_categories_1.default.findByIdAndUpdate(request.id, {
+                name: request.name,
+                sequence: request.sequence,
+            }, { new: true });
+            return true;
+        }
+    }
+    async deleteArticleCategory(requestData) {
+        if (mongoose_1.default.isValidObjectId(requestData.id)) {
+            await article_categories_1.default.findByIdAndRemove(requestData.id, { new: true });
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     async getArticleCategories() {
-        let data = await article_categories_1.default.find();
+        let data = await article_categories_1.default.find({ deleted_at: { $eq: null } }).sort({ sequence: 1 }).lean();
         return data;
     }
     async getArticles(requestData) {
         let model = articles_1.default;
         let searchRegex = new RegExp(requestData.search, 'i');
-        let data = await model.paginate({ title: searchRegex }, {
+        let query = { title: searchRegex };
+        if (requestData.categoryId != '') {
+            query['category'] = requestData.categoryId;
+        }
+        let data = await model.paginate(query, {
             page: requestData.page,
             limit: requestData.limit,
+            sort: { sequence: 1 },
             populate: {
-                path: 'category'
-            }
+                path: 'category',
+            },
         });
         return data;
     }

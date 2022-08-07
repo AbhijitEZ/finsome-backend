@@ -82,5 +82,6 @@ declare class PostService {
     private notificationUpdate;
     private sendNotificationWrapper;
     private sendNotificationToSubscripedUsers;
+    getArticleCategories(): Promise<any>;
 }
 export default PostService;
