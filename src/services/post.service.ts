@@ -1042,7 +1042,7 @@ class PostService {
       .find({
         deleted_at: { $eq: null },
       })
-      .sort({ sequence: -1 })
+      .sort({ sequence: 1 })
       .lean();
 
     // @ts-ignore
