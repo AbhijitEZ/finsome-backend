@@ -322,10 +322,11 @@ class AdminService {
                 return false;
             }
             else {
-                await article_categories_1.default.create({
+                let query = {
                     name: request.name,
                     sequence: request.sequence,
-                });
+                };
+                await article_categories_1.default.create(query);
                 return true;
             }
         }
@@ -399,6 +400,7 @@ class AdminService {
             title: requestData.title,
             category: requestData.category,
             description: requestData.description,
+            sequence: requestData.sequence,
             readingTime: requestData.readingTime,
             content: requestData.content,
         };

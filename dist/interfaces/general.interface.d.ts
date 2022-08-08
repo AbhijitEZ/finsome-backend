@@ -127,6 +127,7 @@ export interface ArticleCategoryInf {
     _id: string;
     user_id: string;
     name: string;
+    sequence: Number;
     deleted_at?: Date;
     created_at: Date;
     updated_at: Date;

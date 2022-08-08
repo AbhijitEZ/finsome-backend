@@ -549,7 +549,6 @@ class PostService {
 
   public async postDetail(userId: string, postId: string): Promise<any> {
     const data = await this.singlePostAggreData(postId, userId);
-
     return data;
   }
 

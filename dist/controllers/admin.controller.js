@@ -214,7 +214,7 @@ class AdminController {
         };
         this.deleteArticleCategory = async (req, res, next) => {
             try {
-                const response = await this.adminService.saveArticleCategory(req.body);
+                const response = await this.adminService.deleteArticleCategory(req.body);
                 if (response) {
                     res.status(200).json({ data: 1, message: 'Article category saved!' });
                 }

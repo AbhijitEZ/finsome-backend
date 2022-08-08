@@ -23,7 +23,6 @@ class PostController {
     }
   };
 
-
   public stockTypesController = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
@@ -97,7 +96,7 @@ class PostController {
   public postDelete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // @ts-ignore
-      const data = await this.postService.postDelete(req.user?._id, req.method == 'POST'? req.body : req.params?.postId);
+      const data = await this.postService.postDelete(req.user?._id, req.method == 'POST' ? req.body : req.params?.postId);
       responseJSONMapper(res, 200, data);
     } catch (error) {
       next(error);
@@ -108,6 +107,16 @@ class PostController {
     try {
       // @ts-ignore
       const data = await this.postService.postDetail(req.user?._id, req.params?.postId);
+      responseJSONMapper(res, 200, data);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public postDetailByUserId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // @ts-ignore
+      const data = await this.postService.postDetail(req.body?.userId, req.body?.postId);
       responseJSONMapper(res, 200, data);
     } catch (error) {
       next(error);

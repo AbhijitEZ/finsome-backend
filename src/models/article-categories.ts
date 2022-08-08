@@ -14,7 +14,7 @@ const articleCatSchema: Schema = new Schema(
       type: String,
     },
     sequence:{
-      typpe: Number,
+      type: Number,
       default: 0
     },
     deleted_at: {

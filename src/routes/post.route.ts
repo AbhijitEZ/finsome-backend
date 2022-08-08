@@ -59,6 +59,7 @@ class PostRoute implements Routes {
       this.postController.postDeleteAssets,
     );
     this.router.get(`${this.path}detail/:postId`, authMiddleware, this.postController.postDetail);
+    this.router.post(`${this.path}detail`, authMiddleware, this.postController.postDetailByUserId);
     this.router.delete(`${this.path}delete/:postId`, authMiddleware, this.postController.postDelete);
     this.router.post(`${this.path}delete`, authMiddleware, this.postController.postDelete);
     this.router.get(`${this.path}explore`, authMiddleware, this.postController.postExplore);

@@ -369,10 +369,11 @@ class AdminService {
       if (existing.length == 1) {
         return false;
       } else {
-        await articleCatModel.create({
+        let query = {
           name: request.name,
           sequence: request.sequence,
-        });
+        };
+        await articleCatModel.create(query);
         return true;
       }
     } else {
@@ -454,6 +455,7 @@ class AdminService {
       title: requestData.title,
       category: requestData.category,
       description: requestData.description,
+      sequence: requestData.sequence,
       readingTime: requestData.readingTime,
       content: requestData.content,
     };

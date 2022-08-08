@@ -30,7 +30,7 @@ const articleSchema: Schema = new Schema(
       default: '',
     },
     sequence:{
-      typpe: Number,
+      type: Number,
       default: 0
     },
     deleted_at: {

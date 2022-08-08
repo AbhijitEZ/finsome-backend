@@ -49,7 +49,7 @@ class AdminRoute {
         //Article
         this.router.post(`${this.path}get-article-category`, auth_middleware_1.authAdminMiddleware, this.adminController.articleCategory);
         this.router.post(`${this.path}save-article-category`, auth_middleware_1.authAdminMiddleware, this.adminController.saveArticleCategory);
-        this.router.post(`${this.path}delete-article-category`, this.adminController.deleteArticleCategory);
+        this.router.post(`${this.path}delete-article-category`, auth_middleware_1.authAdminMiddleware, this.adminController.deleteArticleCategory);
         this.router.post(`${this.path}get-article-listing`, auth_middleware_1.authAdminMiddleware, this.adminController.articleListing);
         this.router.post(`${this.path}get-single-article`, this.adminController.getSingleArticle);
         this.router.post(`${this.path}save-article`, global_1.fileUploadCB, this.adminController.saveArticle);
