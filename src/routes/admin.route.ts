@@ -73,6 +73,7 @@ class AdminRoute implements Routes {
     /* !Policies */
 
     this.router.post(`${this.path}delete-user-rating`, authAdminMiddleware, this.adminController.deleteUserRating);
+    this.router.post(`${this.path}user-rating-count`, authAdminMiddleware, this.adminController.getUserRatingCount);
 
     //Article
     this.router.post(`${this.path}get-article-category`, authAdminMiddleware, this.adminController.articleCategory);

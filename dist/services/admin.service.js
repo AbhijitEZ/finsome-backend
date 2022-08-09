@@ -20,6 +20,7 @@ const fs_1 = tslib_1.__importDefault(require("fs"));
 const sync_1 = require("csv-parse/sync");
 const posts_1 = tslib_1.__importDefault(require("../models/posts"));
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
+const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
 const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
 const articles_1 = tslib_1.__importDefault(require("../models/articles"));
 const article_categories_1 = tslib_1.__importDefault(require("../models/article-categories"));
@@ -34,6 +35,27 @@ class AdminService {
         this.privacyPolicy = privacy_policy_1.default;
         this.termsConditionM = terms_condition_1.default;
         this.complaintM = complaints_1.default;
+        this.getUserRating = async (userId) => {
+            let avgRating = await user_rates_1.default
+                .aggregate([
+                {
+                    $match: {
+                        user_id: mongoose_1.default.Types.ObjectId(userId),
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$user_id',
+                        avg: { $avg: '$rate' },
+                    },
+                },
+            ])
+                .exec();
+            let postCount = await posts_1.default.countDocuments({ user_id: userId });
+            let followingCount = await user_followers_1.default.countDocuments({ user_id: userId });
+            let followerCount = await user_followers_1.default.countDocuments({ follower_id: userId });
+            return { avgRating, postCount, followingCount, followerCount };
+        };
     }
     async adminLogin(loginDto) {
         const adminUser = await this.users.findOne({
@@ -272,6 +294,11 @@ class AdminService {
                 select: 'fullname phone_number',
             },
         });
+        for (let i = 0; i < complaints.docs.length; i++) {
+            if (complaints.docs[i].user_complain_id != null) {
+                complaints.docs[i].user_complain_id = await users_model_1.default.findById(complaints.docs[i].user_complain_id).select('-password').lean();
+            }
+        }
         return complaints;
     }
     async stockTypeAdd(type, reqData) {
@@ -348,7 +375,10 @@ class AdminService {
         }
     }
     async getArticleCategories() {
-        let data = await article_categories_1.default.find({ deleted_at: { $eq: null } }).sort({ sequence: 1 }).lean();
+        let data = await article_categories_1.default
+            .find({ deleted_at: { $eq: null } })
+            .sort({ sequence: 1 })
+            .lean();
         return data;
     }
     async getArticles(requestData) {

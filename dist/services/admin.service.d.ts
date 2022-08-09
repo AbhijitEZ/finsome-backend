@@ -15,6 +15,12 @@ declare class AdminService {
         token: string;
     }>;
     userListing(user: User, req: any): Promise<Record<string, any>>;
+    getUserRating: (userId: any) => Promise<{
+        avgRating: any;
+        postCount: any;
+        followingCount: number;
+        followerCount: number;
+    }>;
     dashboardData(user: User): Promise<Record<string, any>>;
     toggleUserStatus(user: ToggleUserStatusDto): Promise<void>;
     deleteUser(id: string): Promise<void>;

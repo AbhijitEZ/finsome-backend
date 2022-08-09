@@ -428,7 +428,13 @@ class PostService {
             let searchRegex = new RegExp(queryData.search, 'i');
             postsQb.append({
                 $match: {
-                    $or: [{ caption: searchRegex }, { stock_type: searchRegex }, { 'user.fullname': searchRegex }],
+                    $or: [
+                        { caption: searchRegex },
+                        { stock_type: searchRegex },
+                        { 'user.fullname': searchRegex },
+                        { 'security.name': searchRegex },
+                        { 'security.country_data.name': searchRegex }
+                    ],
                 },
             });
             let model = posts_1.default;

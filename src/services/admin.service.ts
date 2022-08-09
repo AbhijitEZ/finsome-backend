@@ -105,6 +105,28 @@ class AdminService {
     return users;
   }
 
+  public getUserRating = async (userId: any) => {
+    let avgRating = await userRatesModel
+      .aggregate([
+        {
+          $match: {
+            user_id: mongoose.Types.ObjectId(userId),
+          },
+        },
+        {
+          $group: {
+            _id: '$user_id',
+            avg: { $avg: '$rate' },
+          },
+        },
+      ])
+      .exec();
+    let postCount = await postsModel.countDocuments({ user_id: userId });
+    let followingCount = await userFollowerModel.countDocuments({ user_id: userId });
+    let followerCount = await userFollowerModel.countDocuments({ follower_id: userId });
+    return { avgRating, postCount, followingCount, followerCount };
+  };
+
   public async dashboardData(user: User): Promise<Record<string, any>> {
     const users = await this.users
       .find({
@@ -307,6 +329,13 @@ class AdminService {
         select: 'fullname phone_number',
       },
     });
+
+    for (let i = 0; i < complaints.docs.length; i++) {
+      if (complaints.docs[i].user_complain_id != null) {
+        complaints.docs[i].user_complain_id = await userModel.findById(complaints.docs[i].user_complain_id).select('-password').lean();
+      }
+    }
+
     return complaints;
   }
 
@@ -398,7 +427,10 @@ class AdminService {
   }
 
   public async getArticleCategories(): Promise<any> {
-    let data = await articleCatModel.find({ deleted_at: { $eq: null } }).sort({ sequence: 1 }).lean();
+    let data = await articleCatModel
+      .find({ deleted_at: { $eq: null } })
+      .sort({ sequence: 1 })
+      .lean();
     return data;
   }
 

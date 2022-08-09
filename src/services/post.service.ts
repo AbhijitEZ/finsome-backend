@@ -385,6 +385,7 @@ class PostService {
         },
       });
     }
+    
     if (queryData.stock_ids) {
       const stockIds = queryData.stock_ids.split(',');
 
@@ -435,7 +436,13 @@ class PostService {
       let searchRegex: any = new RegExp(queryData.search, 'i');
       postsQb.append({
         $match: {
-          $or: [{ caption: searchRegex }, { stock_type: searchRegex }, { 'user.fullname': searchRegex }],
+          $or: [
+            { caption: searchRegex }, 
+            { stock_type: searchRegex }, 
+            { 'user.fullname': searchRegex },
+            { 'security.name': searchRegex },
+            { 'security.country_data.name': searchRegex }
+          ],
         },
       });
       let model: any = postsModel;

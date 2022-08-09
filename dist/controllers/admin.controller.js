@@ -27,6 +27,15 @@ class AdminController {
                 next(error);
             }
         };
+        this.getUserRatingCount = async (req, res, next) => {
+            try {
+                const users = await this.adminService.getUserRating(req.body.userId);
+                res.status(200).json({ data: users });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.dashboardData = async (req, res, next) => {
             try {
                 const users = await this.adminService.dashboardData(req.user);
