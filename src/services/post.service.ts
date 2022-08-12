@@ -793,7 +793,7 @@ class PostService {
       _id: reqData.post_id,
     });
 
-    if (postDetail.user_id) {
+    if (postDetail.user_id != userId) {
       const message = `${fullname || 'User'} has added a comment to one your post`;
       const metadata = {
         post_id: postDetail._id,
