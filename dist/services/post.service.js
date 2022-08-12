@@ -9,12 +9,13 @@ const fs_1 = tslib_1.__importDefault(require("fs"));
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
 const lodash_isempty_1 = tslib_1.__importDefault(require("lodash.isempty"));
+const mongoose_1 = tslib_1.__importDefault(require("mongoose"));
 const constants_1 = require("../utils/constants");
 const util_1 = require("../utils/util");
 const global_1 = require("../utils/global");
 const post_stocks_1 = tslib_1.__importDefault(require("../models/post-stocks"));
 const comments_1 = tslib_1.__importDefault(require("../models/comments"));
-const mongoose_1 = require("mongoose");
+const mongoose_2 = require("mongoose");
 const likes_1 = tslib_1.__importDefault(require("../models/likes"));
 const HttpException_1 = require("../exceptions/HttpException");
 const complaints_1 = tslib_1.__importDefault(require("../models/complaints"));
@@ -198,7 +199,7 @@ class PostService {
             delete userMatch.deleted_at;
         }
         else if (queryData === null || queryData === void 0 ? void 0 : queryData.user_id) {
-            userMatch['user_id'] = new mongoose_1.Types.ObjectId(queryData.user_id);
+            userMatch['user_id'] = new mongoose_2.Types.ObjectId(queryData.user_id);
         }
         else {
             userMatch['user_id'] = {
@@ -304,7 +305,7 @@ class PostService {
                     pipeline: [
                         {
                             $match: {
-                                user_id: (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) ? { $ne: null } : new mongoose_1.Types.ObjectId(_id),
+                                user_id: (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) ? { $ne: null } : new mongoose_2.Types.ObjectId(_id),
                             },
                         },
                         {
@@ -387,7 +388,7 @@ class PostService {
             postsQb.append({
                 $match: {
                     'security._id': {
-                        $in: stockIds.map(id => new mongoose_1.Types.ObjectId(id)),
+                        $in: stockIds.map(id => new mongoose_2.Types.ObjectId(id)),
                     },
                 },
             });
@@ -433,7 +434,7 @@ class PostService {
                         { stock_type: searchRegex },
                         { 'user.fullname': searchRegex },
                         { 'security.name': searchRegex },
-                        { 'security.country_data.name': searchRegex }
+                        { 'security.country_data.name': searchRegex },
                     ],
                 },
             });
@@ -528,7 +529,7 @@ class PostService {
     async postDelete(userId, postId) {
         const postData = await posts_1.default
             .findOne({
-            _id: new mongoose_1.Types.ObjectId(postId),
+            _id: new mongoose_2.Types.ObjectId(postId),
         })
             .lean();
         if (!postData) {
@@ -621,7 +622,7 @@ class PostService {
             },
             {
                 $match: {
-                    post_id: new mongoose_1.Types.ObjectId(reqData.id),
+                    post_id: new mongoose_2.Types.ObjectId(reqData.id),
                     parent_id: { $eq: null },
                     deleted_at: { $eq: null },
                 },
@@ -773,8 +774,8 @@ class PostService {
                 },
                 {
                     $match: {
-                        _id: new mongoose_1.Types.ObjectId(reqData.parent_id),
-                        post_id: new mongoose_1.Types.ObjectId(reqData.post_id),
+                        _id: new mongoose_2.Types.ObjectId(reqData.parent_id),
+                        post_id: new mongoose_2.Types.ObjectId(reqData.post_id),
                         parent_id: { $eq: null },
                         deleted_at: undefined,
                     },
@@ -856,8 +857,8 @@ class PostService {
             },
             {
                 $match: {
-                    _id: new mongoose_1.Types.ObjectId(newComment._id),
-                    post_id: new mongoose_1.Types.ObjectId(reqData.post_id),
+                    _id: new mongoose_2.Types.ObjectId(newComment._id),
+                    post_id: new mongoose_2.Types.ObjectId(reqData.post_id),
                     parent_id: { $eq: null },
                     deleted_at: undefined,
                 },
@@ -902,13 +903,13 @@ class PostService {
     // TODO: Need to remove the replies if the parent is removed
     async commentDelete(userId, postId, commentId) {
         const commentCheck = await comments_1.default.findOne({
-            _id: new mongoose_1.Types.ObjectId(commentId),
+            _id: new mongoose_2.Types.ObjectId(commentId),
         });
         if (!commentCheck) {
             throw new HttpException_1.HttpException(403, constants_1.APP_ERROR_MESSAGE.user_not_auth);
         }
         await comments_1.default.deleteOne({
-            _id: new mongoose_1.Types.ObjectId(commentId),
+            _id: new mongoose_2.Types.ObjectId(commentId),
         });
         const commentCounts = await comments_1.default.countDocuments({
             post_id: postId,
@@ -933,7 +934,7 @@ class PostService {
         }
         if (reqData.like) {
             await likes_1.default.create({ user_id: userId, post_id: reqData.post_id });
-            this.notificationUpdate({ reqData, userId, fullname, profile_photo });
+            await this.notificationUpdate({ reqData, userId, fullname, profile_photo });
         }
         else {
             await likes_1.default.deleteOne({ user_id: userId, post_id: reqData.post_id });
@@ -942,7 +943,7 @@ class PostService {
             {
                 $match: {
                     post_id: {
-                        $eq: new mongoose_1.Types.ObjectId(reqData.post_id),
+                        $eq: new mongoose_2.Types.ObjectId(reqData.post_id),
                     },
                 },
             },
@@ -979,7 +980,7 @@ class PostService {
         return articleCategories;
     }
     async articleAdd(userId, reqData) {
-        const newArticle = await article_categories_1.default.create(Object.assign({ user_id: new mongoose_1.Types.ObjectId(userId) }, reqData));
+        const newArticle = await article_categories_1.default.create(Object.assign({ user_id: new mongoose_2.Types.ObjectId(userId) }, reqData));
         // @ts-ignore
         return newArticle;
     }
@@ -989,7 +990,7 @@ class PostService {
             {
                 $project: this.postResObj,
             },
-            { $match: { $expr: { $eq: ['$_id', { $toObjectId: new mongoose_1.Types.ObjectId(postId) }] } } },
+            { $match: { $expr: { $eq: ['$_id', { $toObjectId: new mongoose_2.Types.ObjectId(postId) }] } } },
             {
                 $lookup: {
                     from: constants_1.USERS,
@@ -1082,7 +1083,7 @@ class PostService {
                     pipeline: [
                         {
                             $match: {
-                                user_id: new mongoose_1.Types.ObjectId(userId),
+                                user_id: new mongoose_2.Types.ObjectId(userId),
                             },
                         },
                         {
@@ -1116,30 +1117,32 @@ class PostService {
     }
     async notificationUpdate({ reqData, fullname, userId, profile_photo }) {
         const userPostData = await posts_1.default.findOne({
-            _id: new mongoose_1.Types.ObjectId(reqData.post_id),
+            _id: new mongoose_2.Types.ObjectId(reqData.post_id),
         });
-        if (userPostData && userId !== (userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id)) {
-            const message = `${fullname || 'User'} has like your post`;
-            const meta_data = {
-                post_id: reqData.post_id,
-                user_id: userId,
-                profile_photo: (0, util_1.profileImageGenerator)(profile_photo),
-            };
-            /* TODO: Need to add notification wrapper that takes care of all the stuff */
-            notifications_1.default.create({
-                user_id: userPostData.user_id,
-                type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED,
-                message: message,
-                meta_data,
-            });
-            this.sendNotificationWrapper(userPostData.user_id, {
-                notification: {
-                    title: message,
-                },
-                data: {
-                    payload: JSON.stringify(Object.assign(Object.assign({}, meta_data), { type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED })),
-                },
-            });
+        if (userPostData != null && mongoose_1.default.isValidObjectId(userId) && mongoose_1.default.isValidObjectId(userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id)) {
+            if (userId != (userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id)) {
+                const message = `${fullname || 'User'} has like your post`;
+                const meta_data = {
+                    post_id: reqData.post_id,
+                    user_id: userId,
+                    profile_photo: (0, util_1.profileImageGenerator)(profile_photo),
+                };
+                /* TODO: Need to add notification wrapper that takes care of all the stuff */
+                notifications_1.default.create({
+                    user_id: userPostData.user_id,
+                    type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED,
+                    message: message,
+                    meta_data,
+                });
+                this.sendNotificationWrapper(userPostData.user_id, {
+                    notification: {
+                        title: message,
+                    },
+                    data: {
+                        payload: JSON.stringify(Object.assign(Object.assign({}, meta_data), { type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED })),
+                    },
+                });
+            }
         }
     }
     async getArticleCategories() {

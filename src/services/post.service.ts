@@ -19,6 +19,7 @@ import fs from 'fs';
 import stockTypeModel from '@/models/stock-types';
 import userConfigurationModel from '@/models/user-configurations';
 import isEmpty from 'lodash.isempty';
+import mongoose from 'mongoose';
 import {
   APP_ERROR_MESSAGE,
   COMMENTS,
@@ -385,7 +386,7 @@ class PostService {
         },
       });
     }
-    
+
     if (queryData.stock_ids) {
       const stockIds = queryData.stock_ids.split(',');
 
@@ -437,11 +438,11 @@ class PostService {
       postsQb.append({
         $match: {
           $or: [
-            { caption: searchRegex }, 
-            { stock_type: searchRegex }, 
+            { caption: searchRegex },
+            { stock_type: searchRegex },
             { 'user.fullname': searchRegex },
             { 'security.name': searchRegex },
-            { 'security.country_data.name': searchRegex }
+            { 'security.country_data.name': searchRegex },
           ],
         },
       });
@@ -1004,7 +1005,7 @@ class PostService {
 
     if (reqData.like) {
       await likesModel.create({ user_id: userId, post_id: reqData.post_id });
-      this.notificationUpdate({ reqData, userId, fullname, profile_photo });
+      await this.notificationUpdate({ reqData, userId, fullname, profile_photo });
     } else {
       await likesModel.deleteOne({ user_id: userId, post_id: reqData.post_id });
     }
@@ -1204,29 +1205,31 @@ class PostService {
       _id: new Types.ObjectId(reqData.post_id),
     });
 
-    if (userPostData && userId !== userPostData?.user_id) {
-      const message = `${fullname || 'User'} has like your post`;
-      const meta_data = {
-        post_id: reqData.post_id,
-        user_id: userId,
-        profile_photo: profileImageGenerator(profile_photo),
-      };
-      /* TODO: Need to add notification wrapper that takes care of all the stuff */
-      notificationModel.create({
-        user_id: userPostData.user_id,
-        type: NOTIFICATION_TYPE_CONST.USER_LIKED,
-        message: message,
-        meta_data,
-      });
+    if (userPostData != null && mongoose.isValidObjectId(userId) && mongoose.isValidObjectId(userPostData?.user_id)) {
+      if (userId != userPostData?.user_id) {
+        const message = `${fullname || 'User'} has like your post`;
+        const meta_data = {
+          post_id: reqData.post_id,
+          user_id: userId,
+          profile_photo: profileImageGenerator(profile_photo),
+        };
+        /* TODO: Need to add notification wrapper that takes care of all the stuff */
+        notificationModel.create({
+          user_id: userPostData.user_id,
+          type: NOTIFICATION_TYPE_CONST.USER_LIKED,
+          message: message,
+          meta_data,
+        });
 
-      this.sendNotificationWrapper(userPostData.user_id, {
-        notification: {
-          title: message,
-        },
-        data: {
-          payload: JSON.stringify({ ...meta_data, type: NOTIFICATION_TYPE_CONST.USER_LIKED }),
-        },
-      });
+        this.sendNotificationWrapper(userPostData.user_id, {
+          notification: {
+            title: message,
+          },
+          data: {
+            payload: JSON.stringify({ ...meta_data, type: NOTIFICATION_TYPE_CONST.USER_LIKED }),
+          },
+        });
+      }
     }
   }
 

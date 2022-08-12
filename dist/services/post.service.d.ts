@@ -1,12 +1,11 @@
 /// <reference types="multer" />
-/// <reference types="mongoose" />
-/// <reference types="mongoose-paginate-v2" />
 import { ArticleAddDto, CommentsAddDto, ComplaintAddDto, IdPaginationDto, LikePostDto, PostAssetDeleteDto, PostCreateDto, PostHomeDto, StockSearchDto, StockTypeDto, UserConfigurationDto } from '../dtos/posts.dto';
+import mongoose from 'mongoose';
 declare class PostService {
-    countryObj: import("mongoose").Model<import("../interfaces/general.interface").CountryInf & import("mongoose").Document<any, any, any>, {}, {}>;
-    stockTypesObj: import("mongoose").Model<import("../interfaces/general.interface").StockTypeInf & import("mongoose").Document<any, any, any>, {}, {}>;
-    userConfigObj: import("mongoose").Model<import("../interfaces/general.interface").UserConfigurationInf & import("mongoose").Document<any, any, any>, {}, {}>;
-    postsObj: import("mongoose").Model<import("mongoose").Document<any, any, any>, any, any>;
+    countryObj: mongoose.Model<import("../interfaces/general.interface").CountryInf & mongoose.Document<any, any, any>, {}, {}>;
+    stockTypesObj: mongoose.Model<import("../interfaces/general.interface").StockTypeInf & mongoose.Document<any, any, any>, {}, {}>;
+    userConfigObj: mongoose.Model<import("../interfaces/general.interface").UserConfigurationInf & mongoose.Document<any, any, any>, {}, {}>;
+    postsObj: mongoose.Model<mongoose.Document<any, any, any>, any, any>;
     postResObj: {
         _id: number;
         is_recommended: number;
