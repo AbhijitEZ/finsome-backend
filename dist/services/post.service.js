@@ -1120,7 +1120,7 @@ class PostService {
             _id: new mongoose_2.Types.ObjectId(reqData.post_id),
         });
         if (userPostData != null && mongoose_1.default.isValidObjectId(userId) && mongoose_1.default.isValidObjectId(userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id)) {
-            if (userId != (userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id)) {
+            if (userId.toString() != (userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id.toString())) {
                 const message = `${fullname || 'User'} has like your post ${userId} ${userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id}`;
                 const meta_data = {
                     post_id: reqData.post_id,
