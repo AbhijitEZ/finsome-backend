@@ -1428,15 +1428,20 @@ class AuthService {
   };
 
   private sendNotificationWrapper = async (userId: string, messagePayload: any) => {
-    const deviceTokens = await deviceTokenModel.find({
-      user_id: userId,
-      revoked: false,
-    });
-
-    if (deviceTokens?.length) {
-      deviceTokens.forEach(data => {
-        firecustom.sendNotification(data.device_token, messagePayload);
-      });
+    const userData = await userModel.find({ _id: userId }).select('allow_notification').lean();
+    if (userData.length > 0) {
+      if (userData[0].allow_notification == true) {
+        const deviceTokens = await deviceTokenModel.find({
+          user_id: userId,
+          revoked: false,
+        });
+    
+        if (deviceTokens?.length) {
+          deviceTokens.forEach(data => {
+            firecustom.sendNotification(data.device_token, messagePayload);
+          });
+        }
+      }
     }
   };
 }

@@ -25,6 +25,7 @@ const article_categories_1 = tslib_1.__importDefault(require("../models/article-
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
 const articles_1 = tslib_1.__importDefault(require("../models/articles"));
 const notification_subscription_1 = tslib_1.__importDefault(require("../models/notification.subscription"));
+const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -72,14 +73,19 @@ class PostService {
             reply: 1,
         };
         this.sendNotificationWrapper = async (userId, messagePayload) => {
-            const deviceTokens = await device_tokens_1.default.find({
-                user_id: userId,
-                revoked: false,
-            });
-            if (deviceTokens === null || deviceTokens === void 0 ? void 0 : deviceTokens.length) {
-                deviceTokens.forEach(data => {
-                    firecustom_1.default.sendNotification(data.device_token, messagePayload);
-                });
+            const userData = await users_model_1.default.find({ _id: userId }).select('allow_notification').lean();
+            if (userData.length > 0) {
+                if (userData[0].allow_notification == true) {
+                    const deviceTokens = await device_tokens_1.default.find({
+                        user_id: userId,
+                        revoked: false,
+                    });
+                    if (deviceTokens === null || deviceTokens === void 0 ? void 0 : deviceTokens.length) {
+                        deviceTokens.forEach(data => {
+                            firecustom_1.default.sendNotification(data.device_token, messagePayload);
+                        });
+                    }
+                }
             }
         };
         this.sendNotificationToSubscripedUsers = async (userId, postId, fullname, profilePhoto) => {

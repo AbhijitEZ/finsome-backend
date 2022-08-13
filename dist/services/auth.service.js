@@ -56,14 +56,19 @@ class AuthService {
             }
         };
         this.sendNotificationWrapper = async (userId, messagePayload) => {
-            const deviceTokens = await device_tokens_1.default.find({
-                user_id: userId,
-                revoked: false,
-            });
-            if (deviceTokens === null || deviceTokens === void 0 ? void 0 : deviceTokens.length) {
-                deviceTokens.forEach(data => {
-                    firecustom_1.default.sendNotification(data.device_token, messagePayload);
-                });
+            const userData = await users_model_1.default.find({ _id: userId }).select('allow_notification').lean();
+            if (userData.length > 0) {
+                if (userData[0].allow_notification == true) {
+                    const deviceTokens = await device_tokens_1.default.find({
+                        user_id: userId,
+                        revoked: false,
+                    });
+                    if (deviceTokens === null || deviceTokens === void 0 ? void 0 : deviceTokens.length) {
+                        deviceTokens.forEach(data => {
+                            firecustom_1.default.sendNotification(data.device_token, messagePayload);
+                        });
+                    }
+                }
             }
         };
     }
