@@ -118,12 +118,12 @@ class AuthService {
             console.log('NEW OTP VALIDAION');
             const code = (0, phone_1.createPhoneCodeToVerify)();
             logger_1.logger.info(`Phone number OTP changed for first time: ${reqData.phone_country_code}-${reqData.phone_number}.`);
-            // TODO: Would be uncommented in future
-            // checkPhoneNumberCountryCodeForSMSCalling({
-            //   countryCode: reqData.phone_country_code,
-            //   phoneNumber: reqData.phone_number,
-            //   codeData: { code },
-            // });
+            //TODO: Would be uncommented in future
+            (0, phone_1.checkPhoneNumberCountryCodeForSMSCalling)({
+                countryCode: reqData.phone_country_code,
+                phoneNumber: reqData.phone_number,
+                codeData: { code },
+            });
             await this.otpValidation.create({
                 phone_number: reqData.phone_number,
                 phone_country_code: reqData.phone_country_code,
@@ -137,13 +137,13 @@ class AuthService {
             phone_country_code: userData.phone_country_code,
         });
         // TODO: Would be removed in future.
-        if (!userPhoneCheck && userData.otp !== '9999') {
-            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.otp_invalid);
-        }
+        // if (!userPhoneCheck && userData.otp !== '9999') {
+        //   throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
+        // }
         // TODO: Would be removed in future for testing part.
-        if (userPhoneCheck && userData.otp !== '9999' && userData.otp !== userPhoneCheck.otp) {
-            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.otp_invalid);
-        }
+        // if (userPhoneCheck && userData.otp !== '9999' && userData.otp !== userPhoneCheck.otp) {
+        //   throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
+        // }
         const hashedPassword = await (0, bcrypt_1.hash)(userData.password, 10);
         const createUserData = await this.users.create(Object.assign(Object.assign({}, userData), { password: hashedPassword, term_agree_timestamp: (0, date_fns_1.toDate)(new Date()) }));
         // @ts-ignore
