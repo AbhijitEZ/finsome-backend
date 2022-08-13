@@ -150,6 +150,10 @@ class AuthService {
     //   throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
     // }
 
+    if(userData.otp != userPhoneCheck?.otp){
+      throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
+    }
+
     const hashedPassword = await hash(userData.password, 10);
     const createUserData = await this.users.create({ ...userData, password: hashedPassword, term_agree_timestamp: toDate(new Date()) });
 

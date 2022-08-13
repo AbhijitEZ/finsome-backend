@@ -144,6 +144,9 @@ class AuthService {
         // if (userPhoneCheck && userData.otp !== '9999' && userData.otp !== userPhoneCheck.otp) {
         //   throw new HttpException(400, APP_ERROR_MESSAGE.otp_invalid);
         // }
+        if (userData.otp != (userPhoneCheck === null || userPhoneCheck === void 0 ? void 0 : userPhoneCheck.otp)) {
+            throw new HttpException_1.HttpException(400, constants_1.APP_ERROR_MESSAGE.otp_invalid);
+        }
         const hashedPassword = await (0, bcrypt_1.hash)(userData.password, 10);
         const createUserData = await this.users.create(Object.assign(Object.assign({}, userData), { password: hashedPassword, term_agree_timestamp: (0, date_fns_1.toDate)(new Date()) }));
         // @ts-ignore
