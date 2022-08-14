@@ -22,7 +22,7 @@ const createPhoneTextLocalSMSBody = (code) => `Hi there, thank you for sending y
 const checkPhoneNumberCountryCodeForSMSCalling = ({ countryCode, phoneNumber, codeData, }) => {
     switch (countryCode) {
         case '+91':
-            return (0, exports.indiaPhoneNumberSMSHandler)('91' + phoneNumber, codeData);
+            return (0, exports.usCanadaPhoneNumberSMSHandler)('91' + phoneNumber, codeData);
         case '+1':
             return (0, exports.usCanadaPhoneNumberSMSHandler)('1' + phoneNumber, codeData);
         /* TODO: would be removed based on mobile request payload in future */
