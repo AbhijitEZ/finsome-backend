@@ -19,10 +19,11 @@ exports.createPhoneCodeToVerify = createPhoneCodeToVerify;
 const createPhoneSMSBody = (code) => `OTP code for finsom is: ${code}`;
 // TODO: This needs to updated in TextLocal template to use custom message
 const createPhoneTextLocalSMSBody = (code) => `Hi there, thank you for sending your first test message from Textlocal. Get 20% off today with our code: ${code}.`;
+// return indiaPhoneNumberSMSHandler('91' + phoneNumber, codeData);
 const checkPhoneNumberCountryCodeForSMSCalling = ({ countryCode, phoneNumber, codeData, }) => {
     switch (countryCode) {
         case '+91':
-            return (0, exports.usCanadaPhoneNumberSMSHandler)('91' + phoneNumber, codeData);
+            return (0, exports.usCanadaPhoneNumberSMSHandler)('+91' + phoneNumber, codeData);
         case '+1':
             return (0, exports.usCanadaPhoneNumberSMSHandler)('1' + phoneNumber, codeData);
         /* TODO: would be removed based on mobile request payload in future */
