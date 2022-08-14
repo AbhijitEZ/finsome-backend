@@ -37,11 +37,11 @@ class AuthService {
             const code = existCode ? existCode : (0, phone_1.createPhoneCodeToVerify)();
             logger_1.logger.info(`Phone number OTP for: ${reqData.phone_country_code}-${reqData.phone_number}.`);
             // TODO: Would be uncommented in future
-            // checkPhoneNumberCountryCodeForSMSCalling({
-            //   countryCode: reqData.phone_country_code,
-            //   phoneNumber: reqData.phone_number,
-            //   codeData: { code },
-            // });
+            (0, phone_1.checkPhoneNumberCountryCodeForSMSCalling)({
+                countryCode: reqData.phone_country_code,
+                phoneNumber: reqData.phone_number,
+                codeData: { code },
+            });
             if (!type) {
                 await this.otpValidation.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
             }

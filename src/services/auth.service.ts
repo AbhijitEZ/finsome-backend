@@ -1408,11 +1408,11 @@ class AuthService {
     const code = existCode ? existCode : createPhoneCodeToVerify();
     logger.info(`Phone number OTP for: ${reqData.phone_country_code}-${reqData.phone_number}.`);
     // TODO: Would be uncommented in future
-    // checkPhoneNumberCountryCodeForSMSCalling({
-    //   countryCode: reqData.phone_country_code,
-    //   phoneNumber: reqData.phone_number,
-    //   codeData: { code },
-    // });
+    checkPhoneNumberCountryCodeForSMSCalling({
+      countryCode: reqData.phone_country_code,
+      phoneNumber: reqData.phone_number,
+      codeData: { code },
+    });
 
     if (!type) {
       await this.otpValidation.findOneAndUpdate(
