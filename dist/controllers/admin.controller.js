@@ -210,11 +210,11 @@ class AdminController {
         this.saveArticleCategory = async (req, res, next) => {
             try {
                 const response = await this.adminService.saveArticleCategory(req.body);
-                if (response) {
-                    res.status(200).json({ data: 1, message: 'Article category saved!' });
+                if (response.status) {
+                    res.status(200).json({ data: 1, message: response.message });
                 }
                 else {
-                    res.status(200).json({ data: 0, message: 'Unable to save article category!' });
+                    res.status(200).json({ data: 0, message: response.message });
                 }
             }
             catch (error) {
@@ -247,7 +247,7 @@ class AdminController {
         this.saveArticle = async (req, res, next) => {
             try {
                 let response = await this.adminService.saveArticle(req.body, req.file);
-                res.status(200).json({ data: response, message: response ? 'Article saved!' : 'Unable to save article' });
+                res.status(200).json({ data: response.status, message: response.message });
             }
             catch (error) {
                 next(error);

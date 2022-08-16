@@ -394,16 +394,21 @@ class AdminService {
 
   public async saveArticleCategory(request: any) {
     if (request.id == '0') {
-      let existing = await articleCatModel.find({ name: request.name });
-      if (existing.length == 1) {
-        return false;
-      } else {
-        let query = {
-          name: request.name,
-          sequence: request.sequence,
-        };
-        await articleCatModel.create(query);
-        return true;
+      let checkingSequence = await articleCatModel.find({ sequence: request.sequence });
+      if (checkingSequence.length == 0) {
+        let existing = await articleCatModel.find({ name: request.name });
+        if (existing.length == 1) {
+          return { status: false, message: "Article category is already exist!"};
+        } else {
+          let query = {
+            name: request.name,
+            sequence: request.sequence,
+          };
+          await articleCatModel.create(query);
+          return { status: true, message: "Article category created successfully!"};
+        }
+      }else{
+        return { status: false, message: "Sequence is already exist!"};
       }
     } else {
       await articleCatModel.findByIdAndUpdate(
@@ -414,9 +419,10 @@ class AdminService {
         },
         { new: true },
       );
-      return true;
+      return { status: true, message: "Article category updated successfully!"};
     }
   }
+
   public async deleteArticleCategory(requestData: any): Promise<any> {
     if (mongoose.isValidObjectId(requestData.id)) {
       await articleCatModel.findByIdAndRemove(requestData.id, { new: true });
@@ -495,17 +501,23 @@ class AdminService {
     console.log(query);
 
     if (requestData.id == '0') {
-      if (file) {
-        query.coverImage = imageFile != null ? imageFile : '';
+      let checkingSequence = await articleCatModel.find({ sequence: requestData.sequence });
+      if (checkingSequence.length == 0) {
+        if (file) {
+          query.coverImage = imageFile != null ? imageFile : '';
+        }
+        await articleModel.create(query);
+        return {status: true, message: "Article created successfully!"};
       }
-      await articleModel.create(query);
-      return true;
+      else{
+        return {status: false, message: "Sequence is already existys!"};
+      }
     } else {
       if (mongoose.isValidObjectId(requestData.id)) {
         await articleModel.findByIdAndUpdate(requestData.id, query);
-        return true;
+        return {status: true, message: "Article updated successfully!"};
       } else {
-        return false;
+        return {status: false, message: "Unable to update article"};
       }
     }
   }

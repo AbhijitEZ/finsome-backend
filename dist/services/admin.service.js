@@ -344,17 +344,23 @@ class AdminService {
     }
     async saveArticleCategory(request) {
         if (request.id == '0') {
-            let existing = await article_categories_1.default.find({ name: request.name });
-            if (existing.length == 1) {
-                return false;
+            let checkingSequence = await article_categories_1.default.find({ sequence: request.sequence });
+            if (checkingSequence.length == 0) {
+                let existing = await article_categories_1.default.find({ name: request.name });
+                if (existing.length == 1) {
+                    return { status: false, message: "Article category is already exist!" };
+                }
+                else {
+                    let query = {
+                        name: request.name,
+                        sequence: request.sequence,
+                    };
+                    await article_categories_1.default.create(query);
+                    return { status: true, message: "Article category created successfully!" };
+                }
             }
             else {
-                let query = {
-                    name: request.name,
-                    sequence: request.sequence,
-                };
-                await article_categories_1.default.create(query);
-                return true;
+                return { status: false, message: "Sequence is already exist!" };
             }
         }
         else {
@@ -362,7 +368,7 @@ class AdminService {
                 name: request.name,
                 sequence: request.sequence,
             }, { new: true });
-            return true;
+            return { status: true, message: "Article category updated successfully!" };
         }
     }
     async deleteArticleCategory(requestData) {
@@ -436,19 +442,25 @@ class AdminService {
         };
         console.log(query);
         if (requestData.id == '0') {
-            if (file) {
-                query.coverImage = imageFile != null ? imageFile : '';
+            let checkingSequence = await article_categories_1.default.find({ sequence: requestData.sequence });
+            if (checkingSequence.length == 0) {
+                if (file) {
+                    query.coverImage = imageFile != null ? imageFile : '';
+                }
+                await articles_1.default.create(query);
+                return { status: true, message: "Article created successfully!" };
             }
-            await articles_1.default.create(query);
-            return true;
+            else {
+                return { status: false, message: "Sequence is already existys!" };
+            }
         }
         else {
             if (mongoose_1.default.isValidObjectId(requestData.id)) {
                 await articles_1.default.findByIdAndUpdate(requestData.id, query);
-                return true;
+                return { status: true, message: "Article updated successfully!" };
             }
             else {
-                return false;
+                return { status: false, message: "Unable to update article" };
             }
         }
     }
