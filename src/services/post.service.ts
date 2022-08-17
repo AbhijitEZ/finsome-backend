@@ -21,6 +21,7 @@ import userConfigurationModel from '@/models/user-configurations';
 import isEmpty from 'lodash.isempty';
 import mongoose from 'mongoose';
 import {
+  ACCOUNT_TYPE_CONST,
   APP_ERROR_MESSAGE,
   COMMENTS,
   COUNTRIES,
@@ -201,9 +202,19 @@ class PostService {
     } else if (queryData?.user_id) {
       userMatch['user_id'] = new Types.ObjectId(queryData.user_id);
     } else {
-      userMatch['user_id'] = {
-        $in: allUserPostDisplayIds,
-      };
+      if (queryData.is_explore == null || queryData.is_explore == false) {
+        userMatch['user_id'] = {
+          $in: allUserPostDisplayIds,
+        };
+      } else {
+        let query: any = {
+          user_id: { $nin: [mongoose.Types.ObjectId(_id)] },
+          account_type: ACCOUNT_TYPE_CONST.PUBLIC,
+        };
+        let userIds: any = await userConfigurationModel.find(query).select('user_id').lean();
+        userIds = userIds.map(e => mongoose.Types.ObjectId(e.user_id));
+        userMatch['user_id'] = { $in: userIds };
+      }
     }
 
     const postsQb = this.postsObj.aggregate([

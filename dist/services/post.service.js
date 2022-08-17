@@ -208,9 +208,20 @@ class PostService {
             userMatch['user_id'] = new mongoose_2.Types.ObjectId(queryData.user_id);
         }
         else {
-            userMatch['user_id'] = {
-                $in: allUserPostDisplayIds,
-            };
+            if (queryData.is_explore == null || queryData.is_explore == false) {
+                userMatch['user_id'] = {
+                    $in: allUserPostDisplayIds,
+                };
+            }
+            else {
+                let query = {
+                    user_id: { $nin: [mongoose_1.default.Types.ObjectId(_id)] },
+                    account_type: constants_1.ACCOUNT_TYPE_CONST.PUBLIC,
+                };
+                let userIds = await user_configurations_1.default.find(query).select('user_id').lean();
+                userIds = userIds.map(e => mongoose_1.default.Types.ObjectId(e.user_id));
+                userMatch['user_id'] = { $in: userIds };
+            }
         }
         const postsQb = this.postsObj.aggregate([
             {
