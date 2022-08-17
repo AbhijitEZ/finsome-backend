@@ -165,8 +165,8 @@ export class PostHomeDto extends PaginationDto {
   is_recommended: string;
 
   @IsOptional()
-  @IsBoolean()
-  is_explore: boolean;
+  @IsString()
+  is_explore: string;
 
   @IsOptional()
   @IsString()

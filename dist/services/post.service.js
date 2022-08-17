@@ -208,7 +208,7 @@ class PostService {
             userMatch['user_id'] = new mongoose_2.Types.ObjectId(queryData.user_id);
         }
         else {
-            if (queryData.is_explore == null || queryData.is_explore == false) {
+            if (queryData.is_explore == null || queryData.is_explore == "false") {
                 userMatch['user_id'] = {
                     $in: allUserPostDisplayIds,
                 };

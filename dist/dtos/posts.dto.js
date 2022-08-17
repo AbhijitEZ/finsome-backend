@@ -208,8 +208,8 @@ tslib_1.__decorate([
 ], PostHomeDto.prototype, "is_recommended", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    tslib_1.__metadata("design:type", Boolean)
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
 ], PostHomeDto.prototype, "is_explore", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
