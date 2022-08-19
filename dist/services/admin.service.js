@@ -51,7 +51,7 @@ class AdminService {
                 },
             ])
                 .exec();
-            let postCount = await posts_1.default.countDocuments({ user_id: userId });
+            let postCount = await posts_1.default.countDocuments({ user_id: userId, deleted_at: null });
             let followingCount = await user_followers_1.default.countDocuments({ user_id: userId });
             let followerCount = await user_followers_1.default.countDocuments({ follower_id: userId });
             return { avgRating, postCount, followingCount, followerCount };
