@@ -131,10 +131,10 @@ class AdminService {
         const appImproves = await this.appImprovement.countDocuments();
         const quickContacts = await this.quickContact.countDocuments();
         const suggestions = await this.userSuggestion.countDocuments();
-        const postsCount = await posts_1.default.countDocuments();
-        const cryptPostCount = await posts_1.default.countDocuments({ stock_type: 'CRYPT' });
-        const equityPostCount = await posts_1.default.countDocuments({ stock_type: 'EQUITY' });
-        const generalPostCount = await posts_1.default.countDocuments({ stock_type: 'OTHER' });
+        const postsCount = await posts_1.default.countDocuments({ deleted_at: null });
+        const cryptPostCount = await posts_1.default.countDocuments({ stock_type: 'CRYPT', deleted_at: null });
+        const equityPostCount = await posts_1.default.countDocuments({ stock_type: 'EQUITY', deleted_at: null });
+        const generalPostCount = await posts_1.default.countDocuments({ stock_type: 'OTHER', deleted_at: null });
         let active_user = 0, inactive_user = 0, total_user = 0, completed_registered_user = 0;
         users.map(usr => {
             total_user = total_user + 1;

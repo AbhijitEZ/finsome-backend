@@ -139,10 +139,10 @@ class AdminService {
     const appImproves = await this.appImprovement.countDocuments();
     const quickContacts = await this.quickContact.countDocuments();
     const suggestions = await this.userSuggestion.countDocuments();
-    const postsCount = await postsModel.countDocuments();
-    const cryptPostCount = await postsModel.countDocuments({ stock_type: 'CRYPT' });
-    const equityPostCount = await postsModel.countDocuments({ stock_type: 'EQUITY' });
-    const generalPostCount = await postsModel.countDocuments({ stock_type: 'OTHER' });
+    const postsCount = await postsModel.countDocuments({ deleted_at: null });
+    const cryptPostCount = await postsModel.countDocuments({ stock_type: 'CRYPT', deleted_at: null });
+    const equityPostCount = await postsModel.countDocuments({ stock_type: 'EQUITY', deleted_at: null });
+    const generalPostCount = await postsModel.countDocuments({ stock_type: 'OTHER', deleted_at: null });
 
     let active_user = 0,
       inactive_user = 0,
@@ -398,17 +398,17 @@ class AdminService {
       if (checkingSequence.length == 0) {
         let existing = await articleCatModel.find({ name: request.name });
         if (existing.length == 1) {
-          return { status: false, message: "Article category is already exist!"};
+          return { status: false, message: "Article category is already exist!" };
         } else {
           let query = {
             name: request.name,
             sequence: request.sequence,
           };
           await articleCatModel.create(query);
-          return { status: true, message: "Article category created successfully!"};
+          return { status: true, message: "Article category created successfully!" };
         }
-      }else{
-        return { status: false, message: "Sequence is already exist!"};
+      } else {
+        return { status: false, message: "Sequence is already exist!" };
       }
     } else {
       await articleCatModel.findByIdAndUpdate(
@@ -419,7 +419,7 @@ class AdminService {
         },
         { new: true },
       );
-      return { status: true, message: "Article category updated successfully!"};
+      return { status: true, message: "Article category updated successfully!" };
     }
   }
 
@@ -507,17 +507,17 @@ class AdminService {
           query.coverImage = imageFile != null ? imageFile : '';
         }
         await articleModel.create(query);
-        return {status: true, message: "Article created successfully!"};
+        return { status: true, message: "Article created successfully!" };
       }
-      else{
-        return {status: false, message: "Sequence is already existys!"};
+      else {
+        return { status: false, message: "Sequence is already existys!" };
       }
     } else {
       if (mongoose.isValidObjectId(requestData.id)) {
         await articleModel.findByIdAndUpdate(requestData.id, query);
-        return {status: true, message: "Article updated successfully!"};
+        return { status: true, message: "Article updated successfully!" };
       } else {
-        return {status: false, message: "Unable to update article"};
+        return { status: false, message: "Unable to update article" };
       }
     }
   }

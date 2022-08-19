@@ -344,6 +344,11 @@ class PostService {
             {
                 $unset: ['likes', 'comments', 'post_stock'],
             },
+            {
+                $match: {
+                    deleted_at: null
+                }
+            },
             /* TODO: This needs to be updated according to views and comment */
             { $sort: { created_at: -1 } },
         ]);
