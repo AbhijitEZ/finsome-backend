@@ -847,6 +847,7 @@ class AuthService {
                         {
                             $match: (0, util_1.includeDeletedAtMatch)({
                                 follower_id: new mongoose_1.Types.ObjectId(userId),
+                                accepted: { $eq: true },
                             }),
                         },
                         {

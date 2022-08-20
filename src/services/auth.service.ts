@@ -940,6 +940,7 @@ class AuthService {
             {
               $match: includeDeletedAtMatch({
                 follower_id: new Types.ObjectId(userId),
+                accepted: { $eq: true },
               }),
             },
             {
