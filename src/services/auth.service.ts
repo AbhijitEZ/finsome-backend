@@ -1415,12 +1415,12 @@ class AuthService {
       codeData: { code },
     });
 
-    if (!type) {
+    if (type!='user') {
       await this.otpValidation.findOneAndUpdate(
         { phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code },
         { otp: code },
       );
-    } else if (type === 'user') {
+    } else if (type == 'user') {
       await this.users.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
     }
   };
@@ -1440,7 +1440,7 @@ class AuthService {
           user_id: userId,
           revoked: false,
         });
-    
+
         if (deviceTokens?.length) {
           deviceTokens.forEach(data => {
             firecustom.sendNotification(data.device_token, messagePayload);
