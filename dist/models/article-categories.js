@@ -8,9 +8,14 @@ const articleCatSchema = new mongoose_1.Schema({
     user_id: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: constants_1.USERS,
+        default: null
     },
     name: {
         type: String,
+    },
+    sequence: {
+        type: Number,
+        default: 0
     },
     deleted_at: {
         type: Date,

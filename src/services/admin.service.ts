@@ -83,10 +83,34 @@ class AdminService {
       sort: { created_at: -1 },
     });
     for (let i = 0; i < users.docs.length; i++) {
-      users.docs[i].rating = await userRatesModel.aggregate([
+      users.docs[i].rating = await userRatesModel
+        .aggregate([
+          {
+            $match: {
+              user_id: mongoose.Types.ObjectId(users.docs[i]._id),
+            },
+          },
+          {
+            $group: {
+              _id: '$user_id',
+              avg: { $avg: '$rate' },
+            },
+          },
+        ])
+        .exec();
+    }
+    let data: any = users.docs;
+    const userSanitized = data.map(d => ({ ...d, profile_photo: profileImageGenerator(d.profile_photo) }));
+    users.docs = userSanitized;
+    return users;
+  }
+
+  public getUserRating = async (userId: any) => {
+    let avgRating = await userRatesModel
+      .aggregate([
         {
           $match: {
-            user_id: mongoose.Types.ObjectId(users.docs[i]._id),
+            user_id: mongoose.Types.ObjectId(userId),
           },
         },
         {
@@ -95,13 +119,13 @@ class AdminService {
             avg: { $avg: '$rate' },
           },
         },
-      ]).exec();
-    }
-    let data: any = users.docs;
-    const userSanitized = data.map(d => ({ ...d, profile_photo: profileImageGenerator(d.profile_photo) }));
-    users.docs = userSanitized;
-    return users;
-  }
+      ])
+      .exec();
+    let postCount = await postsModel.countDocuments({ user_id: userId, deleted_at: null });
+    let followingCount = await userFollowerModel.countDocuments({ follower_id: userId, accepted: true });
+    let followerCount = await userFollowerModel.countDocuments({ user_id: userId, accepted: true });
+    return { avgRating, postCount, followingCount, followerCount };
+  };
 
   public async dashboardData(user: User): Promise<Record<string, any>> {
     const users = await this.users
@@ -115,10 +139,10 @@ class AdminService {
     const appImproves = await this.appImprovement.countDocuments();
     const quickContacts = await this.quickContact.countDocuments();
     const suggestions = await this.userSuggestion.countDocuments();
-    const postsCount = await postsModel.countDocuments();
-    const cryptPostCount = await postsModel.countDocuments({ stock_type: 'CRYPT' });
-    const equityPostCount = await postsModel.countDocuments({ stock_type: 'EQUITY' });
-    const generalPostCount = await postsModel.countDocuments({ stock_type: 'OTHER' });
+    const postsCount = await postsModel.countDocuments({ deleted_at: null });
+    const cryptPostCount = await postsModel.countDocuments({ stock_type: 'CRYPT', deleted_at: null });
+    const equityPostCount = await postsModel.countDocuments({ stock_type: 'EQUITY', deleted_at: null });
+    const generalPostCount = await postsModel.countDocuments({ stock_type: 'OTHER', deleted_at: null });
 
     let active_user = 0,
       inactive_user = 0,
@@ -305,6 +329,13 @@ class AdminService {
         select: 'fullname phone_number',
       },
     });
+
+    for (let i = 0; i < complaints.docs.length; i++) {
+      if (complaints.docs[i].user_complain_id != null) {
+        complaints.docs[i].user_complain_id = await userModel.findById(complaints.docs[i].user_complain_id).select('-password').lean();
+      }
+    }
+
     return complaints;
   }
 
@@ -361,24 +392,70 @@ class AdminService {
     await stockTypeModel.findOneAndDelete({ _id, s_type: type }).exec();
   }
 
+  public async saveArticleCategory(request: any) {
+    if (request.id == '0') {
+      let checkingSequence = await articleCatModel.find({ sequence: request.sequence });
+      if (checkingSequence.length == 0) {
+        let existing = await articleCatModel.find({ name: request.name });
+        if (existing.length == 1) {
+          return { status: false, message: "Article category is already exist!" };
+        } else {
+          let query = {
+            name: request.name,
+            sequence: request.sequence,
+          };
+          await articleCatModel.create(query);
+          return { status: true, message: "Article category created successfully!" };
+        }
+      } else {
+        return { status: false, message: "Sequence is already exist!" };
+      }
+    } else {
+      await articleCatModel.findByIdAndUpdate(
+        request.id,
+        {
+          name: request.name,
+          sequence: request.sequence,
+        },
+        { new: true },
+      );
+      return { status: true, message: "Article category updated successfully!" };
+    }
+  }
+
+  public async deleteArticleCategory(requestData: any): Promise<any> {
+    if (mongoose.isValidObjectId(requestData.id)) {
+      await articleCatModel.findByIdAndRemove(requestData.id, { new: true });
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public async getArticleCategories(): Promise<any> {
-    let data = await articleCatModel.find();
+    let data = await articleCatModel
+      .find({ deleted_at: { $eq: null } })
+      .sort({ sequence: 1 })
+      .lean();
     return data;
   }
 
   public async getArticles(requestData: any): Promise<any> {
     let model: any = articleModel;
     let searchRegex = new RegExp(requestData.search, 'i');
-    let data = await model.paginate(
-      { title: searchRegex },
-      {
-        page: requestData.page,
-        limit: requestData.limit,
-        populate: {
-          path: 'category'
-        }
+    let query: any = { title: searchRegex };
+    if (requestData.categoryId != '') {
+      query['category'] = requestData.categoryId;
+    }
+
+    let data = await model.paginate(query, {
+      page: requestData.page,
+      limit: requestData.limit,
+      sort: { sequence: 1 },
+      populate: {
+        path: 'category',
       },
-    );
+    });
     return data;
   }
 
@@ -416,6 +493,7 @@ class AdminService {
       title: requestData.title,
       category: requestData.category,
       description: requestData.description,
+      sequence: requestData.sequence,
       readingTime: requestData.readingTime,
       content: requestData.content,
     };
@@ -423,17 +501,23 @@ class AdminService {
     console.log(query);
 
     if (requestData.id == '0') {
-      if (file) {
-        query.coverImage = imageFile != null ? imageFile : '';
+      let checkingSequence = await articleCatModel.find({ sequence: requestData.sequence });
+      if (checkingSequence.length == 0) {
+        if (file) {
+          query.coverImage = imageFile != null ? imageFile : '';
+        }
+        await articleModel.create(query);
+        return { status: true, message: "Article created successfully!" };
       }
-      await articleModel.create(query);
-      return true;
+      else {
+        return { status: false, message: "Sequence is already existys!" };
+      }
     } else {
       if (mongoose.isValidObjectId(requestData.id)) {
         await articleModel.findByIdAndUpdate(requestData.id, query);
-        return true;
+        return { status: true, message: "Article updated successfully!" };
       } else {
-        return false;
+        return { status: false, message: "Unable to update article" };
       }
     }
   }

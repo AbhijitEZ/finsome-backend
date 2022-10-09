@@ -27,6 +27,15 @@ class AdminController {
       next(error);
     }
   };
+  
+  public getUserRatingCount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.adminService.getUserRating(req.body.userId);
+      res.status(200).json({ data: users });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   public dashboardData = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -205,6 +214,32 @@ class AdminController {
     }
   };
 
+  public saveArticleCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+      const response = await this.adminService.saveArticleCategory(req.body);
+      if(response.status){
+        res.status(200).json({ data: 1, message: response.message });
+      }else{
+        res.status(200).json({ data: 0, message: response.message });
+      }
+    }catch(error){
+      next(error);
+    }
+  } 
+  
+  public deleteArticleCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+      const response = await this.adminService.deleteArticleCategory(req.body);
+      if(response){
+        res.status(200).json({ data: 1, message: 'Article category saved!' });
+      }else{
+        res.status(200).json({ data: 0, message: 'Unable to save article category!' });
+      }
+    }catch(error){
+      next(error);
+    }
+  }
+
   public articleCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       let response = await this.adminService.getArticleCategories();
@@ -217,7 +252,7 @@ class AdminController {
   public saveArticle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       let response = await this.adminService.saveArticle(req.body, req.file);
-      res.status(200).json({ data: response, message: response ? 'Article saved!' : 'Unable to save article' });
+      res.status(200).json({ data: response.status, message: response.message });
     } catch (error) {
       next(error);
     }

@@ -210,6 +210,11 @@ tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     tslib_1.__metadata("design:type", String)
+], PostHomeDto.prototype, "is_explore", void 0);
+tslib_1.__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    tslib_1.__metadata("design:type", String)
 ], PostHomeDto.prototype, "has_all_data", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsOptional)(),

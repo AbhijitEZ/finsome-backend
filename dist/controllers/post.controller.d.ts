@@ -13,6 +13,7 @@ declare class PostController {
     stockSearch: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postDelete: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postDetail: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    postDetailByUserId: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     postDeleteAssets: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     commentListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     commentAdd: (req: Request, res: Response, next: NextFunction) => Promise<void>;
@@ -20,6 +21,7 @@ declare class PostController {
     complaintAdd: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     articleCatListing: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     articleAdd: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    articleCategory: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     commentDelete: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
 export default PostController;

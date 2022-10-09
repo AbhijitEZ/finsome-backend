@@ -121,6 +121,17 @@ class PostController {
                 next(error);
             }
         };
+        this.postDetailByUserId = async (req, res, next) => {
+            var _a, _b;
+            try {
+                // @ts-ignore
+                const data = await this.postService.postDetail((_a = req.body) === null || _a === void 0 ? void 0 : _a.userId, (_b = req.body) === null || _b === void 0 ? void 0 : _b.postId);
+                (0, global_1.responseJSONMapper)(res, 200, data);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.postDeleteAssets = async (req, res, next) => {
             var _a, _b;
             try {
@@ -196,6 +207,15 @@ class PostController {
             }
             catch (error) {
                 console.log(error);
+                next(error);
+            }
+        };
+        this.articleCategory = async (req, res, next) => {
+            try {
+                let response = await this.postService.getArticleCategories();
+                res.status(200).json({ data: response, message: 'Article listing!' });
+            }
+            catch (error) {
                 next(error);
             }
         };

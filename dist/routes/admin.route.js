@@ -46,8 +46,11 @@ class AdminRoute {
         this.router.post(`${this.path}send-notification`, (0, validation_middleware_1.default)(admin_dto_1.SendNotificationDto, 'body'), this.adminController.sendNotification);
         /* !Policies */
         this.router.post(`${this.path}delete-user-rating`, auth_middleware_1.authAdminMiddleware, this.adminController.deleteUserRating);
+        this.router.post(`${this.path}user-rating-count`, auth_middleware_1.authAdminMiddleware, this.adminController.getUserRatingCount);
         //Article
         this.router.post(`${this.path}get-article-category`, auth_middleware_1.authAdminMiddleware, this.adminController.articleCategory);
+        this.router.post(`${this.path}save-article-category`, auth_middleware_1.authAdminMiddleware, this.adminController.saveArticleCategory);
+        this.router.post(`${this.path}delete-article-category`, auth_middleware_1.authAdminMiddleware, this.adminController.deleteArticleCategory);
         this.router.post(`${this.path}get-article-listing`, auth_middleware_1.authAdminMiddleware, this.adminController.articleListing);
         this.router.post(`${this.path}get-single-article`, this.adminController.getSingleArticle);
         this.router.post(`${this.path}save-article`, global_1.fileUploadCB, this.adminController.saveArticle);

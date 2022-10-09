@@ -8,9 +8,14 @@ const articleCatSchema: Schema = new Schema(
     user_id: {
       type: Schema.Types.ObjectId,
       ref: USERS,
+      default: null
     },
     name: {
       type: String,
+    },
+    sequence:{
+      type: Number,
+      default: 0
     },
     deleted_at: {
       type: Date,

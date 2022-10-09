@@ -29,6 +29,10 @@ const articleSchema: Schema = new Schema(
       type: String,
       default: '',
     },
+    sequence:{
+      type: Number,
+      default: 0
+    },
     deleted_at: {
       type: Date,
     },

@@ -19,7 +19,9 @@ import fs from 'fs';
 import stockTypeModel from '@/models/stock-types';
 import userConfigurationModel from '@/models/user-configurations';
 import isEmpty from 'lodash.isempty';
+import mongoose from 'mongoose';
 import {
+  ACCOUNT_TYPE_CONST,
   APP_ERROR_MESSAGE,
   COMMENTS,
   COUNTRIES,
@@ -39,7 +41,7 @@ import { fileUnSyncFromLocalStroage, listingResponseSanitize, profileImageGenera
 import { commentResponseMapper, dateConstSwitcherHandler, postResponseMapper } from '@/utils/global';
 import postStockModel from '@/models/post-stocks';
 import commentsModel from '@/models/comments';
-import { Types } from 'mongoose';
+import { Mongoose, Types } from 'mongoose';
 import likesModel from '@/models/likes';
 import { HttpException } from '@/exceptions/HttpException';
 import complaintModel from '@/models/complaints';
@@ -49,6 +51,7 @@ import articleCatModel from '@/models/article-categories';
 import deviceTokenModel from '@/models/device-tokens';
 import articleModel from '@/models/articles';
 import notificationSubscriptionModel from '@/models/notification.subscription';
+import userModel from '@/models/users.model';
 
 class PostService {
   public countryObj = countryModel;
@@ -125,13 +128,13 @@ class PostService {
       });
       return output;
     } else {
-      let stock = await this.stockTypesObj
+      let stocks = await this.stockTypesObj
         .find(query)
         .limit(parseInt(reqData.limit ?? LIMIT_DEF))
         .skip(parseInt(reqData.skip ?? SKIP_DEF))
         .exec();
       const total_count = await this.stockTypesObj.countDocuments(query);
-      return { stock, total_count };
+      return { stocks, total_count };
     }
   }
 
@@ -168,7 +171,11 @@ class PostService {
   public async getArticles(requestData: any): Promise<any> {
     let model: any = articleModel;
     let searchRegex = new RegExp(requestData.search, 'i');
-    let data = await model.find({ title: searchRegex }).populate('category').skip(requestData.skip).limit(requestData.limit);
+    let query = { title: searchRegex };
+    if (requestData.categoryId != null && requestData.categoryId != '') {
+      query['category'] = requestData.categoryId;
+    }
+    let data = await model.find(query).populate('category').sort({ sequence: 1 }).skip(requestData.skip).limit(requestData.limit);
     return data;
   }
 
@@ -195,9 +202,19 @@ class PostService {
     } else if (queryData?.user_id) {
       userMatch['user_id'] = new Types.ObjectId(queryData.user_id);
     } else {
-      userMatch['user_id'] = {
-        $in: allUserPostDisplayIds,
-      };
+      if (queryData.is_explore == null || queryData.is_explore == 'false') {
+        userMatch['user_id'] = {
+          $in: allUserPostDisplayIds,
+        };
+      } else {
+        let query: any = {
+          user_id: { $nin: [mongoose.Types.ObjectId(_id)] },
+          account_type: ACCOUNT_TYPE_CONST.PUBLIC,
+        };
+        let userIds: any = await userConfigurationModel.find(query).select('user_id').lean();
+        userIds = userIds.map(e => mongoose.Types.ObjectId(e.user_id));
+        userMatch['user_id'] = { $in: userIds };
+      }
     }
 
     const postsQb = this.postsObj.aggregate([
@@ -321,6 +338,11 @@ class PostService {
       {
         $unset: ['likes', 'comments', 'post_stock'],
       },
+      {
+        $match: {
+          deleted_at: null,
+        },
+      },
       /* TODO: This needs to be updated according to views and comment */
       { $sort: { created_at: -1 } },
     ]);
@@ -381,6 +403,7 @@ class PostService {
         },
       });
     }
+
     if (queryData.stock_ids) {
       const stockIds = queryData.stock_ids.split(',');
 
@@ -431,7 +454,13 @@ class PostService {
       let searchRegex: any = new RegExp(queryData.search, 'i');
       postsQb.append({
         $match: {
-          $or: [{ caption: searchRegex }, { stock_type: searchRegex }, { 'user.fullname': searchRegex }],
+          $or: [
+            { caption: searchRegex },
+            { stock_type: searchRegex },
+            { 'user.fullname': searchRegex },
+            { 'security.name': searchRegex },
+            { 'security.country_data.name': searchRegex },
+          ],
         },
       });
       let model: any = postsModel;
@@ -545,7 +574,6 @@ class PostService {
 
   public async postDetail(userId: string, postId: string): Promise<any> {
     const data = await this.singlePostAggreData(postId, userId);
-
     return data;
   }
 
@@ -782,7 +810,7 @@ class PostService {
       _id: reqData.post_id,
     });
 
-    if (postDetail.user_id) {
+    if (postDetail.user_id.toString() != userId.toString()) {
       const message = `${fullname || 'User'} has added a comment to one your post`;
       const metadata = {
         post_id: postDetail._id,
@@ -994,7 +1022,7 @@ class PostService {
 
     if (reqData.like) {
       await likesModel.create({ user_id: userId, post_id: reqData.post_id });
-      this.notificationUpdate({ reqData, userId, fullname, profile_photo });
+      await this.notificationUpdate({ reqData, userId, fullname, profile_photo });
     } else {
       await likesModel.deleteOne({ user_id: userId, post_id: reqData.post_id });
     }
@@ -1038,7 +1066,7 @@ class PostService {
       .find({
         deleted_at: { $eq: null },
       })
-      .sort({ created_at: -1 })
+      .sort({ sequence: 1 })
       .lean();
 
     // @ts-ignore
@@ -1194,42 +1222,49 @@ class PostService {
       _id: new Types.ObjectId(reqData.post_id),
     });
 
-    if (userPostData && userId !== userPostData?.user_id) {
-      const message = `${fullname || 'User'} has like your post`;
-      const meta_data = {
-        post_id: reqData.post_id,
-        user_id: userId,
-        profile_photo: profileImageGenerator(profile_photo),
-      };
-      /* TODO: Need to add notification wrapper that takes care of all the stuff */
-      notificationModel.create({
-        user_id: userPostData.user_id,
-        type: NOTIFICATION_TYPE_CONST.USER_LIKED,
-        message: message,
-        meta_data,
-      });
+    if (userPostData != null && mongoose.isValidObjectId(userId) && mongoose.isValidObjectId(userPostData?.user_id)) {
+      if (userId.toString() != userPostData?.user_id.toString()) {
+        const message = `${fullname || 'User'} has like your post`;
+        const meta_data = {
+          post_id: reqData.post_id,
+          user_id: userId,
+          profile_photo: profileImageGenerator(profile_photo),
+        };
+        /* TODO: Need to add notification wrapper that takes care of all the stuff */
+        notificationModel.create({
+          user_id: userPostData.user_id,
+          type: NOTIFICATION_TYPE_CONST.USER_LIKED,
+          message: message,
+          meta_data,
+        });
 
-      this.sendNotificationWrapper(userPostData.user_id, {
-        notification: {
-          title: message,
-        },
-        data: {
-          payload: JSON.stringify({ ...meta_data, type: NOTIFICATION_TYPE_CONST.USER_LIKED }),
-        },
-      });
+        this.sendNotificationWrapper(userPostData.user_id, {
+          notification: {
+            title: message,
+          },
+          data: {
+            payload: JSON.stringify({ ...meta_data, type: NOTIFICATION_TYPE_CONST.USER_LIKED }),
+          },
+        });
+      }
     }
   }
 
   private sendNotificationWrapper = async (userId: string, messagePayload: any) => {
-    const deviceTokens = await deviceTokenModel.find({
-      user_id: userId,
-      revoked: false,
-    });
+    const userData = await userModel.find({ _id: userId }).select('allow_notification').lean();
+    if (userData.length > 0) {
+      if (userData[0].allow_notification == true) {
+        const deviceTokens = await deviceTokenModel.find({
+          user_id: userId,
+          revoked: false,
+        });
 
-    if (deviceTokens?.length) {
-      deviceTokens.forEach(data => {
-        firecustom.sendNotification(data.device_token, messagePayload);
-      });
+        if (deviceTokens?.length) {
+          deviceTokens.forEach(data => {
+            firecustom.sendNotification(data.device_token, messagePayload);
+          });
+        }
+      }
     }
   };
 
@@ -1265,6 +1300,16 @@ class PostService {
       }
     });
   };
+
+  public async getArticleCategories(): Promise<any> {
+    let data = await articleCatModel
+      .find({
+        deleted_at: { $eq: null },
+      })
+      .sort({ sequence: -1 })
+      .lean();
+    return data;
+  }
 }
 
 export default PostService;

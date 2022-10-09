@@ -9,12 +9,13 @@ const fs_1 = tslib_1.__importDefault(require("fs"));
 const stock_types_1 = tslib_1.__importDefault(require("../models/stock-types"));
 const user_configurations_1 = tslib_1.__importDefault(require("../models/user-configurations"));
 const lodash_isempty_1 = tslib_1.__importDefault(require("lodash.isempty"));
+const mongoose_1 = tslib_1.__importDefault(require("mongoose"));
 const constants_1 = require("../utils/constants");
 const util_1 = require("../utils/util");
 const global_1 = require("../utils/global");
 const post_stocks_1 = tslib_1.__importDefault(require("../models/post-stocks"));
 const comments_1 = tslib_1.__importDefault(require("../models/comments"));
-const mongoose_1 = require("mongoose");
+const mongoose_2 = require("mongoose");
 const likes_1 = tslib_1.__importDefault(require("../models/likes"));
 const HttpException_1 = require("../exceptions/HttpException");
 const complaints_1 = tslib_1.__importDefault(require("../models/complaints"));
@@ -24,6 +25,7 @@ const article_categories_1 = tslib_1.__importDefault(require("../models/article-
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
 const articles_1 = tslib_1.__importDefault(require("../models/articles"));
 const notification_subscription_1 = tslib_1.__importDefault(require("../models/notification.subscription"));
+const users_model_1 = tslib_1.__importDefault(require("../models/users.model"));
 class PostService {
     constructor() {
         this.countryObj = countries_1.default;
@@ -71,14 +73,19 @@ class PostService {
             reply: 1,
         };
         this.sendNotificationWrapper = async (userId, messagePayload) => {
-            const deviceTokens = await device_tokens_1.default.find({
-                user_id: userId,
-                revoked: false,
-            });
-            if (deviceTokens === null || deviceTokens === void 0 ? void 0 : deviceTokens.length) {
-                deviceTokens.forEach(data => {
-                    firecustom_1.default.sendNotification(data.device_token, messagePayload);
-                });
+            const userData = await users_model_1.default.find({ _id: userId }).select('allow_notification').lean();
+            if (userData.length > 0) {
+                if (userData[0].allow_notification == true) {
+                    const deviceTokens = await device_tokens_1.default.find({
+                        user_id: userId,
+                        revoked: false,
+                    });
+                    if (deviceTokens === null || deviceTokens === void 0 ? void 0 : deviceTokens.length) {
+                        deviceTokens.forEach(data => {
+                            firecustom_1.default.sendNotification(data.device_token, messagePayload);
+                        });
+                    }
+                }
             }
         };
         this.sendNotificationToSubscripedUsers = async (userId, postId, fullname, profilePhoto) => {
@@ -133,17 +140,18 @@ class PostService {
             let model = stock_types_1.default;
             let output = await model.paginate(query, {
                 page: reqData.page,
-                limit: reqData.limit
+                limit: reqData.limit,
             });
             return output;
         }
         else {
-            let output = await this.stockTypesObj.find(query)
+            let stocks = await this.stockTypesObj
+                .find(query)
                 .limit(parseInt((_a = reqData.limit) !== null && _a !== void 0 ? _a : constants_1.LIMIT_DEF))
                 .skip(parseInt((_b = reqData.skip) !== null && _b !== void 0 ? _b : constants_1.SKIP_DEF))
                 .exec();
             const total_count = await this.stockTypesObj.countDocuments(query);
-            return { output, total_count };
+            return { stocks, total_count };
         }
     }
     async userConfigListing(_id) {
@@ -170,7 +178,11 @@ class PostService {
     async getArticles(requestData) {
         let model = articles_1.default;
         let searchRegex = new RegExp(requestData.search, 'i');
-        let data = await model.find({ title: searchRegex }).populate("category").skip(requestData.skip).limit(requestData.limit);
+        let query = { title: searchRegex };
+        if (requestData.categoryId != null && requestData.categoryId != '') {
+            query['category'] = requestData.categoryId;
+        }
+        let data = await model.find(query).populate('category').sort({ sequence: 1 }).skip(requestData.skip).limit(requestData.limit);
         return data;
     }
     async postHome(_id, queryData) {
@@ -193,12 +205,23 @@ class PostService {
             delete userMatch.deleted_at;
         }
         else if (queryData === null || queryData === void 0 ? void 0 : queryData.user_id) {
-            userMatch['user_id'] = new mongoose_1.Types.ObjectId(queryData.user_id);
+            userMatch['user_id'] = new mongoose_2.Types.ObjectId(queryData.user_id);
         }
         else {
-            userMatch['user_id'] = {
-                $in: allUserPostDisplayIds,
-            };
+            if (queryData.is_explore == null || queryData.is_explore == "false") {
+                userMatch['user_id'] = {
+                    $in: allUserPostDisplayIds,
+                };
+            }
+            else {
+                let query = {
+                    user_id: { $nin: [mongoose_1.default.Types.ObjectId(_id)] },
+                    account_type: constants_1.ACCOUNT_TYPE_CONST.PUBLIC,
+                };
+                let userIds = await user_configurations_1.default.find(query).select('user_id').lean();
+                userIds = userIds.map(e => mongoose_1.default.Types.ObjectId(e.user_id));
+                userMatch['user_id'] = { $in: userIds };
+            }
         }
         const postsQb = this.postsObj.aggregate([
             {
@@ -299,7 +322,7 @@ class PostService {
                     pipeline: [
                         {
                             $match: {
-                                user_id: (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) ? { $ne: null } : new mongoose_1.Types.ObjectId(_id),
+                                user_id: (queryData === null || queryData === void 0 ? void 0 : queryData.has_all_data) ? { $ne: null } : new mongoose_2.Types.ObjectId(_id),
                             },
                         },
                         {
@@ -320,6 +343,11 @@ class PostService {
             },
             {
                 $unset: ['likes', 'comments', 'post_stock'],
+            },
+            {
+                $match: {
+                    deleted_at: null
+                }
             },
             /* TODO: This needs to be updated according to views and comment */
             { $sort: { created_at: -1 } },
@@ -382,7 +410,7 @@ class PostService {
             postsQb.append({
                 $match: {
                     'security._id': {
-                        $in: stockIds.map(id => new mongoose_1.Types.ObjectId(id)),
+                        $in: stockIds.map(id => new mongoose_2.Types.ObjectId(id)),
                     },
                 },
             });
@@ -423,7 +451,13 @@ class PostService {
             let searchRegex = new RegExp(queryData.search, 'i');
             postsQb.append({
                 $match: {
-                    $or: [{ caption: searchRegex }, { stock_type: searchRegex }, { 'user.fullname': searchRegex }],
+                    $or: [
+                        { caption: searchRegex },
+                        { stock_type: searchRegex },
+                        { 'user.fullname': searchRegex },
+                        { 'security.name': searchRegex },
+                        { 'security.country_data.name': searchRegex },
+                    ],
                 },
             });
             let model = posts_1.default;
@@ -517,7 +551,7 @@ class PostService {
     async postDelete(userId, postId) {
         const postData = await posts_1.default
             .findOne({
-            _id: new mongoose_1.Types.ObjectId(postId),
+            _id: new mongoose_2.Types.ObjectId(postId),
         })
             .lean();
         if (!postData) {
@@ -610,7 +644,7 @@ class PostService {
             },
             {
                 $match: {
-                    post_id: new mongoose_1.Types.ObjectId(reqData.id),
+                    post_id: new mongoose_2.Types.ObjectId(reqData.id),
                     parent_id: { $eq: null },
                     deleted_at: { $eq: null },
                 },
@@ -727,7 +761,7 @@ class PostService {
         const postDetail = await this.postsObj.findOne({
             _id: reqData.post_id,
         });
-        if (postDetail.user_id) {
+        if (postDetail.user_id.toString() != userId.toString()) {
             const message = `${fullname || 'User'} has added a comment to one your post`;
             const metadata = {
                 post_id: postDetail._id,
@@ -762,8 +796,8 @@ class PostService {
                 },
                 {
                     $match: {
-                        _id: new mongoose_1.Types.ObjectId(reqData.parent_id),
-                        post_id: new mongoose_1.Types.ObjectId(reqData.post_id),
+                        _id: new mongoose_2.Types.ObjectId(reqData.parent_id),
+                        post_id: new mongoose_2.Types.ObjectId(reqData.post_id),
                         parent_id: { $eq: null },
                         deleted_at: undefined,
                     },
@@ -845,8 +879,8 @@ class PostService {
             },
             {
                 $match: {
-                    _id: new mongoose_1.Types.ObjectId(newComment._id),
-                    post_id: new mongoose_1.Types.ObjectId(reqData.post_id),
+                    _id: new mongoose_2.Types.ObjectId(newComment._id),
+                    post_id: new mongoose_2.Types.ObjectId(reqData.post_id),
                     parent_id: { $eq: null },
                     deleted_at: undefined,
                 },
@@ -891,13 +925,13 @@ class PostService {
     // TODO: Need to remove the replies if the parent is removed
     async commentDelete(userId, postId, commentId) {
         const commentCheck = await comments_1.default.findOne({
-            _id: new mongoose_1.Types.ObjectId(commentId),
+            _id: new mongoose_2.Types.ObjectId(commentId),
         });
         if (!commentCheck) {
             throw new HttpException_1.HttpException(403, constants_1.APP_ERROR_MESSAGE.user_not_auth);
         }
         await comments_1.default.deleteOne({
-            _id: new mongoose_1.Types.ObjectId(commentId),
+            _id: new mongoose_2.Types.ObjectId(commentId),
         });
         const commentCounts = await comments_1.default.countDocuments({
             post_id: postId,
@@ -922,7 +956,7 @@ class PostService {
         }
         if (reqData.like) {
             await likes_1.default.create({ user_id: userId, post_id: reqData.post_id });
-            this.notificationUpdate({ reqData, userId, fullname, profile_photo });
+            await this.notificationUpdate({ reqData, userId, fullname, profile_photo });
         }
         else {
             await likes_1.default.deleteOne({ user_id: userId, post_id: reqData.post_id });
@@ -931,7 +965,7 @@ class PostService {
             {
                 $match: {
                     post_id: {
-                        $eq: new mongoose_1.Types.ObjectId(reqData.post_id),
+                        $eq: new mongoose_2.Types.ObjectId(reqData.post_id),
                     },
                 },
             },
@@ -962,13 +996,13 @@ class PostService {
             .find({
             deleted_at: { $eq: null },
         })
-            .sort({ created_at: -1 })
+            .sort({ sequence: 1 })
             .lean();
         // @ts-ignore
         return articleCategories;
     }
     async articleAdd(userId, reqData) {
-        const newArticle = await article_categories_1.default.create(Object.assign({ user_id: new mongoose_1.Types.ObjectId(userId) }, reqData));
+        const newArticle = await article_categories_1.default.create(Object.assign({ user_id: new mongoose_2.Types.ObjectId(userId) }, reqData));
         // @ts-ignore
         return newArticle;
     }
@@ -978,7 +1012,7 @@ class PostService {
             {
                 $project: this.postResObj,
             },
-            { $match: { $expr: { $eq: ['$_id', { $toObjectId: new mongoose_1.Types.ObjectId(postId) }] } } },
+            { $match: { $expr: { $eq: ['$_id', { $toObjectId: new mongoose_2.Types.ObjectId(postId) }] } } },
             {
                 $lookup: {
                     from: constants_1.USERS,
@@ -1071,7 +1105,7 @@ class PostService {
                     pipeline: [
                         {
                             $match: {
-                                user_id: new mongoose_1.Types.ObjectId(userId),
+                                user_id: new mongoose_2.Types.ObjectId(userId),
                             },
                         },
                         {
@@ -1105,31 +1139,42 @@ class PostService {
     }
     async notificationUpdate({ reqData, fullname, userId, profile_photo }) {
         const userPostData = await posts_1.default.findOne({
-            _id: new mongoose_1.Types.ObjectId(reqData.post_id),
+            _id: new mongoose_2.Types.ObjectId(reqData.post_id),
         });
-        if (userPostData && userId !== (userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id)) {
-            const message = `${fullname || 'User'} has like your post`;
-            const meta_data = {
-                post_id: reqData.post_id,
-                user_id: userId,
-                profile_photo: (0, util_1.profileImageGenerator)(profile_photo),
-            };
-            /* TODO: Need to add notification wrapper that takes care of all the stuff */
-            notifications_1.default.create({
-                user_id: userPostData.user_id,
-                type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED,
-                message: message,
-                meta_data,
-            });
-            this.sendNotificationWrapper(userPostData.user_id, {
-                notification: {
-                    title: message,
-                },
-                data: {
-                    payload: JSON.stringify(Object.assign(Object.assign({}, meta_data), { type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED })),
-                },
-            });
+        if (userPostData != null && mongoose_1.default.isValidObjectId(userId) && mongoose_1.default.isValidObjectId(userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id)) {
+            if (userId.toString() != (userPostData === null || userPostData === void 0 ? void 0 : userPostData.user_id.toString())) {
+                const message = `${fullname || 'User'} has like your post`;
+                const meta_data = {
+                    post_id: reqData.post_id,
+                    user_id: userId,
+                    profile_photo: (0, util_1.profileImageGenerator)(profile_photo),
+                };
+                /* TODO: Need to add notification wrapper that takes care of all the stuff */
+                notifications_1.default.create({
+                    user_id: userPostData.user_id,
+                    type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED,
+                    message: message,
+                    meta_data,
+                });
+                this.sendNotificationWrapper(userPostData.user_id, {
+                    notification: {
+                        title: message,
+                    },
+                    data: {
+                        payload: JSON.stringify(Object.assign(Object.assign({}, meta_data), { type: constants_1.NOTIFICATION_TYPE_CONST.USER_LIKED })),
+                    },
+                });
+            }
         }
+    }
+    async getArticleCategories() {
+        let data = await article_categories_1.default
+            .find({
+            deleted_at: { $eq: null },
+        })
+            .sort({ sequence: -1 })
+            .lean();
+        return data;
     }
 }
 exports.default = PostService;

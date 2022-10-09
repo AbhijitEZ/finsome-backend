@@ -20,6 +20,7 @@ const fs_1 = tslib_1.__importDefault(require("fs"));
 const sync_1 = require("csv-parse/sync");
 const posts_1 = tslib_1.__importDefault(require("../models/posts"));
 const device_tokens_1 = tslib_1.__importDefault(require("../models/device-tokens"));
+const user_followers_1 = tslib_1.__importDefault(require("../models/user-followers"));
 const aws_1 = tslib_1.__importDefault(require("../utils/aws"));
 const articles_1 = tslib_1.__importDefault(require("../models/articles"));
 const article_categories_1 = tslib_1.__importDefault(require("../models/article-categories"));
@@ -34,6 +35,27 @@ class AdminService {
         this.privacyPolicy = privacy_policy_1.default;
         this.termsConditionM = terms_condition_1.default;
         this.complaintM = complaints_1.default;
+        this.getUserRating = async (userId) => {
+            let avgRating = await user_rates_1.default
+                .aggregate([
+                {
+                    $match: {
+                        user_id: mongoose_1.default.Types.ObjectId(userId),
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$user_id',
+                        avg: { $avg: '$rate' },
+                    },
+                },
+            ])
+                .exec();
+            let postCount = await posts_1.default.countDocuments({ user_id: userId, deleted_at: null });
+            let followingCount = await user_followers_1.default.countDocuments({ follower_id: userId, accepted: true });
+            let followerCount = await user_followers_1.default.countDocuments({ user_id: userId, accepted: true });
+            return { avgRating, postCount, followingCount, followerCount };
+        };
     }
     async adminLogin(loginDto) {
         const adminUser = await this.users.findOne({
@@ -77,7 +99,8 @@ class AdminService {
             sort: { created_at: -1 },
         });
         for (let i = 0; i < users.docs.length; i++) {
-            users.docs[i].rating = await user_rates_1.default.aggregate([
+            users.docs[i].rating = await user_rates_1.default
+                .aggregate([
                 {
                     $match: {
                         user_id: mongoose_1.default.Types.ObjectId(users.docs[i]._id),
@@ -89,7 +112,8 @@ class AdminService {
                         avg: { $avg: '$rate' },
                     },
                 },
-            ]).exec();
+            ])
+                .exec();
         }
         let data = users.docs;
         const userSanitized = data.map(d => (Object.assign(Object.assign({}, d), { profile_photo: (0, util_1.profileImageGenerator)(d.profile_photo) })));
@@ -107,10 +131,10 @@ class AdminService {
         const appImproves = await this.appImprovement.countDocuments();
         const quickContacts = await this.quickContact.countDocuments();
         const suggestions = await this.userSuggestion.countDocuments();
-        const postsCount = await posts_1.default.countDocuments();
-        const cryptPostCount = await posts_1.default.countDocuments({ stock_type: 'CRYPT' });
-        const equityPostCount = await posts_1.default.countDocuments({ stock_type: 'EQUITY' });
-        const generalPostCount = await posts_1.default.countDocuments({ stock_type: 'OTHER' });
+        const postsCount = await posts_1.default.countDocuments({ deleted_at: null });
+        const cryptPostCount = await posts_1.default.countDocuments({ stock_type: 'CRYPT', deleted_at: null });
+        const equityPostCount = await posts_1.default.countDocuments({ stock_type: 'EQUITY', deleted_at: null });
+        const generalPostCount = await posts_1.default.countDocuments({ stock_type: 'OTHER', deleted_at: null });
         let active_user = 0, inactive_user = 0, total_user = 0, completed_registered_user = 0;
         users.map(usr => {
             total_user = total_user + 1;
@@ -270,6 +294,11 @@ class AdminService {
                 select: 'fullname phone_number',
             },
         });
+        for (let i = 0; i < complaints.docs.length; i++) {
+            if (complaints.docs[i].user_complain_id != null) {
+                complaints.docs[i].user_complain_id = await users_model_1.default.findById(complaints.docs[i].user_complain_id).select('-password').lean();
+            }
+        }
         return complaints;
     }
     async stockTypeAdd(type, reqData) {
@@ -313,19 +342,65 @@ class AdminService {
         // ANCHOR This would be added on, when more models gets associated with Stock.
         await stock_types_1.default.findOneAndDelete({ _id, s_type: type }).exec();
     }
+    async saveArticleCategory(request) {
+        if (request.id == '0') {
+            let checkingSequence = await article_categories_1.default.find({ sequence: request.sequence });
+            if (checkingSequence.length == 0) {
+                let existing = await article_categories_1.default.find({ name: request.name });
+                if (existing.length == 1) {
+                    return { status: false, message: "Article category is already exist!" };
+                }
+                else {
+                    let query = {
+                        name: request.name,
+                        sequence: request.sequence,
+                    };
+                    await article_categories_1.default.create(query);
+                    return { status: true, message: "Article category created successfully!" };
+                }
+            }
+            else {
+                return { status: false, message: "Sequence is already exist!" };
+            }
+        }
+        else {
+            await article_categories_1.default.findByIdAndUpdate(request.id, {
+                name: request.name,
+                sequence: request.sequence,
+            }, { new: true });
+            return { status: true, message: "Article category updated successfully!" };
+        }
+    }
+    async deleteArticleCategory(requestData) {
+        if (mongoose_1.default.isValidObjectId(requestData.id)) {
+            await article_categories_1.default.findByIdAndRemove(requestData.id, { new: true });
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     async getArticleCategories() {
-        let data = await article_categories_1.default.find();
+        let data = await article_categories_1.default
+            .find({ deleted_at: { $eq: null } })
+            .sort({ sequence: 1 })
+            .lean();
         return data;
     }
     async getArticles(requestData) {
         let model = articles_1.default;
         let searchRegex = new RegExp(requestData.search, 'i');
-        let data = await model.paginate({ title: searchRegex }, {
+        let query = { title: searchRegex };
+        if (requestData.categoryId != '') {
+            query['category'] = requestData.categoryId;
+        }
+        let data = await model.paginate(query, {
             page: requestData.page,
             limit: requestData.limit,
+            sort: { sequence: 1 },
             populate: {
-                path: 'category'
-            }
+                path: 'category',
+            },
         });
         return data;
     }
@@ -361,24 +436,31 @@ class AdminService {
             title: requestData.title,
             category: requestData.category,
             description: requestData.description,
+            sequence: requestData.sequence,
             readingTime: requestData.readingTime,
             content: requestData.content,
         };
         console.log(query);
         if (requestData.id == '0') {
-            if (file) {
-                query.coverImage = imageFile != null ? imageFile : '';
+            let checkingSequence = await article_categories_1.default.find({ sequence: requestData.sequence });
+            if (checkingSequence.length == 0) {
+                if (file) {
+                    query.coverImage = imageFile != null ? imageFile : '';
+                }
+                await articles_1.default.create(query);
+                return { status: true, message: "Article created successfully!" };
             }
-            await articles_1.default.create(query);
-            return true;
+            else {
+                return { status: false, message: "Sequence is already existys!" };
+            }
         }
         else {
             if (mongoose_1.default.isValidObjectId(requestData.id)) {
                 await articles_1.default.findByIdAndUpdate(requestData.id, query);
-                return true;
+                return { status: true, message: "Article updated successfully!" };
             }
             else {
-                return false;
+                return { status: false, message: "Unable to update article" };
             }
         }
     }

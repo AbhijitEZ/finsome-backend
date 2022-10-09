@@ -166,6 +166,10 @@ export class PostHomeDto extends PaginationDto {
 
   @IsOptional()
   @IsString()
+  is_explore: string;
+
+  @IsOptional()
+  @IsString()
   has_all_data?: string;
 
   /* Specific to user-profile listing */

@@ -27,6 +27,15 @@ class AdminController {
                 next(error);
             }
         };
+        this.getUserRatingCount = async (req, res, next) => {
+            try {
+                const users = await this.adminService.getUserRating(req.body.userId);
+                res.status(200).json({ data: users });
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.dashboardData = async (req, res, next) => {
             try {
                 const users = await this.adminService.dashboardData(req.user);
@@ -198,6 +207,34 @@ class AdminController {
                 next(error);
             }
         };
+        this.saveArticleCategory = async (req, res, next) => {
+            try {
+                const response = await this.adminService.saveArticleCategory(req.body);
+                if (response.status) {
+                    res.status(200).json({ data: 1, message: response.message });
+                }
+                else {
+                    res.status(200).json({ data: 0, message: response.message });
+                }
+            }
+            catch (error) {
+                next(error);
+            }
+        };
+        this.deleteArticleCategory = async (req, res, next) => {
+            try {
+                const response = await this.adminService.deleteArticleCategory(req.body);
+                if (response) {
+                    res.status(200).json({ data: 1, message: 'Article category saved!' });
+                }
+                else {
+                    res.status(200).json({ data: 0, message: 'Unable to save article category!' });
+                }
+            }
+            catch (error) {
+                next(error);
+            }
+        };
         this.articleCategory = async (req, res, next) => {
             try {
                 let response = await this.adminService.getArticleCategories();
@@ -210,7 +247,7 @@ class AdminController {
         this.saveArticle = async (req, res, next) => {
             try {
                 let response = await this.adminService.saveArticle(req.body, req.file);
-                res.status(200).json({ data: response, message: response ? 'Article saved!' : 'Unable to save article' });
+                res.status(200).json({ data: response.status, message: response.message });
             }
             catch (error) {
                 next(error);

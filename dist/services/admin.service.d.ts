@@ -15,6 +15,12 @@ declare class AdminService {
         token: string;
     }>;
     userListing(user: User, req: any): Promise<Record<string, any>>;
+    getUserRating: (userId: any) => Promise<{
+        avgRating: any;
+        postCount: any;
+        followingCount: number;
+        followerCount: number;
+    }>;
     dashboardData(user: User): Promise<Record<string, any>>;
     toggleUserStatus(user: ToggleUserStatusDto): Promise<void>;
     deleteUser(id: string): Promise<void>;
@@ -28,6 +34,11 @@ declare class AdminService {
     complaintsListing(body: any): Promise<Record<string, any>>;
     stockTypeAdd(type: string, reqData: StockUpdateTypeDto): Promise<any>;
     stockTypeDelete(type: string, _id: string): Promise<any>;
+    saveArticleCategory(request: any): Promise<{
+        status: boolean;
+        message: string;
+    }>;
+    deleteArticleCategory(requestData: any): Promise<any>;
     getArticleCategories(): Promise<any>;
     getArticles(requestData: any): Promise<any>;
     getSingleArticle(requestData: any): Promise<any>;

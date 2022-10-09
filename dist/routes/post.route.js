@@ -24,6 +24,7 @@ class PostRoute {
         this.router.post(`${this.path}create/:id`, auth_middleware_1.default, global_1.fileUploadPostCB, (0, validation_middleware_1.default)(posts_dto_1.PostCreateDto, 'body'), this.postController.postCreate);
         this.router.delete(`${this.path}delete-asset/:postId`, (0, validation_middleware_1.default)(posts_dto_1.PostAssetDeleteDto, 'query'), auth_middleware_1.default, this.postController.postDeleteAssets);
         this.router.get(`${this.path}detail/:postId`, auth_middleware_1.default, this.postController.postDetail);
+        this.router.post(`${this.path}detail`, auth_middleware_1.default, this.postController.postDetailByUserId);
         this.router.delete(`${this.path}delete/:postId`, auth_middleware_1.default, this.postController.postDelete);
         this.router.post(`${this.path}delete`, auth_middleware_1.default, this.postController.postDelete);
         this.router.get(`${this.path}explore`, auth_middleware_1.default, this.postController.postExplore);
