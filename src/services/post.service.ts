@@ -113,25 +113,25 @@ class PostService {
     }
 
     if (reqData.search) {
-      query['$and']=[{ $or: [{ name: { $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }];
+      query['$and'] = [{ $or: [{ name: { $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }];
       // stQb = stQb.and([{ $or: [{ name: {find $regex: `.*${reqData.search}.*`, $options: 'i' } }, { code: reqData.search }] }]);
     }
 
-
     if (reqData.has_all_data) {
       let model: any = stockTypeModel;
-      let output: any = await model.paginate(query, { 
-        page: reqData.page, 
-        limit: reqData.limit
+      let output: any = await model.paginate(query, {
+        page: reqData.page,
+        limit: reqData.limit,
       });
       return output;
     } else {
-      let output = await this.stockTypesObj.find(query)
+      let stock = await this.stockTypesObj
+        .find(query)
         .limit(parseInt(reqData.limit ?? LIMIT_DEF))
         .skip(parseInt(reqData.skip ?? SKIP_DEF))
         .exec();
-        const total_count = await this.stockTypesObj.countDocuments(query);
-        return { output, total_count };
+      const total_count = await this.stockTypesObj.countDocuments(query);
+      return { stock, total_count };
     }
   }
 
@@ -168,7 +168,7 @@ class PostService {
   public async getArticles(requestData: any): Promise<any> {
     let model: any = articleModel;
     let searchRegex = new RegExp(requestData.search, 'i');
-    let data = await model.find({ title: searchRegex }).populate("category").skip(requestData.skip).limit(requestData.limit);
+    let data = await model.find({ title: searchRegex }).populate('category').skip(requestData.skip).limit(requestData.limit);
     return data;
   }
 
@@ -199,8 +199,6 @@ class PostService {
         $in: allUserPostDisplayIds,
       };
     }
-
-    
 
     const postsQb = this.postsObj.aggregate([
       {
