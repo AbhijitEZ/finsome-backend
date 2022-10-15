@@ -247,11 +247,7 @@ class AuthService {
       return;
     }
 
-    if (intervalDurationOTPCheck(userFound.updated_at)) {
-      this.updateUserCodeWithSMS(reqData, undefined, 'user');
-    } else {
-      this.updateUserCodeWithSMS(reqData, userFound.otp, 'user');
-    }
+    this.updateUserCodeWithSMS(reqData, userFound.otp, 'user');
   }
 
   public async verifyOtp(reqData: VerifyOtpDTO): Promise<any> {
@@ -1415,13 +1411,13 @@ class AuthService {
       codeData: { code },
     });
 
-    if (type!='user') {
+    if (type == 'user') {
+      await this.users.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code }, {new: true});
+    }else{
       await this.otpValidation.findOneAndUpdate(
         { phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code },
         { otp: code },
       );
-    } else if (type == 'user') {
-      await this.users.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
     }
   };
 

@@ -208,7 +208,7 @@ class PostService {
             userMatch['user_id'] = new mongoose_2.Types.ObjectId(queryData.user_id);
         }
         else {
-            if (queryData.is_explore == null || queryData.is_explore == "false") {
+            if (queryData.is_explore == null || queryData.is_explore == 'false') {
                 userMatch['user_id'] = {
                     $in: allUserPostDisplayIds,
                 };
@@ -346,8 +346,8 @@ class PostService {
             },
             {
                 $match: {
-                    deleted_at: null
-                }
+                    deleted_at: null,
+                },
             },
             /* TODO: This needs to be updated according to views and comment */
             { $sort: { created_at: -1 } },

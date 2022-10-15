@@ -42,11 +42,11 @@ class AuthService {
                 phoneNumber: reqData.phone_number,
                 codeData: { code },
             });
-            if (!type) {
-                await this.otpValidation.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
+            if (type == 'user') {
+                await this.users.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code }, { new: true });
             }
-            else if (type === 'user') {
-                await this.users.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
+            else {
+                await this.otpValidation.findOneAndUpdate({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code }, { otp: code });
             }
         };
         this.asyncUserCreationProcess = async (id) => {
@@ -217,12 +217,7 @@ class AuthService {
         if (reqData.is_testing === 'true') {
             return;
         }
-        if ((0, phone_1.intervalDurationOTPCheck)(userFound.updated_at)) {
-            this.updateUserCodeWithSMS(reqData, undefined, 'user');
-        }
-        else {
-            this.updateUserCodeWithSMS(reqData, userFound.otp, 'user');
-        }
+        this.updateUserCodeWithSMS(reqData, userFound.otp, 'user');
     }
     async verifyOtp(reqData) {
         const userFound = await this.users.findOne({ phone_number: reqData.phone_number, phone_country_code: reqData.phone_country_code });
